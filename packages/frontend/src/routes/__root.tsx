@@ -1,7 +1,7 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
 
-import logoUrl from '@/assets/logo.webp'
+import logoIconUrl from '@/assets/logo-icon.webp'
 
 // Devtools are dev-only: in a production build this resolves to a component
 // that renders nothing, so the package never reaches the bundle.
@@ -26,12 +26,14 @@ function RootLayout() {
           aria-label="Hauptnavigation"
           className="mx-auto flex w-full max-w-6xl items-center gap-6 px-4 py-3"
         >
-          <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-            {/* The asset is 1024x559 (1.83:1). `size-7` forced it into a square
-                and squashed it — constrain the height and let width follow.
-                width/height match the intrinsic ratio to reserve layout space. */}
-            <img src={logoUrl} alt="" width={51} height={28} className="h-7 w-auto" />
-            WELS
+          <Link to="/" className="flex items-center">
+            <img
+              src={logoIconUrl}
+              alt="WELS — zur Übersicht"
+              width={32}
+              height={32}
+              className="size-8"
+            />
           </Link>
         </nav>
       </header>
