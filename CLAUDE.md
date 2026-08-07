@@ -124,6 +124,8 @@ wels-monorepo/
 ```bash
 # First-time setup
 make setup          # venvs (Python), pnpm install (frontend), moon, pre-commit hooks
+make auth           # one-time Google Drive OAuth → credentials/token.json
+make download-models # pull CV models from Drive → data/input/models/ingestion/
 
 # Development
 make dev            # backend + frontend (parallel)

@@ -5,7 +5,7 @@
        format format-backend \
        test test-backend test-integration test-pipeline \
        explore-db \
-       auth \
+       auth download-models \
        stop clean
 
 MOON_VERSION     := latest
@@ -143,6 +143,18 @@ auth:
 		  echo "       Download it from Google Cloud Console and place it in credentials/."; \
 		  exit 1; }
 	@packages/backend/.venv/bin/python docker/auth.py
+
+## Download the CV models from Google Drive into data/input/models/ingestion/.
+## Requires credentials/credentials.json; run 'make auth' first, or let this
+## target open the browser consent flow itself on the first run.
+download-models:
+	@test -x packages/backend/.venv/bin/python || \
+		{ echo "ERROR: backend venv not found. Run 'make setup' first."; exit 1; }
+	@test -f credentials/credentials.json || \
+		{ echo "ERROR: credentials/credentials.json not found."; \
+		  echo "       Download it from Google Cloud Console and place it in credentials/."; \
+		  exit 1; }
+	@packages/backend/.venv/bin/python scripts/download_models.py
 
 clean:
 	@for pkg in $(PY_PACKAGES); do \
