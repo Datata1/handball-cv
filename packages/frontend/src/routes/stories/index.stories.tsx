@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Home } from './index'
+import { Home } from '../index'
 
 const meta = {
   title: 'Routes/Home',

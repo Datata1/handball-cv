@@ -30,7 +30,7 @@ export default defineConfig({
         test: {
           ...shared.test,
           name: 'unit',
-          setupFiles: ['./src/test/setup.ts'],
+          setupFiles: ['./src/testing/setup.ts'],
           include: ['src/**/*.{test,spec}.{ts,tsx}'],
         },
       },
@@ -58,7 +58,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.stories.tsx', 'src/routeTree.gen.ts', 'src/test/**'],
+      exclude: [
+        'src/**/stories/**',
+        'src/**/tests/**',
+        'src/testing/**',
+        'src/routeTree.gen.ts',
+      ],
     },
   },
 })

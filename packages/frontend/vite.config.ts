@@ -13,8 +13,10 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      // Co-located tests and stories are not routes.
-      routeFileIgnorePattern: '\\.(test|stories)\\.tsx?$',
+      // Excludes src/routes/{stories,tests}/. Matched against each path
+      // segment separately, so it can name a directory but must not contain
+      // a slash.
+      routeFileIgnorePattern: '^(stories|tests)$',
     }),
     react(),
     tailwindcss(),

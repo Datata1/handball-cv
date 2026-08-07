@@ -1,9 +1,9 @@
 import { composeStories } from '@storybook/react-vite'
 import { render, screen } from '@testing-library/react'
 
-import { expectNoA11yViolations } from '@/test/axe'
+import { expectNoA11yViolations } from '@/testing/axe'
 
-import * as stories from './index.stories'
+import * as stories from '../stories/index.stories'
 
 const { Default } = composeStories(stories)
 
