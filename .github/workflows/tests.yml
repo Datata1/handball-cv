@@ -118,11 +118,15 @@ jobs:
         continue-on-error: true
 
       - name: Build frontend
-        # The React frontend has no tests yet; a production build is the CI gate —
-        # it verifies Vite resolves every import, Tailwind compiles, the router's
-        # generated route tree is current, and tsc succeeds.
+        # A separate gate from the tests: catches unresolved imports, a stale
+        # generated route tree, and tsc errors.
         id: build-frontend
         run: cd packages/frontend && pnpm build 2>&1 | tee /tmp/build-frontend.txt
+        continue-on-error: true
+
+      - name: Test frontend
+        id: test-frontend
+        run: cd packages/frontend && pnpm test 2>&1 | tee /tmp/test-frontend.txt
         continue-on-error: true
 
       - name: Test ingestion
@@ -195,6 +199,7 @@ jobs:
             echo ""
             test_row "Backend"         "${{ steps.test-backend.outcome }}"    /tmp/test-backend.txt
             lint_row "Frontend build"  "${{ steps.build-frontend.outcome }}"  /tmp/build-frontend.txt
+            test_row "Frontend"        "${{ steps.test-frontend.outcome }}"   /tmp/test-frontend.txt
             test_row "Ingestion"       "${{ steps.test-ingestion.outcome }}"  /tmp/test-ingestion.txt
             test_row "ML"              "${{ steps.test-ml.outcome }}"         /tmp/test-ml.txt
 
@@ -209,6 +214,7 @@ jobs:
                passed "${{ steps.typecheck-ml.outcome }}"       && \
                passed "${{ steps.test-backend.outcome }}"       && \
                passed "${{ steps.build-frontend.outcome }}"     && \
+               passed "${{ steps.test-frontend.outcome }}"      && \
                passed "${{ steps.test-ingestion.outcome }}"     && \
                passed "${{ steps.test-ml.outcome }}"; then
               echo "**All checks passed** ✅"
@@ -250,6 +256,7 @@ jobs:
              [ "${{ steps.typecheck-ml.outcome }}"       != "success" ] || \
              [ "${{ steps.test-backend.outcome }}"       != "success" ] || \
              [ "${{ steps.build-frontend.outcome }}"     != "success" ] || \
+             [ "${{ steps.test-frontend.outcome }}"      != "success" ] || \
              [ "${{ steps.test-ingestion.outcome }}"     != "success" ] || \
              [ "${{ steps.test-ml.outcome }}"            != "success" ]; then
             echo "One or more checks failed"

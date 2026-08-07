@@ -45,6 +45,26 @@ tasks:
       - "tsconfig*.json"
       - "package.json"
 
+  test:
+    command: pnpm test
+    inputs:
+      - "src/**/*"
+      - "vitest.config.ts"
+      - "package.json"
+
+  # Not a CI gate: `test` already renders every story.
+  build-storybook:
+    command: pnpm build-storybook
+    inputs:
+      - "src/**/*"
+      - ".storybook/**/*"
+      - "vite.config.ts"
+      - "package.json"
+    outputs:
+      - "storybook-static"
+    options:
+      runInCI: false
+
   build:
     command: pnpm build
     inputs:

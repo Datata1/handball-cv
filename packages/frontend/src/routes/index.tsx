@@ -4,7 +4,8 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-function Home() {
+// Exported for index.stories.tsx — rendering it needs no router context.
+export function Home() {
   return (
     <section>
       <h1 className="text-3xl font-bold text-primary">WELS</h1>

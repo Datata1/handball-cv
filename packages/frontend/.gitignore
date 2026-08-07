@@ -7,6 +7,10 @@ dist-ssr/
 .vite/
 *.tsbuildinfo
 
+# Storybook build output + vitest coverage
+storybook-static/
+coverage/
+
 # Local env overrides (VITE_BACKEND_URL etc.)
 .env
 .env.local

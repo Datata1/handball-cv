@@ -6,7 +6,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!src/routeTree.gen.ts", "!**/dist", "!**/.vite"]
+    "includes": [
+      "**",
+      "!src/routeTree.gen.ts",
+      "!**/dist",
+      "!**/.vite",
+      "!storybook-static"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -52,6 +58,16 @@
   "overrides": [
     {
       "includes": ["src/routes/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.stories.tsx", ".storybook/**"],
       "linter": {
         "rules": {
           "style": {

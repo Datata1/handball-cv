@@ -2,6 +2,11 @@
 # package.json. This package is its own single-package workspace — there is no
 # workspace root above it (see .moon/toolchain.yml:syncProjectWorkspaceDependencies).
 
+# pnpm hard-errors on an untriaged install script, so every dependency that
+# has one must be listed here or CI's install fails.
+allowBuilds:
+  esbuild: true
+
 # pnpm gates dependency versions younger than its default minimum release age.
 # These were pinned deliberately and are exempt; the lockfile is the source of
 # truth for what actually gets installed.
