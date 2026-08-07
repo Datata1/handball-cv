@@ -10,7 +10,14 @@ export default defineConfig({
     // Must come BEFORE the react plugin: it generates src/routeTree.gen.ts
     // from the files in src/routes/ and rewrites route modules for code
     // splitting, and react() has to see the rewritten output.
-    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+      // Tests and stories live next to the route they cover. Without this the
+      // generator treats them as route files, warns that they export no
+      // `Route`, and would try to give them a URL.
+      routeFileIgnorePattern: '\\.(test|stories)\\.tsx?$',
+    }),
     react(),
     tailwindcss(),
   ],

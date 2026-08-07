@@ -45,6 +45,29 @@ tasks:
       - "tsconfig*.json"
       - "package.json"
 
+  # Components are tested through their stories (composeStories), so the story
+  # files are inputs to this task as much as the components are.
+  test:
+    command: pnpm test
+    inputs:
+      - "src/**/*"
+      - "vitest.config.ts"
+      - "package.json"
+
+  # Not a CI gate: a full Storybook build is slow and duplicates what
+  # `test` already asserts about every story.
+  build-storybook:
+    command: pnpm build-storybook
+    inputs:
+      - "src/**/*"
+      - ".storybook/**/*"
+      - "vite.config.ts"
+      - "package.json"
+    outputs:
+      - "storybook-static"
+    options:
+      runInCI: false
+
   build:
     command: pnpm build
     inputs:

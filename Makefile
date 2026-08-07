@@ -3,7 +3,8 @@
        lint lint-backend lint-frontend \
        typecheck typecheck-backend typecheck-frontend \
        format format-backend format-frontend \
-       test test-backend test-integration test-pipeline \
+       test test-backend test-frontend test-integration test-pipeline \
+       storybook \
        explore-db \
        auth download-models \
        stop clean
@@ -131,10 +132,17 @@ format-backend:
 format-frontend: $(MOON_BIN)
 	$(MOON_BIN) run frontend:format
 
-test: test-backend
+test: test-backend test-frontend
 
 test-backend:
 	cd packages/backend && uv run pytest
+
+test-frontend: $(MOON_BIN)
+	$(MOON_BIN) run frontend:test
+
+## Component workshop + a11y panel on http://localhost:6006
+storybook: $(MOON_BIN)
+	cd packages/frontend && pnpm storybook
 
 test-integration:
 	cd packages/backend && uv run pytest -m integration
