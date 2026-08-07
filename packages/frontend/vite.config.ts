@@ -1,29 +1,33 @@
-import { defineConfig, loadEnv } from 'vite'
-import path from 'path'
+import path from 'node:path'
+
 import tailwindcss from '@tailwindcss/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+export default defineConfig({
+  plugins: [
+    // Must come BEFORE the react plugin: it generates src/routeTree.gen.ts
+    // from the files in src/routes/ and rewrites route modules for code
+    // splitting, and react() has to see the rewritten output.
+    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+    react(),
+    tailwindcss(),
+  ],
 
-  return {
-    plugins: [
-      // The React and Tailwind plugins are both required for Make, even if
-      // Tailwind is not being actively used – do not remove them
-      react(),
-      tailwindcss(),
-    ],
-    resolve: {
-      alias: {
-        // Alias @ to the src directory
-        '@': path.resolve(__dirname, './src'),
-      },
+  resolve: {
+    alias: {
+      '@': path.resolve(import.meta.dirname, './src'),
     },
-    define: {
-      'import.meta.env.VITE_BACKEND_URL': JSON.stringify(env.VITE_BACKEND_URL || 'http://localhost:8000'),
-    },
+  },
 
-    // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
-    assetsInclude: ['**/*.svg', '**/*.csv'],
-  }
+  server: {
+    port: 3000,
+    strictPort: true,
+  },
+
+  preview: {
+    port: 3000,
+    strictPort: true,
+  },
 })

@@ -26,6 +26,14 @@ function Invoke-SetupFrontend {
     finally { Pop-Location }
 }
 
+# Superseded frontend — not part of Invoke-Setup. Opt in only when you need to
+# run it side by side for reference.
+function Invoke-SetupFrontendLegacy {
+    Push-Location packages\frontend-legacy
+    try { pnpm install }
+    finally { Pop-Location }
+}
+
 function Invoke-SetupMoon {
     if (Test-Path $MOON_BIN) { return }
     New-Item -ItemType Directory -Force -Path tools | Out-Null
@@ -97,6 +105,13 @@ function Invoke-RunFrontend {
     finally { Pop-Location }
 }
 
+function Invoke-RunFrontendLegacy {
+    Write-Host "Legacy frontend -> http://localhost:3001 (superseded, reference only)"
+    Push-Location packages\frontend-legacy
+    try { pnpm dev }
+    finally { Pop-Location }
+}
+
 function Invoke-BuildFrontend {
     Push-Location packages\frontend
     try { pnpm build }
@@ -149,8 +164,15 @@ function Invoke-FormatBackend {
     finally { Pop-Location }
 }
 
+function Invoke-FormatFrontend {
+    Push-Location packages\frontend
+    try { pnpm format }
+    finally { Pop-Location }
+}
+
 function Invoke-Format {
     Invoke-FormatBackend
+    Invoke-FormatFrontend
 }
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
@@ -179,7 +201,7 @@ function Invoke-Clean {
         Remove-Item -Recurse -Force "$pkg\.venv"  -ErrorAction SilentlyContinue
         Remove-Item -Force         "$pkg\uv.lock" -ErrorAction SilentlyContinue
     }
-    foreach ($pkg in @("packages\frontend")) {
+    foreach ($pkg in @("packages\frontend", "packages\frontend-legacy")) {
         Write-Host "Cleaning $pkg..."
         Remove-Item -Recurse -Force "$pkg\node_modules" -ErrorAction SilentlyContinue
         Remove-Item -Recurse -Force "$pkg\dist"         -ErrorAction SilentlyContinue
@@ -193,26 +215,30 @@ function Show-Help {
 Usage: .\Make.ps1 <target>
 
 Setup:
-  setup               Set up all packages (backend + frontend + moon + hooks)
-  setup-backend       Install backend dependencies
-  setup-frontend      Install frontend dependencies (pnpm install via moon)
-  setup-moon          Download moon binary
-  setup-hooks         Install pre-commit hooks
+  setup                  Set up all packages (backend + frontend + moon + hooks)
+  setup-backend          Install backend dependencies
+  setup-frontend         Install frontend dependencies (pnpm install via moon)
+  setup-frontend-legacy  Install the superseded frontend's dependencies
+  setup-moon             Download moon binary
+  setup-hooks            Install pre-commit hooks
 
 Development:
-  dev                 Start all services (backend + frontend)
-  run-backend         Start backend only  (http://localhost:8000)
-  run-frontend        Start frontend only (http://localhost:3000, Vite)
-  build-frontend      Production build of the React frontend
+  dev                    Start all services (backend + frontend)
+  run-backend            Start backend only  (http://localhost:8000)
+  run-frontend           Start frontend only (http://localhost:3000, Vite)
+  run-frontend-legacy    Start the superseded frontend (http://localhost:3001)
+  build-frontend         Production build of the React frontend
 
 Code Quality:
   lint                Lint all packages
   lint-backend        Lint backend
-  lint-frontend       Lint frontend (eslint)
+  lint-frontend       Lint frontend (biome)
   typecheck           Type-check all packages
   typecheck-backend   Type-check backend (ty)
   typecheck-frontend  Type-check frontend (tsc)
-  format              Format backend
+  format              Format backend (ruff) + frontend (biome)
+  format-backend      Format backend only
+  format-frontend     Format frontend only
 
 Tests:
   test                Run all tests (backend)
@@ -231,11 +257,13 @@ switch ($Target) {
     "setup"              { Invoke-Setup }
     "setup-backend"      { Invoke-SetupBackend }
     "setup-frontend"     { Invoke-SetupFrontend }
+    "setup-frontend-legacy" { Invoke-SetupFrontendLegacy }
     "setup-moon"         { Invoke-SetupMoon }
     "setup-hooks"        { Invoke-SetupHooks }
     "dev"                { Invoke-Dev }
     "run-backend"        { Invoke-RunBackend }
     "run-frontend"       { Invoke-RunFrontend }
+    "run-frontend-legacy" { Invoke-RunFrontendLegacy }
     "build-frontend"     { Invoke-BuildFrontend }
     "lint"               { Invoke-Lint }
     "lint-backend"       { Invoke-LintBackend }
@@ -245,6 +273,7 @@ switch ($Target) {
     "typecheck-frontend" { Invoke-TypecheckFrontend }
     "format"             { Invoke-Format }
     "format-backend"     { Invoke-FormatBackend }
+    "format-frontend"    { Invoke-FormatFrontend }
     "test"               { Invoke-Test }
     "test-backend"       { Invoke-TestBackend }
     "test-integration"   { Invoke-TestIntegration }

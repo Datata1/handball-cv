@@ -1,0 +1,20 @@
+$schema: "https://moonrepo.dev/schemas/toolchains.json"
+
+# Toolchain plugins for the JS/TS packages: `frontend` (active) and
+# `frontend-legacy` (reference only, pending deletion). moon attaches these
+# automatically to any project containing a package.json.
+#
+# NOTE: this file is `toolchains.yml` (plural). moon 2 renamed it from the
+# 1.x `toolchain.yml`, and it does NOT read the old name — a stale
+# `toolchain.yml` is silently ignored, which is how the previous Node pin
+# came to have no effect at all.
+
+node:
+  # Active LTS. Vite 8 requires ^20.19 || >=22.12, so the previous 20.18.1
+  # pin would have been a hard blocker had it ever been applied.
+  version: "24.19.0"
+
+pnpm:
+  # pnpm >= 11 reads per-package settings from pnpm-workspace.yaml, not from
+  # a "pnpm" field in package.json.
+  version: "11.20.0"

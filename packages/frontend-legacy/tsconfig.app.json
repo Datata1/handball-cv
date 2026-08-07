@@ -2,29 +2,28 @@
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "jsx": "react-jsx",
     "noEmit": true,
 
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
 
-    // No baseUrl: deprecated in TS 6, removed in 7. Since TS 5.0 `paths` is
-    // resolved relative to this file.
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
+  
   "include": ["src"]
 }

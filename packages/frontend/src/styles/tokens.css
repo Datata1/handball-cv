@@ -1,0 +1,203 @@
+/* ──────────────────────────────────────────────────────────────────
+   WELS design tokens.
+
+   Three layers, each built from the one above:
+
+     1. Raw palette   --wels-*        literal brand values
+     2. Semantic      --primary, …    roles, per color scheme
+     3. Theme bridge  @theme inline   Tailwind utilities
+
+   Net effect: `bg-primary` / `text-foreground` / `ring-ring` ARE the
+   WELS palette — you get the brand by writing ordinary utilities,
+   without anyone having to remember a token name.
+
+   This is the one thing the previous frontend got wrong: it defined
+   this palette and then hardcoded `from-blue-900 via-sky-600
+   to-orange-500` everywhere. Do not hardcode a color. If a shade is
+   missing, add it to layer 1 and give it a role in layer 2.
+
+   The raw palette is namespaced `--wels-*` rather than `--color-*` on
+   purpose: `--color-gray-100` and friends belong to Tailwind's own
+   theme, and redefining them here would silently change what
+   `bg-gray-100` renders everywhere.
+   ────────────────────────────────────────────────────────────────── */
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── 1. Raw palette ─────────────────────────────────────────────── */
+
+:root {
+  --wels-dark: #1a1a2e;
+  --wels-navy: #16213e;
+  --wels-blue: #0f3460;
+  --wels-accent: #e94560;
+
+  /* Neutrals — deliberately few. Reach for a role in layer 2 first. */
+  --wels-neutral-50: #f9fafb;
+  --wels-neutral-100: #f3f4f6;
+  --wels-neutral-400: #9ca3af;
+  --wels-neutral-500: #6b7280;
+  --wels-neutral-900: #111827;
+  --wels-white: #fff;
+
+  /* Categorical accents, used only by the chart roles below. */
+  --wels-positive: #16a34a;
+  --wels-caution: #ca8a04;
+  --wels-info: #2563eb;
+
+  --wels-font-sans:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --wels-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+/* ── 2a. Semantic roles (light) ─────────────────────────────────────
+   Names follow the shadcn/ui contract, so `pnpm dlx shadcn@latest add
+   <component>` drops in already wearing the WELS palette. */
+
+:root {
+  --background: var(--wels-neutral-50);
+  --foreground: var(--wels-neutral-900);
+  --card: var(--wels-white);
+  --card-foreground: var(--wels-neutral-900);
+  --popover: var(--wels-white);
+  --popover-foreground: var(--wels-neutral-900);
+  --primary: var(--wels-blue);
+  --primary-foreground: var(--wels-white);
+  --secondary: var(--wels-neutral-100);
+  --secondary-foreground: var(--wels-navy);
+  --muted: var(--wels-neutral-100);
+  --muted-foreground: var(--wels-neutral-500);
+  --accent: var(--wels-neutral-100);
+  --accent-foreground: var(--wels-navy);
+  --destructive: var(--wels-accent);
+  --destructive-foreground: var(--wels-white);
+  --border: rgb(15 52 96 / 0.12);
+  --input: transparent;
+  --ring: var(--wels-accent);
+
+  --chart-1: var(--wels-blue);
+  --chart-2: var(--wels-accent);
+  --chart-3: var(--wels-navy);
+  --chart-4: var(--wels-caution);
+  --chart-5: var(--wels-positive);
+
+  --sidebar: var(--wels-white);
+  --sidebar-foreground: var(--wels-neutral-900);
+  --sidebar-primary: var(--wels-navy);
+  --sidebar-primary-foreground: var(--wels-white);
+  --sidebar-accent: var(--wels-neutral-100);
+  --sidebar-accent-foreground: var(--wels-navy);
+  --sidebar-border: rgb(15 52 96 / 0.1);
+  --sidebar-ring: var(--wels-accent);
+
+  --radius: 0.5rem;
+}
+
+/* ── 2b. Semantic roles (dark) ──────────────────────────────────── */
+
+.dark {
+  --background: var(--wels-dark);
+  --foreground: var(--wels-neutral-100);
+  --card: var(--wels-navy);
+  --card-foreground: var(--wels-neutral-100);
+  --popover: var(--wels-navy);
+  --popover-foreground: var(--wels-neutral-100);
+  --primary: var(--wels-accent);
+  --primary-foreground: var(--wels-white);
+  --secondary: var(--wels-blue);
+  --secondary-foreground: var(--wels-white);
+  --muted: var(--wels-blue);
+  --muted-foreground: var(--wels-neutral-400);
+  --accent: var(--wels-blue);
+  --accent-foreground: var(--wels-white);
+  --destructive: var(--wels-accent);
+  --destructive-foreground: var(--wels-white);
+  --border: rgb(255 255 255 / 0.08);
+  --input: rgb(255 255 255 / 0.05);
+  --ring: var(--wels-accent);
+
+  --chart-1: var(--wels-accent);
+  --chart-2: var(--wels-neutral-400);
+  --chart-3: var(--wels-caution);
+  --chart-4: var(--wels-positive);
+  --chart-5: var(--wels-info);
+
+  --sidebar: var(--wels-navy);
+  --sidebar-foreground: var(--wels-neutral-100);
+  --sidebar-primary: var(--wels-accent);
+  --sidebar-primary-foreground: var(--wels-white);
+  --sidebar-accent: var(--wels-blue);
+  --sidebar-accent-foreground: var(--wels-white);
+  --sidebar-border: rgb(255 255 255 / 0.08);
+  --sidebar-ring: var(--wels-accent);
+}
+
+/* ── 3. Tailwind theme bridge ───────────────────────────────────────
+   Exposes the semantic layer as utilities: bg-background, text-primary,
+   border-border, rounded-lg, … plus the four brand colors directly
+   (bg-wels-navy) for the rare case where no role fits. */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-wels-dark: var(--wels-dark);
+  --color-wels-navy: var(--wels-navy);
+  --color-wels-blue: var(--wels-blue);
+  --color-wels-accent: var(--wels-accent);
+
+  --font-sans: var(--wels-font-sans);
+  --font-mono: var(--wels-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ── Base layer ─────────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}

@@ -304,9 +304,7 @@ interface AnalysisResultsProps {
   matchId?: string;
 }
 
-const BACKEND_URL = window.location.origin.includes(':3000')
-  ? window.location.origin.replace(':3000', ':8000')
-  : 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 function formatSceneTime(seconds: number): string {
   const m = Math.floor(seconds / 60);

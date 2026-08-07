@@ -13,16 +13,30 @@ tasks:
 
   run:
     command: pnpm dev
+    deps:
+      - "~:setup"
     options:
       persistent: true
       runInCI: false
 
+  # biome check = lint + formatter check + import sorting, over ts/tsx/css/json.
   lint:
     command: pnpm lint
     inputs:
-      - "src/**/*.{ts,tsx}"
-      - "eslint.config.js"
+      - "src/**/*"
+      - "biome.json"
+      - "*.json"
       - "package.json"
+
+  format:
+    command: pnpm format
+    inputs:
+      - "src/**/*"
+      - "biome.json"
+      - "*.json"
+      - "package.json"
+    options:
+      runInCI: false
 
   typecheck:
     command: pnpm typecheck
@@ -38,7 +52,6 @@ tasks:
       - "index.html"
       - "vite.config.ts"
       - "tsconfig*.json"
-      - "postcss.config.mjs"
       - "package.json"
     outputs:
       - "dist"
