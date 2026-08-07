@@ -1,0 +1,128 @@
+[
+  {
+    "event_id": 1,
+    "play_type": "kreuzen",
+    "team": "A",
+    "start_frame": 100,
+    "end_frame": 190,
+    "start_time_s": 4.0,
+    "end_time_s": 7.6,
+    "confidence": 0.82,
+    "track_ids": [1, 2],
+    "details": {
+      "goal_x": 40.0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        },
+        {
+          "track_id": 2,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        }
+      ]
+    },
+    "sequence_id": 1,
+    "outcome": "goal",
+    "label": "correct"
+  },
+  {
+    "event_id": 2,
+    "play_type": "einlaeufer",
+    "team": "A",
+    "start_frame": 300,
+    "end_frame": 400,
+    "start_time_s": 12.0,
+    "end_time_s": 16.0,
+    "confidence": 0.64,
+    "track_ids": [2, 3],
+    "details": {
+      "goal_x": 40.0,
+      "tracks": [
+        {
+          "track_id": 2,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        },
+        {
+          "track_id": 3,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        }
+      ]
+    },
+    "sequence_id": 1,
+    "outcome": "goal",
+    "label": null
+  },
+  {
+    "event_id": 3,
+    "play_type": "parallelstoss",
+    "team": "B",
+    "start_frame": 600,
+    "end_frame": 700,
+    "start_time_s": 24.0,
+    "end_time_s": 28.0,
+    "confidence": 0.71,
+    "track_ids": [4, 5],
+    "details": {
+      "goal_x": 0.0,
+      "tracks": [
+        {
+          "track_id": 4,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        },
+        {
+          "track_id": 5,
+          "points": [
+            [0.0, 20.0, 10.0],
+            [0.4, 21.0, 9.0],
+            [0.8, 22.0, 8.0],
+            [1.2, 23.0, 7.0]
+          ]
+        }
+      ]
+    },
+    "sequence_id": 2,
+    "outcome": "no_goal",
+    "label": null
+  },
+  {
+    "event_id": 4,
+    "play_type": "tempogegenstoss",
+    "team": "B",
+    "start_frame": 1200,
+    "end_frame": 1260,
+    "start_time_s": 48.0,
+    "end_time_s": 50.4,
+    "confidence": 0.55,
+    "track_ids": [6],
+    "details": null,
+    "sequence_id": 3,
+    "outcome": "unknown",
+    "label": null
+  }
+]

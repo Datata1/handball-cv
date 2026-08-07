@@ -1,0 +1,401 @@
+{
+  "match_id": "seed01",
+  "total_frames": 1500,
+  "fps": 25.0,
+  "duration_seconds": 60.0,
+  "players_detected": 7,
+  "ball_detection_rate": 10.0,
+  "player_detection_rate": 20.0,
+  "field_detection_rate": 20.0,
+  "possession_a": 50.0,
+  "possession_b": 50.0,
+  "player_stats": [
+    {
+      "track_id": 1,
+      "team": "A",
+      "frame_count": 300,
+      "avg_confidence_pct": 65.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 2,
+      "team": "A",
+      "frame_count": 300,
+      "avg_confidence_pct": 68.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 3,
+      "team": "A",
+      "frame_count": 300,
+      "avg_confidence_pct": 71.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 4,
+      "team": "B",
+      "frame_count": 300,
+      "avg_confidence_pct": 74.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 5,
+      "team": "B",
+      "frame_count": 300,
+      "avg_confidence_pct": 77.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 6,
+      "team": "B",
+      "frame_count": 300,
+      "avg_confidence_pct": 80.0,
+      "distance_m": 4.2
+    },
+    {
+      "track_id": 7,
+      "team": "unknown",
+      "frame_count": 300,
+      "avg_confidence_pct": 83.0,
+      "distance_m": 4.2
+    }
+  ],
+  "heatmap_left": [
+    {
+      "zone": "LA",
+      "label": "Linksau\u00dfen",
+      "intensity": 47.9
+    },
+    {
+      "zone": "RL",
+      "label": "R\u00fcckraum links",
+      "intensity": 99.7
+    },
+    {
+      "zone": "RM",
+      "label": "R\u00fcckraum Mitte",
+      "intensity": 36.2
+    },
+    {
+      "zone": "RR",
+      "label": "R\u00fcckraum rechts",
+      "intensity": 63.5
+    },
+    {
+      "zone": "RA",
+      "label": "Rechtsau\u00dfen",
+      "intensity": 0.0
+    },
+    {
+      "zone": "KL",
+      "label": "Kreisl\u00e4ufer",
+      "intensity": 100.0
+    }
+  ],
+  "heatmap_right": [
+    {
+      "zone": "LA",
+      "label": "Linksau\u00dfen",
+      "intensity": 32.0
+    },
+    {
+      "zone": "RL",
+      "label": "R\u00fcckraum links",
+      "intensity": 100.0
+    },
+    {
+      "zone": "RM",
+      "label": "R\u00fcckraum Mitte",
+      "intensity": 31.0
+    },
+    {
+      "zone": "RR",
+      "label": "R\u00fcckraum rechts",
+      "intensity": 3.3
+    },
+    {
+      "zone": "RA",
+      "label": "Rechtsau\u00dfen",
+      "intensity": 0.0
+    },
+    {
+      "zone": "KL",
+      "label": "Kreisl\u00e4ufer",
+      "intensity": 41.6
+    }
+  ],
+  "heatmap_left_by_team": {
+    "A": [
+      {
+        "team": "A",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 151
+      },
+      {
+        "team": "A",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 314
+      },
+      {
+        "team": "A",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 114
+      },
+      {
+        "team": "A",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 315
+      }
+    ],
+    "B": [
+      {
+        "team": "B",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 0
+      }
+    ],
+    "U": [
+      {
+        "team": "U",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 200
+      },
+      {
+        "team": "U",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 0
+      }
+    ]
+  },
+  "heatmap_right_by_team": {
+    "A": [
+      {
+        "team": "A",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "A",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 0
+      }
+    ],
+    "B": [
+      {
+        "team": "B",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 154
+      },
+      {
+        "team": "B",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 381
+      },
+      {
+        "team": "B",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 149
+      },
+      {
+        "team": "B",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 16
+      },
+      {
+        "team": "B",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "B",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 200
+      }
+    ],
+    "U": [
+      {
+        "team": "U",
+        "zone": "LA",
+        "label": "Linksau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RL",
+        "label": "R\u00fcckraum links",
+        "count": 100
+      },
+      {
+        "team": "U",
+        "zone": "RM",
+        "label": "R\u00fcckraum Mitte",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RR",
+        "label": "R\u00fcckraum rechts",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "RA",
+        "label": "Rechtsau\u00dfen",
+        "count": 0
+      },
+      {
+        "team": "U",
+        "zone": "KL",
+        "label": "Kreisl\u00e4ufer",
+        "count": 0
+      }
+    ]
+  },
+  "heatmap_points": [
+    {
+      "x": 6.365883939231586,
+      "y": 11.620906917604419,
+      "team": "A"
+    },
+    {
+      "x": 12.637189707302728,
+      "y": 15.751559490358574,
+      "team": "A"
+    },
+    {
+      "x": 31.972790018768286,
+      "y": 8.039069137409165,
+      "team": "B"
+    },
+    {
+      "x": 26.164302901347448,
+      "y": 3.850986556389679,
+      "team": "B"
+    },
+    {
+      "x": 23.882338007204297,
+      "y": 8.880510859951098,
+      "team": "B"
+    },
+    {
+      "x": 20.627946394875156,
+      "y": 6.261706763029913,
+      "team": "U"
+    },
+    {
+      "x": 6.95380233393233,
+      "y": 10.454630615013535,
+      "team": "A"
+    },
+    {
+      "x": 11.646326479756148,
+      "y": 14.750380511857715,
+      "team": "A"
+    }
+  ]
+}

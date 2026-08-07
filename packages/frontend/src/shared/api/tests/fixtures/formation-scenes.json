@@ -1,0 +1,38 @@
+[
+  {
+    "scene_id": 1,
+    "team": "A",
+    "formation": "6-0",
+    "start_frame": 0,
+    "end_frame": 800,
+    "start_time_s": 0.0,
+    "end_time_s": 32.0
+  },
+  {
+    "scene_id": 2,
+    "team": "B",
+    "formation": "5-1",
+    "start_frame": 0,
+    "end_frame": 775,
+    "start_time_s": 0.0,
+    "end_time_s": 31.0
+  },
+  {
+    "scene_id": 4,
+    "team": "B",
+    "formation": "3-2-1",
+    "start_frame": 800,
+    "end_frame": 1475,
+    "start_time_s": 32.0,
+    "end_time_s": 59.0
+  },
+  {
+    "scene_id": 3,
+    "team": "A",
+    "formation": "6-0",
+    "start_frame": 825,
+    "end_frame": 1475,
+    "start_time_s": 33.0,
+    "end_time_s": 59.0
+  }
+]

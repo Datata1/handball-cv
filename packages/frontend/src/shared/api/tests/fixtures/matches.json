@@ -1,0 +1,16 @@
+[
+  {
+    "match_id": "seed01",
+    "file_name": "seed01.mp4",
+    "video_path": "/srv/wels/data/input/videos/seed01.mp4",
+    "fps": 25.0,
+    "total_frames": 1500,
+    "status": "done",
+    "date": "2026-08-07T23:32:40.153507",
+    "duration": "01:00",
+    "ingested_at": "2026-08-07T23:32:40.153507",
+    "display_name": "Testspiel Nord vs S\u00fcd",
+    "team_a_name": "HSG Nord",
+    "team_b_name": "TV S\u00fcd"
+  }
+]
