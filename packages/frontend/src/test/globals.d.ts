@@ -1,4 +1,2 @@
-// vitest runs with `globals: true` (see vitest.config.ts) so composeStories
-// tests read without a describe/it/expect import line in every file. This
-// reference is what tells tsc those globals exist.
+// Makes vitest's globals (describe/it/expect) visible to tsc.
 /// <reference types="vitest/globals" />

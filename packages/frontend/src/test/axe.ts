@@ -1,18 +1,13 @@
 import axe, { type ImpactValue, type Result } from 'axe-core'
 
-// axe-core directly, not the `vitest-axe` wrapper: that package is at 0.1.0,
-// unmaintained, and adds nothing but a matcher.
 const OPTIONS: axe.RunOptions = {
   rules: {
-    // Components are rendered bare in tests, outside any <main>/<nav>, so
-    // "all content must live in a landmark" only ever fires on the harness.
-    // The full-page version of this check belongs in the a11y sweep (PR 20).
+    // Components render outside any landmark in tests, so this only ever
+    // fires on the harness.
     region: { enabled: false },
 
-    // jsdom has no layout engine and no canvas, so axe cannot sample rendered
-    // pixels: this rule can only ever return "incomplete" here, while logging
-    // a getContext() warning per run. Contrast is checked where it is
-    // meaningful — Storybook's a11y panel, in a real browser.
+    // jsdom cannot compute rendered colour; contrast is checked in
+    // Storybook's a11y panel instead.
     'color-contrast': { enabled: false },
   },
 }
@@ -25,10 +20,6 @@ function bySeverity(a: Result, b: Result): number {
   return rank(a) - rank(b)
 }
 
-/**
- * Format violations the way you will actually want to read them at 5pm: rule,
- * impact, what to fix, the offending markup, and a link.
- */
 function formatViolations(violations: Result[]): string {
   const count = violations.length
   const header = `${count} accessibility violation${count === 1 ? '' : 's'}:`
@@ -58,10 +49,7 @@ function formatViolations(violations: Result[]): string {
   return [header, ...blocks].join('\n\n')
 }
 
-/**
- * Throws with a readable report if `container` has any axe violation.
- * Every component test ends with this call.
- */
+/** Throws a readable report if `container` has any axe violation. */
 export async function expectNoA11yViolations(container: HTMLElement): Promise<void> {
   const results = await axe.run(container, OPTIONS)
 

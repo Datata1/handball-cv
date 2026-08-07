@@ -14,11 +14,8 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
 
-  // The builder loads the app's vite.config.ts, which includes
-  // tanstackRouter({ autoCodeSplitting: true }). That plugin rewrites route
-  // modules into virtual split chunks, so a story importing a route module
-  // would render a different module than the app does. Same reason
-  // vitest.config.ts is standalone.
+  // The builder loads vite.config.ts. Drop the router plugin from it, or a
+  // story of a route component renders the code-split rewrite instead.
   viteFinal: (viteConfig) => ({
     ...viteConfig,
     plugins: (viteConfig.plugins ?? []).filter(

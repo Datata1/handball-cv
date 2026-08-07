@@ -4,9 +4,7 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-// Exported so index.stories.tsx can render it without a router context.
-// Route modules are the one place a non-route export is expected here; the
-// code splitter only ever moves the value assigned to `component`.
+// Exported for index.stories.tsx — rendering it needs no router context.
 export function Home() {
   return (
     <section>

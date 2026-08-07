@@ -118,16 +118,13 @@ jobs:
         continue-on-error: true
 
       - name: Build frontend
-        # A production build is its own gate alongside the tests below: it
-        # verifies Vite resolves every import, Tailwind compiles, the router's
-        # generated route tree is current, and tsc succeeds.
+        # A separate gate from the tests: catches unresolved imports, a stale
+        # generated route tree, and tsc errors.
         id: build-frontend
         run: cd packages/frontend && pnpm build 2>&1 | tee /tmp/build-frontend.txt
         continue-on-error: true
 
       - name: Test frontend
-        # Two vitest projects: `unit` (hand-written assertions over composed
-        # stories) and `storybook` (every story rendered and axe-checked).
         id: test-frontend
         run: cd packages/frontend && pnpm test 2>&1 | tee /tmp/test-frontend.txt
         continue-on-error: true

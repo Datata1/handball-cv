@@ -13,9 +13,7 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      // Tests and stories live next to the route they cover. Without this the
-      // generator treats them as route files, warns that they export no
-      // `Route`, and would try to give them a URL.
+      // Co-located tests and stories are not routes.
       routeFileIgnorePattern: '\\.(test|stories)\\.tsx?$',
     }),
     react(),

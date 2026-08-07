@@ -214,13 +214,13 @@ render(<Default />)
 | `unit` | `src/**/*.test.tsx` — your assertions, ending in `expectNoA11yViolations(container)` from `src/test/axe.ts` | behaviour |
 | `storybook` | every `.stories.tsx`, rendered via `@storybook/addon-vitest` | render crashes + axe violations, with no test file written |
 
-So a story alone already buys you a rendered, axe-checked component; the test file adds behaviour on top. Both run in jsdom — no browser, no Playwright.
+So a story alone already buys a rendered, axe-checked component; the test file adds behaviour on top. Both run in jsdom — no browser, no Playwright.
 
-Two things in `vitest.config.ts` are load-bearing and look optional:
-- It does **not** extend `vite.config.ts`. That config's `tanstackRouter({ autoCodeSplitting: true })` rewrites route modules, so a story importing one would render something other than the app does. `.storybook/main.ts` strips the same plugin.
-- `server.deps.inline: ['@storybook/addon-a11y']`. The addon only *throws* on a violation when it can read `import.meta.env.VITEST_STORYBOOK`. Externalised, it degrades to "report but pass" — silently, with every story green.
+Two settings look removable and are not:
+- `vitest.config.ts` does not extend `vite.config.ts`, and `.storybook/main.ts` strips the router plugin. Both because `autoCodeSplitting` rewrites route modules.
+- `server.deps.inline: ['@storybook/addon-a11y']` in `vitest.config.ts`. Without it, a11y violations are reported but do not fail the run.
 
-Colour contrast is checked in Storybook's a11y panel, not in vitest: jsdom has no layout engine, so axe cannot sample pixels there and the rule is disabled in both projects.
+Colour contrast is checked in Storybook's a11y panel, not in vitest — jsdom cannot compute rendered colour.
 
 ### Working on the ingestion pipeline
 - `pipeline/` modules are **pure functions** — no file I/O, no DB calls, no global state inside them.
@@ -321,7 +321,7 @@ Custom skills are defined under `.claude/commands/` and invocable as slash comma
 - **ruff + ty, not black/mypy**: both written in Rust; order-of-magnitude faster.
 - **biome, not eslint, for the frontend**: one Rust binary covering lint + format + import sorting for ts/tsx/css/json, with no plugin tree to keep in sync. It also decouples linting from the compiler — `typescript-eslint` pins its peer to `typescript <6.1`, which would have held the package on TS 6. Biome parses TypeScript itself, so `tsc` is free to be current. Trade-off: biome's type-aware rules (`noFloatingPromises`, `noMisusedPromises`) are still nursery-grade where typescript-eslint's are mature — enable them via the `types` domain in `biome.json` when data fetching lands.
 - **tsc for type-checking only**: `tsc -b --noEmit`; Vite (rolldown) does the bundling and never type-checks.
-- **Stories are the single fixture source**: tests render composed stories rather than bespoke fixtures, so a component's documented states and its tested states are the same list. Storybook's a11y panel and the CI assertion then check the same thing, and a story that goes stale fails a test instead of quietly lying.
+- **Stories are the single fixture source**: tests render composed stories rather than bespoke fixtures, so a component's documented states and its tested states stay the same list, and a stale story fails a test.
 
 ## mycelium (myco)
 

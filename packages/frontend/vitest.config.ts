@@ -5,12 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
-// Deliberately NOT an extension of vite.config.ts. That config runs
-// tanstackRouter({ autoCodeSplitting: true }), which rewrites route modules
-// into virtual split chunks — a transform we do not want inside the test
-// runner, where a story imports a route module directly. Everything the tests
-// need from the app config (the `@` alias, JSX, Tailwind) is restated here,
-// and nothing else is.
+// Standalone, not derived from vite.config.ts: the router plugin there
+// rewrites route modules, so tests would run a different module than they
+// import.
 const shared = {
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -20,11 +17,7 @@ const shared = {
   },
   test: {
     environment: 'jsdom',
-    // composeStories tests read more cleanly without an import line per file.
     globals: true,
-    // Resolve the Tailwind entry rather than stubbing it: components under
-    // test carry token-driven classes, and a story that imports CSS should
-    // not explode.
     css: true,
   },
 }
@@ -32,9 +25,6 @@ const shared = {
 export default defineConfig({
   test: {
     projects: [
-      // Hand-written assertions — behaviour, and the axe check via
-      // expectNoA11yViolations. These render composed stories, never bespoke
-      // fixtures, so a test and its story cannot drift.
       {
         ...shared,
         test: {
@@ -45,12 +35,8 @@ export default defineConfig({
         },
       },
 
-      // Every story, rendered and a11y-checked, with no test file required.
-      // This is the floor: a component that ships a story is covered even
-      // before anyone writes an assertion about it. No setup file: since 10.3
-      // addon-vitest applies .storybook/preview.ts and the addons' runtime
-      // hooks itself, so `a11y.test: 'error'` over there is what makes a story
-      // fail here.
+      // Runs every story. No setup file: addon-vitest applies
+      // .storybook/preview.ts itself.
       {
         ...shared,
         plugins: [...shared.plugins, storybookTest({ configDir: '.storybook' })],
@@ -59,11 +45,9 @@ export default defineConfig({
           name: 'storybook',
           server: {
             deps: {
-              // Not optional. addon-a11y only *throws* on a violation when it
-              // sees import.meta.env.VITEST_STORYBOOK, which the storybookTest
-              // plugin supplies via test.env. Left externalised, the addon
-              // reads node's bare import.meta, the check silently degrades to
-              // "report but pass", and every story is green forever.
+              // Required for a11y violations to fail the run: addon-a11y gates
+              // that on import.meta.env.VITEST_STORYBOOK, which vitest injects
+              // only into inlined modules.
               inline: ['@storybook/addon-a11y'],
             },
           },

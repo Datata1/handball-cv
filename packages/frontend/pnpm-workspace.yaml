@@ -2,11 +2,8 @@
 # package.json. This package is its own single-package workspace — there is no
 # workspace root above it (see .moon/toolchain.yml:syncProjectWorkspaceDependencies).
 
-# pnpm >= 11 refuses to run a dependency's install scripts until it is triaged
-# here, and hard-errors on an untriaged one — so an omission breaks
-# `pnpm install --frozen-lockfile` in CI, not just locally.
-# esbuild arrives via Storybook (Vite 8 itself bundles with rolldown); its
-# postinstall links the platform binary.
+# pnpm hard-errors on an untriaged install script, so every dependency that
+# has one must be listed here or CI's install fails.
 allowBuilds:
   esbuild: true
 

@@ -26,8 +26,6 @@
       "@/*": ["./src/*"]
     }
   },
-  // .storybook lives outside src but is browser-side TypeScript that needs the
-  // DOM lib and vite/client's CSS module declarations, so it belongs to this
-  // project rather than tsconfig.node.json.
+  // .storybook is browser-side TS: it needs the DOM lib and vite/client types.
   "include": ["src", ".storybook"]
 }
