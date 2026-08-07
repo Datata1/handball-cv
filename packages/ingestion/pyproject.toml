@@ -1,0 +1,67 @@
+[project]
+name = "wels-ingestion"
+version = "0.1.0"
+description = "WELS Handball Analytics — Video ingestion and CV pipeline"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "duckdb>=1.2",
+    "lapx[cv]>=0.9.4",
+    "numpy>=1.26",
+    "opencv-python>=4.9",
+    "pandas>=2.0",
+    "pydantic-settings>=2.0",
+    "scikit-learn>=1.4",
+]
+
+[project.optional-dependencies]
+# cv: GPU-heavy runtime deps — install on machines that will actually process video.
+# Unit tests (types, storage) work without these; the pipeline stubs enforce this boundary.
+cv = [
+    "pytesseract>=0.3.10",
+    "torch>=2.1,<2.11",
+    "ultralytics>=8.1",
+    "umap-learn>=0.5",
+    # Floor pins numba (and transitively llvmlite) to a release with cp312
+    # wheels. Without it a fresh resolve — e.g. the Docker build, which doesn't
+    # use uv.lock — backtracks to numba 0.53 / llvmlite 0.36, which only support
+    # Python <3.10 and fail to build from source on 3.12.
+    "numba>=0.60",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pyyaml>=6.0",
+    "ruff>=0.9",
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'" }
+]
+torchvision = [
+    { index = "pytorch-cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'" }
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[project.scripts]
+wels-ingest = "ingestion.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ingestion"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "integration: requires a real video file and GPU",
+    "unit: isolated unit tests (default)",
+    "pipeline: end-to-end smoke test with synthetic data — no GPU required",
+]

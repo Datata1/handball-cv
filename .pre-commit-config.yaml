@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
+    hooks:
+      - id: ruff
+        name: ruff lint
+        args: [--fix]
+      - id: ruff-format
+        name: ruff format
+
+  - repo: local
+    hooks:
+      - id: ty-backend
+        name: ty typecheck backend
+        entry: bash -c 'cd packages/backend && uv run ty check --config-file ../../ty.toml src/'
+        language: system
+        pass_filenames: false
+        files: ^packages/backend/.*\.py$

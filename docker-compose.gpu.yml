@@ -1,0 +1,24 @@
+# GPU override for docker-compose.yml.
+#
+# Layer this on top of the base file to give the backend container access to
+# an NVIDIA GPU. Requires nvidia-container-toolkit installed on the host:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+#
+# Without this override the stack runs CPU-only out of the box (WELS_DEVICE=auto
+# resolves to cpu when no GPU is visible). With it, the same "auto" setting
+# detects the passed-through GPU and uses cuda — no other config change needed.
+services:
+  backend:
+    environment:
+      # GPU has headroom — raise quality/throughput above the CPU-safe defaults.
+      WELS_TEAM_WARMUP_FRAMES: "150"
+      WELS_FRAME_STRIDE: "2"
+      WELS_DETECTION_IMGSZ: "960"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

@@ -1,0 +1,179 @@
+/* ──────────────────────────────────────────────────────────────────
+   WELS semantic design-system CSS.
+
+   Preserved verbatim from the previous HTMX frontend as the source
+   of WELS brand identity: navigation, card, page-header, button,
+   and empty-state classes.
+
+   Brand tokens (--color-wels-*) live in theme.css and are consumed
+   both here and by the shadcn theme above.
+   ────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Spacing base (1 unit = 0.25rem) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-16: 4rem;
+
+  /* Radii (kept alongside shadcn's --radius) */
+  --radius-wels-sm: 0.25rem;
+  --radius-wels-lg: 0.5rem;
+  --radius-wels-full: 9999px;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────── */
+
+.container {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--sp-4);
+}
+
+/* ── Navigation ─────────────────────────────────────────────────── */
+
+.nav {
+  background-color: var(--color-wels-navy);
+  color: var(--color-white);
+  box-shadow: var(--shadow-lg);
+}
+
+.nav__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  transition: color 150ms ease;
+}
+
+.nav__brand:hover {
+  color: var(--color-wels-accent);
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--sp-6);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.nav__link {
+  transition: color 150ms ease;
+}
+
+.nav__link:hover {
+  color: var(--color-wels-accent);
+}
+
+/* ── Main content area ──────────────────────────────────────────── */
+
+.main {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--sp-8) var(--sp-4);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+
+.footer {
+  margin-top: var(--sp-16);
+  border-top: 1px solid var(--color-gray-200);
+  padding: var(--sp-6) 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-gray-400);
+}
+
+/* ── Page header ────────────────────────────────────────────────── */
+
+.page-header {
+  margin-bottom: var(--sp-8);
+}
+
+.page-header__title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--color-wels-navy);
+}
+
+.page-header__subtitle {
+  margin-top: var(--sp-1);
+  color: var(--color-gray-500);
+}
+
+/* ── Section heading ────────────────────────────────────────────── */
+
+.section-heading {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: var(--color-wels-blue);
+  margin-bottom: var(--sp-4);
+}
+
+/* ── Loading placeholder ────────────────────────────────────────── */
+
+.loading-placeholder {
+  color: var(--color-gray-400);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ── Cards / panels ─────────────────────────────────────────────── */
+
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-wels-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-100);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+
+.btn-primary {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-white);
+  background-color: var(--color-wels-blue);
+  border-radius: var(--radius-wels-sm);
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-wels-navy);
+}
+
+/* ── Empty state ────────────────────────────────────────────────── */
+
+.empty-state {
+  background-color: var(--color-white);
+  border-radius: var(--radius-wels-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-100);
+  padding: var(--sp-8);
+  text-align: center;
+  color: var(--color-gray-400);
+}

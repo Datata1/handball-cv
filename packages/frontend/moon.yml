@@ -1,0 +1,44 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: typescript
+
+tasks:
+  setup:
+    command: pnpm install
+    inputs:
+      - "package.json"
+      - "pnpm-lock.yaml"
+    options:
+      runInCI: false
+
+  run:
+    command: pnpm dev
+    options:
+      persistent: true
+      runInCI: false
+
+  lint:
+    command: pnpm lint
+    inputs:
+      - "src/**/*.{ts,tsx}"
+      - "eslint.config.js"
+      - "package.json"
+
+  typecheck:
+    command: pnpm typecheck
+    inputs:
+      - "src/**/*.{ts,tsx}"
+      - "tsconfig*.json"
+      - "package.json"
+
+  build:
+    command: pnpm build
+    inputs:
+      - "src/**/*"
+      - "index.html"
+      - "vite.config.ts"
+      - "tsconfig*.json"
+      - "postcss.config.mjs"
+      - "package.json"
+    outputs:
+      - "dist"

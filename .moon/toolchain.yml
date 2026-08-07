@@ -1,0 +1,15 @@
+$schema: "https://moonrepo.dev/schemas/toolchain.json"
+
+# Node toolchain — installed automatically by moon for TypeScript projects.
+# Shared by every JS/TS package in the monorepo (currently: frontend).
+node:
+  version: "20.18.1"
+  packageManager: "pnpm"
+  pnpm:
+    version: "9.15.0"
+  # We only have a single JS package, so dedupe is unnecessary.
+  dedupeOnLockfileChange: false
+  # Don't let moon touch pnpm scripts — tasks are declared in moon.yml.
+  inferTasksFromScripts: false
+  # Each package keeps its own node_modules (no pnpm workspaces).
+  syncProjectWorkspaceDependencies: false

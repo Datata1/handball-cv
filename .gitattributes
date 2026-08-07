@@ -1,0 +1,13 @@
+# Normalise all text files to LF (Unix) line endings.
+# Git will convert to platform-native on checkout and to LF on commit.
+* text=auto
+
+# These files MUST always have LF — CRLF breaks them on Linux.
+docker/entrypoint.sh text eol=lf
+docker/auth.py       text eol=lf
+docker/download_models_docker.py text eol=lf
+
+# Shell scripts and Makefiles — CRLF in these breaks execution.
+*.sh   text eol=lf
+Makefile text eol=lf
+Make.*   text eol=lf

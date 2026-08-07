@@ -1,0 +1,62 @@
+services:
+
+  # ── Backend (FastAPI + Uvicorn) ──────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist uploaded videos and DuckDB data between container restarts
+      - wels-data:/app/data
+      # Use the host's detection models if present. This bind-mount overlays the
+      # named volume at the models subpath, so models living in the repo's
+      # data/input/models/ are visible inside the container WITHOUT needing the
+      # Google Drive download. The host is the source of truth when populated.
+      # If this directory is empty on the host, the container's startup script
+      # downloads the models from Google Drive into this mount (persisted on the
+      # host). Must be writable for that fallback to work; overwrite=False keeps
+      # existing host models from being clobbered.
+      - ./data/input/models:/app/data/input/models
+      # Google Drive credentials for model download.
+      # Place credentials.json + token.json in a credentials/ directory next to
+      # this file.  Generate token.json locally first:
+      #   python scripts/download_models.py
+      - ./credentials:/app/credentials:ro
+    environment:
+      WELS_DEBUG: "false"
+      # "auto" detects a CUDA GPU inside the container at runtime and uses it,
+      # otherwise falls back to CPU. No manual switch needed. This base file
+      # carries CPU-safe performance defaults so `docker compose up` works on
+      # any host; the GPU override below raises them where a GPU is present.
+      WELS_DEVICE: "auto"
+      WELS_TEAM_WARMUP_FRAMES: "30"  # frames before fitting the team classifier (CPU-friendly)
+      WELS_FRAME_STRIDE: "3"  # process every Nth frame — 3 ≈ 3x faster; frame_id/timestamps stay correct
+      WELS_DETECTION_IMGSZ: "640"  # 640 fast / 960 balanced / 1280 high quality
+    # NOTE: GPU passthrough is intentionally NOT declared here — a hard `nvidia`
+    # device reservation makes `docker compose up` fail on hosts without the
+    # nvidia-container-toolkit. To use a GPU, layer the override file on top:
+    #   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
+    restart: unless-stopped
+
+  # ── Frontend (React, served by nginx) ────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+      args:
+        # VITE_BACKEND_URL is baked into the JS bundle at build time.
+        # This URL is called by the browser, so use the host-side address.
+        # If running on a remote machine, change this to http://<host-ip>:8000
+        VITE_BACKEND_URL: http://localhost:8000
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  wels-data:
+    driver: local

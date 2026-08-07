@@ -1,0 +1,53 @@
+# Virtual environments — Docker installs its own inside the image
+**/.venv
+**/node_modules
+
+# Data directory is mounted as a Docker volume at runtime
+data/
+
+# Build artifacts
+**/dist
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.egg-info
+
+# Test / lint caches
+**/.pytest_cache
+**/.ruff_cache
+**/htmlcov
+**/.coverage
+
+# Moon runtime cache and downloaded binaries
+.moon/cache
+tools/
+
+# Documentation build output
+site/
+
+# IDE / OS
+.idea/
+.DS_Store
+Thumbs.db
+**/*.swp
+**/*.swo
+
+# Environment / secrets
+**/.env
+**/.env.local
+
+# Google Drive credentials — mounted as a volume at runtime, never baked into the image
+credentials/
+credentials.json
+token.json
+
+# CI config — not needed inside the image
+.github/
+
+# mycelium index
+.mycelium/
+
+# Misc dev files in backend package
+packages/backend/test.mp4
+packages/backend/test.txt
+packages/backend/guide/

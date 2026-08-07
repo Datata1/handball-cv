@@ -1,0 +1,253 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: ["*"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9.15.0"
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.18.1"
+          cache: "pnpm"
+          cache-dependency-path: "packages/frontend/pnpm-lock.yaml"
+
+      - name: Cache uv packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('packages/**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      # ── Install ────────────────────────────────────────────────────────────
+
+      - name: Install backend dependencies
+        run: cd packages/backend && uv sync --all-extras
+
+      - name: Install frontend dependencies
+        run: cd packages/frontend && pnpm install --frozen-lockfile
+
+      - name: Install ingestion dependencies
+        # No --all-extras: skips the [cv] optional group (torch + ultralytics).
+        # Unit tests only need duckdb + numpy + opencv, all in core deps.
+        # The [cv] group is for machines that actually process video (GPU required).
+        run: cd packages/ingestion && uv sync --extra dev
+
+      - name: Install ml dependencies
+        # torch and torch-geometric are required deps — needed by unit tests.
+        # They install as CPU-only on this runner (no CUDA available); the cache
+        # makes subsequent runs fast.
+        run: cd packages/ml && uv sync --all-extras
+
+      # ── Lint ───────────────────────────────────────────────────────────────
+
+      - name: Lint backend
+        id: lint-backend
+        run: cd packages/backend && uv run ruff check src/ tests/ 2>&1 | tee /tmp/lint-backend.txt
+        continue-on-error: true
+
+      - name: Lint frontend
+        id: lint-frontend
+        run: cd packages/frontend && pnpm lint 2>&1 | tee /tmp/lint-frontend.txt
+        continue-on-error: true
+
+      - name: Lint ingestion
+        id: lint-ingestion
+        run: cd packages/ingestion && uv run ruff check src/ tests/ 2>&1 | tee /tmp/lint-ingestion.txt
+        continue-on-error: true
+
+      - name: Lint ml
+        id: lint-ml
+        run: cd packages/ml && uv run ruff check src/ tests/ 2>&1 | tee /tmp/lint-ml.txt
+        continue-on-error: true
+
+      # ── Type check ─────────────────────────────────────────────────────────
+
+      - name: Typecheck backend
+        id: typecheck-backend
+        run: cd packages/backend && uv run ty check --config-file ../../ty.toml --output-format github src/ 2>&1 | tee /tmp/typecheck-backend.txt
+        continue-on-error: true
+
+      - name: Typecheck frontend
+        id: typecheck-frontend
+        run: cd packages/frontend && pnpm typecheck 2>&1 | tee /tmp/typecheck-frontend.txt
+        continue-on-error: true
+
+      - name: Typecheck ingestion
+        id: typecheck-ingestion
+        run: cd packages/ingestion && uv run ty check --config-file ../../ty.toml --output-format github src/ 2>&1 | tee /tmp/typecheck-ingestion.txt
+        continue-on-error: true
+
+      - name: Typecheck ml
+        id: typecheck-ml
+        run: cd packages/ml && uv run ty check --config-file ../../ty.toml --output-format github src/ 2>&1 | tee /tmp/typecheck-ml.txt
+        continue-on-error: true
+
+      # ── Tests / Builds ─────────────────────────────────────────────────────
+
+      - name: Test backend
+        id: test-backend
+        run: cd packages/backend && uv run pytest --tb=short --junitxml=/tmp/backend-results.xml 2>&1 | tee /tmp/test-backend.txt
+        continue-on-error: true
+
+      - name: Build frontend
+        # The React frontend has no tests; a production build is the CI gate — it
+        # verifies Vite resolves every import, Tailwind compiles, and tsc succeeds.
+        id: build-frontend
+        run: cd packages/frontend && pnpm build 2>&1 | tee /tmp/build-frontend.txt
+        continue-on-error: true
+
+      - name: Test ingestion
+        id: test-ingestion
+        # -m "not integration" excludes tests that need a real video file and GPU
+        run: cd packages/ingestion && uv run pytest -m "not integration" --tb=short --junitxml=/tmp/ingestion-results.xml 2>&1 | tee /tmp/test-ingestion.txt
+        continue-on-error: true
+
+      - name: Test ml
+        id: test-ml
+        # -m "not integration" excludes tests that need real DuckDB data
+        run: cd packages/ml && uv run pytest -m "not integration" --tb=short --junitxml=/tmp/ml-results.xml 2>&1 | tee /tmp/test-ml.txt
+        continue-on-error: true
+
+      # ── Summary ────────────────────────────────────────────────────────────
+
+      - name: Build test summary
+        id: summary
+        if: always()
+        run: |
+          passed() { [ "$1" = "success" ]; }
+
+          lint_row() {
+            local pkg=$1 outcome=$2 file=$3
+            if passed "$outcome"; then
+              echo "- ✅ **${pkg}** — passed"
+            else
+              echo "- ❌ **${pkg}** — failed"
+              printf '  <details><summary>Output</summary>\n\n  ```\n'
+              cat "$file"
+              printf '  ```\n  </details>\n'
+            fi
+          }
+
+          test_row() {
+            local pkg=$1 outcome=$2 file=$3
+            local last
+            last=$(tail -1 "$file")
+            if passed "$outcome"; then
+              echo "- ✅ **${pkg}** — ${last}"
+            else
+              echo "- ❌ **${pkg}** — ${last}"
+              printf '  <details><summary>Output</summary>\n\n  ```\n'
+              cat "$file"
+              printf '  ```\n  </details>\n'
+            fi
+          }
+
+          {
+            echo "## 🧪 Test Results"
+            echo ""
+
+            echo "### Lint"
+            echo ""
+            lint_row "Backend"    "${{ steps.lint-backend.outcome }}"    /tmp/lint-backend.txt
+            lint_row "Frontend"   "${{ steps.lint-frontend.outcome }}"   /tmp/lint-frontend.txt
+            lint_row "Ingestion"  "${{ steps.lint-ingestion.outcome }}"  /tmp/lint-ingestion.txt
+            lint_row "ML"         "${{ steps.lint-ml.outcome }}"         /tmp/lint-ml.txt
+
+            echo ""
+            echo "### Type Check"
+            echo ""
+            lint_row "Backend"    "${{ steps.typecheck-backend.outcome }}"    /tmp/typecheck-backend.txt
+            lint_row "Frontend"   "${{ steps.typecheck-frontend.outcome }}"   /tmp/typecheck-frontend.txt
+            lint_row "Ingestion"  "${{ steps.typecheck-ingestion.outcome }}"  /tmp/typecheck-ingestion.txt
+            lint_row "ML"         "${{ steps.typecheck-ml.outcome }}"         /tmp/typecheck-ml.txt
+
+            echo ""
+            echo "### Tests & Builds"
+            echo ""
+            test_row "Backend"         "${{ steps.test-backend.outcome }}"    /tmp/test-backend.txt
+            lint_row "Frontend build"  "${{ steps.build-frontend.outcome }}"  /tmp/build-frontend.txt
+            test_row "Ingestion"       "${{ steps.test-ingestion.outcome }}"  /tmp/test-ingestion.txt
+            test_row "ML"              "${{ steps.test-ml.outcome }}"         /tmp/test-ml.txt
+
+            echo ""
+            if passed "${{ steps.lint-backend.outcome }}"       && \
+               passed "${{ steps.lint-frontend.outcome }}"      && \
+               passed "${{ steps.lint-ingestion.outcome }}"     && \
+               passed "${{ steps.lint-ml.outcome }}"            && \
+               passed "${{ steps.typecheck-backend.outcome }}"  && \
+               passed "${{ steps.typecheck-frontend.outcome }}" && \
+               passed "${{ steps.typecheck-ingestion.outcome }}" && \
+               passed "${{ steps.typecheck-ml.outcome }}"       && \
+               passed "${{ steps.test-backend.outcome }}"       && \
+               passed "${{ steps.build-frontend.outcome }}"     && \
+               passed "${{ steps.test-ingestion.outcome }}"     && \
+               passed "${{ steps.test-ml.outcome }}"; then
+              echo "**All checks passed** ✅"
+            else
+              echo "**Some checks failed** — see details above ❌"
+            fi
+          } > /tmp/summary.md
+
+          cat /tmp/summary.md
+
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        if: always()
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "## 🧪 Test Results"
+
+      - name: Post or update PR comment
+        uses: peter-evans/create-or-update-comment@v4
+        if: always()
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body-path: /tmp/summary.md
+
+      - name: Fail if any check failed
+        if: always()
+        run: |
+          if [ "${{ steps.lint-backend.outcome }}"       != "success" ] || \
+             [ "${{ steps.lint-frontend.outcome }}"      != "success" ] || \
+             [ "${{ steps.lint-ingestion.outcome }}"     != "success" ] || \
+             [ "${{ steps.lint-ml.outcome }}"            != "success" ] || \
+             [ "${{ steps.typecheck-backend.outcome }}"  != "success" ] || \
+             [ "${{ steps.typecheck-frontend.outcome }}" != "success" ] || \
+             [ "${{ steps.typecheck-ingestion.outcome }}" != "success" ] || \
+             [ "${{ steps.typecheck-ml.outcome }}"       != "success" ] || \
+             [ "${{ steps.test-backend.outcome }}"       != "success" ] || \
+             [ "${{ steps.build-frontend.outcome }}"     != "success" ] || \
+             [ "${{ steps.test-ingestion.outcome }}"     != "success" ] || \
+             [ "${{ steps.test-ml.outcome }}"            != "success" ]; then
+            echo "One or more checks failed"
+            exit 1
+          fi

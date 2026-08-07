@@ -1,0 +1,44 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: python
+
+tasks:
+  setup:
+    command: uv sync --all-extras
+    options:
+      runInCI: false
+
+  run:
+    command: uv run uvicorn backend.app:app --reload --port 8000
+    options:
+      persistent: true
+      runInCI: false
+
+  lint:
+    command: uv run ruff check src/ tests/
+    inputs:
+      - "src/**/*.py"
+      - "tests/**/*.py"
+
+  format:
+    command: uv run ruff format src/ tests/
+    inputs:
+      - "src/**/*.py"
+      - "tests/**/*.py"
+
+  typecheck:
+    command: uv run ty check --config-file ../../ty.toml src/
+    inputs:
+      - "src/**/*.py"
+
+  test:
+    command: uv run pytest
+    inputs:
+      - "src/**/*.py"
+      - "tests/**/*.py"
+
+  test-integration:
+    command: uv run pytest -m integration
+    inputs:
+      - "src/**/*.py"
+      - "tests/**/*.py"
