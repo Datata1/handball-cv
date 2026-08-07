@@ -29,5 +29,5 @@
   // .storybook is browser-side TS: it needs the DOM lib and vite/client types.
   // Spelled as a glob because TS silently skips dot-directories when expanding
   // a bare directory name.
-  "include": ["src", ".storybook/**/*.ts"]
+  "include": ["src", ".storybook/**/*.{ts,tsx}"]
 }

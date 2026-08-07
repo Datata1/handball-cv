@@ -1,0 +1,8 @@
+{
+  "title": "Video hochladen",
+  "dropzone": {
+    "hint": "Video hierher ziehen oder klicken, um eine Datei auszuwählen",
+    "formats": "MP4, AVI, MOV, MKV",
+    "action": "Video auswählen"
+  }
+}

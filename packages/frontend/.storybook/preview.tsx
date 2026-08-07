@@ -1,8 +1,19 @@
 import type { Preview } from '@storybook/react-vite'
 
+import { AppProviders } from '../src/app/providers'
 import '../src/styles/index.css'
 
 const preview: Preview = {
+  // Stories mount the app's providers, so they render real German copy rather
+  // than raw keys — and a missing key is visible in the workshop.
+  decorators: [
+    (Story) => (
+      <AppProviders>
+        <Story />
+      </AppProviders>
+    ),
+  ],
+
   parameters: {
     controls: {
       matchers: {

@@ -1,6 +1,8 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 
+import { AppProviders } from '@/app/providers'
 import logoIconUrl from '@/assets/logo-icon.webp'
 
 // Devtools are dev-only: in a production build this resolves to a component
@@ -18,18 +20,31 @@ export const Route = createRootRoute({
   notFoundComponent: NotFound,
 })
 
+// Providers wrap the shell rather than living inside it, so everything that
+// calls t() — including notFoundComponent, rendered through the Outlet — is
+// below them.
 function RootLayout() {
+  return (
+    <AppProviders>
+      <AppShell />
+    </AppProviders>
+  )
+}
+
+function AppShell() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="bg-wels-navy text-white">
         <nav
-          aria-label="Hauptnavigation"
+          aria-label={t('nav.main')}
           className="mx-auto flex w-full max-w-6xl items-center gap-6 px-4 py-3"
         >
           <Link to="/" className="flex items-center">
             <img
               src={logoIconUrl}
-              alt="WELS — zur Übersicht"
+              alt={t('nav.home')}
               width={32}
               height={32}
               className="size-8"
@@ -50,14 +65,14 @@ function RootLayout() {
 }
 
 function NotFound() {
+  const { t } = useTranslation()
+
   return (
     <div className="py-16 text-center">
-      <h1 className="text-2xl font-bold">Seite nicht gefunden</h1>
-      <p className="mt-2 text-muted-foreground">
-        Diese Adresse gehört zu keiner Ansicht.
-      </p>
+      <h1 className="text-2xl font-bold">{t('notFound.title')}</h1>
+      <p className="mt-2 text-muted-foreground">{t('notFound.description')}</p>
       <Link to="/" className="mt-6 inline-block text-primary underline">
-        Zur Übersicht
+        {t('notFound.action')}
       </Link>
     </div>
   )

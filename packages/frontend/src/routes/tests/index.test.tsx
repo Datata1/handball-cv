@@ -14,6 +14,14 @@ describe('Home', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('WELS')
   })
 
+  it('renders translated copy rather than raw keys', () => {
+    render(<Default />)
+
+    expect(
+      screen.getByText('Handballanalyse für Trainer und Analysten.'),
+    ).toBeInTheDocument()
+  })
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Default />)
 

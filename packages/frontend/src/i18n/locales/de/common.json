@@ -1,0 +1,38 @@
+{
+  "actions": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "back": "Zurück",
+    "retry": "Erneut versuchen",
+    "close": "Schließen"
+  },
+  "states": {
+    "loading": "Wird geladen…",
+    "empty": "Keine Daten",
+    "error": "Fehler"
+  },
+  "errors": {
+    "unreachable": "Der Server ist nicht erreichbar.",
+    "notFound": "Nicht gefunden.",
+    "invalidResponse": "Die Antwort des Servers war unerwartet aufgebaut.",
+    "unexpected": "Unerwarteter Fehler."
+  },
+  "units": {
+    "seconds": "{{value}} s",
+    "minutes": "{{value}} min",
+    "metres": "{{value}} m",
+    "fps": "{{value}} fps",
+    "frames_one": "{{count}} Frame",
+    "frames_other": "{{count}} Frames"
+  },
+  "nav": {
+    "main": "Hauptnavigation",
+    "home": "WELS — zur Übersicht"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Diese Adresse gehört zu keiner Ansicht.",
+    "action": "Zur Übersicht"
+  }
+}
