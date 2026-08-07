@@ -4,6 +4,7 @@ Uses drive_service.py to handle Google Drive API authentication and download.
 Uses model_config.py to define where models should be saved.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -12,6 +13,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from drive_service import DriveService
 from model_config import MODEL_PATHS, ensure_model_dirs
+
+# Google Drive credentials live in credentials/ at the repo root (same place
+# 'make auth' writes them). Override with WELS_GDRIVE_CREDENTIALS / WELS_GDRIVE_TOKEN.
+CREDENTIALS_DIR = Path(__file__).parent.parent / "credentials"
 
 
 class ModelDownloader:
@@ -231,8 +236,18 @@ def main():
         "player_detection": "19khgz2aQ-dt_4oPkv61VdndsjF3hbP4G",
     }
 
-    # Create downloader instance
-    downloader = ModelDownloader(credentials_path="credentials.json", token_path="token.json")
+    credentials_path = Path(
+        os.environ.get("WELS_GDRIVE_CREDENTIALS", CREDENTIALS_DIR / "credentials.json")
+    )
+    token_path = Path(os.environ.get("WELS_GDRIVE_TOKEN", CREDENTIALS_DIR / "token.json"))
+
+    if not credentials_path.exists():
+        print(f"❌ Google Drive credentials not found at {credentials_path}")
+        print("   Download credentials.json from the Google Cloud Console and place it there.")
+        return 1
+
+    # Create downloader instance (opens a browser for consent if no token exists yet)
+    downloader = ModelDownloader(credentials_path=str(credentials_path), token_path=str(token_path))
 
     # Ensure model directories exist
     ensure_model_dirs()
