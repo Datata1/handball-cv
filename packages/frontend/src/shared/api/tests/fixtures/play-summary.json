@@ -1,0 +1,38 @@
+[
+  {
+    "play_type": "einlaeufer",
+    "team": "A",
+    "count": 1,
+    "avg_confidence": 0.64,
+    "attacks_rated": 1,
+    "attacks_goal": 1,
+    "success_rate": 1.0
+  },
+  {
+    "play_type": "kreuzen",
+    "team": "A",
+    "count": 1,
+    "avg_confidence": 0.82,
+    "attacks_rated": 1,
+    "attacks_goal": 1,
+    "success_rate": 1.0
+  },
+  {
+    "play_type": "parallelstoss",
+    "team": "B",
+    "count": 1,
+    "avg_confidence": 0.71,
+    "attacks_rated": 1,
+    "attacks_goal": 0,
+    "success_rate": 0.0
+  },
+  {
+    "play_type": "tempogegenstoss",
+    "team": "B",
+    "count": 1,
+    "avg_confidence": 0.55,
+    "attacks_rated": 0,
+    "attacks_goal": 0,
+    "success_rate": null
+  }
+]

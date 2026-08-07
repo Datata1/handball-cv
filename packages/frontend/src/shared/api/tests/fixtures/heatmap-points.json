@@ -1,0 +1,109 @@
+{
+  "available_track_ids": [
+    {
+      "track_id": 1,
+      "team": "A",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 2,
+      "team": "A",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 3,
+      "team": "A",
+      "first_frame": 5,
+      "last_frame": 1495,
+      "frame_count": 294,
+      "first_time_s": 0.2,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 4,
+      "team": "B",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 5,
+      "team": "B",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 6,
+      "team": "B",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    },
+    {
+      "track_id": 7,
+      "team": "unknown",
+      "first_frame": 0,
+      "last_frame": 1495,
+      "frame_count": 300,
+      "first_time_s": 0.0,
+      "last_time_s": 59.8
+    }
+  ],
+  "heatmap_points": [
+    {
+      "x": 6.365883939231586,
+      "y": 11.620906917604419,
+      "team": "A"
+    },
+    {
+      "x": 12.637189707302728,
+      "y": 15.751559490358574,
+      "team": "A"
+    },
+    {
+      "x": 31.972790018768286,
+      "y": 8.039069137409165,
+      "team": "B"
+    },
+    {
+      "x": 26.164302901347448,
+      "y": 3.850986556389679,
+      "team": "B"
+    },
+    {
+      "x": 23.882338007204297,
+      "y": 8.880510859951098,
+      "team": "B"
+    },
+    {
+      "x": 20.627946394875156,
+      "y": 6.261706763029913,
+      "team": "U"
+    },
+    {
+      "x": 6.95380233393233,
+      "y": 10.454630615013535,
+      "team": "A"
+    },
+    {
+      "x": 11.646326479756148,
+      "y": 14.750380511857715,
+      "team": "A"
+    }
+  ]
+}

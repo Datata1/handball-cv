@@ -25,7 +25,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-i18next": "17.0.11",
-    "tailwind-merge": "3.6.0"
+    "tailwind-merge": "3.6.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.7",

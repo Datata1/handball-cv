@@ -1,0 +1,42 @@
+[
+  {
+    "phase_id": 1,
+    "offense_team": "A",
+    "defense_team": "B",
+    "phase_type": "attack",
+    "start_frame": 0,
+    "end_frame": 500,
+    "start_time_s": 0.0,
+    "end_time_s": 20.0
+  },
+  {
+    "phase_id": 2,
+    "offense_team": "B",
+    "defense_team": "A",
+    "phase_type": "attack",
+    "start_frame": 520,
+    "end_frame": 900,
+    "start_time_s": 20.8,
+    "end_time_s": 36.0
+  },
+  {
+    "phase_id": 3,
+    "offense_team": "A",
+    "defense_team": "B",
+    "phase_type": "transition",
+    "start_frame": 920,
+    "end_frame": 1100,
+    "start_time_s": 36.8,
+    "end_time_s": 44.0
+  },
+  {
+    "phase_id": 4,
+    "offense_team": "B",
+    "defense_team": "A",
+    "phase_type": "attack",
+    "start_frame": 1120,
+    "end_frame": 1480,
+    "start_time_s": 44.8,
+    "end_time_s": 59.2
+  }
+]

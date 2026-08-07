@@ -1,0 +1,44 @@
+[
+  {
+    "frame_number": 0,
+    "timestamp_sec": 0.0,
+    "game_time": "00:00",
+    "score_home": null,
+    "score_away": null
+  },
+  {
+    "frame_number": 250,
+    "timestamp_sec": 10.0,
+    "game_time": "00:10",
+    "score_home": 0,
+    "score_away": 0
+  },
+  {
+    "frame_number": 500,
+    "timestamp_sec": 20.0,
+    "game_time": "00:20",
+    "score_home": 1,
+    "score_away": 0
+  },
+  {
+    "frame_number": 750,
+    "timestamp_sec": 30.0,
+    "game_time": "00:30",
+    "score_home": 1,
+    "score_away": 1
+  },
+  {
+    "frame_number": 1000,
+    "timestamp_sec": 40.0,
+    "game_time": "00:40",
+    "score_home": 2,
+    "score_away": 1
+  },
+  {
+    "frame_number": 1250,
+    "timestamp_sec": 50.0,
+    "game_time": "00:50",
+    "score_home": 2,
+    "score_away": 1
+  }
+]

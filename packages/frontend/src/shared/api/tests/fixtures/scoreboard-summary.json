@@ -1,0 +1,32 @@
+{
+  "match_id": "seed01",
+  "final_score_home": 2,
+  "final_score_away": 1,
+  "final_game_time": "00:50",
+  "goals": [
+    {
+      "frame_number": 500,
+      "timestamp_sec": 20.0,
+      "game_time": "00:20",
+      "team": "home",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "frame_number": 750,
+      "timestamp_sec": 30.0,
+      "game_time": "00:30",
+      "team": "away",
+      "score_home": 1,
+      "score_away": 1
+    },
+    {
+      "frame_number": 1000,
+      "timestamp_sec": 40.0,
+      "game_time": null,
+      "team": "home",
+      "score_home": 2,
+      "score_away": 1
+    }
+  ]
+}

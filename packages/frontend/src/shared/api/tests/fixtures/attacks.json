@@ -1,0 +1,35 @@
+[
+  {
+    "sequence_id": 1,
+    "team": "A",
+    "goal_x": 40.0,
+    "start_frame": 0,
+    "end_frame": 500,
+    "start_time_s": 0.0,
+    "end_time_s": 20.0,
+    "outcome": "goal",
+    "event_count": 2
+  },
+  {
+    "sequence_id": 2,
+    "team": "B",
+    "goal_x": 0.0,
+    "start_frame": 520,
+    "end_frame": 900,
+    "start_time_s": 20.8,
+    "end_time_s": 36.0,
+    "outcome": "no_goal",
+    "event_count": 1
+  },
+  {
+    "sequence_id": 3,
+    "team": "B",
+    "goal_x": 0.0,
+    "start_frame": 1120,
+    "end_frame": 1480,
+    "start_time_s": 44.8,
+    "end_time_s": 59.2,
+    "outcome": "unknown",
+    "event_count": 1
+  }
+]

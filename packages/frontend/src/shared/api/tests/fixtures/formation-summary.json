@@ -1,0 +1,17 @@
+[
+  {
+    "team": "A",
+    "formations": {
+      "6-0": 60
+    },
+    "dominant": "6-0"
+  },
+  {
+    "team": "B",
+    "formations": {
+      "5-1": 32,
+      "3-2-1": 28
+    },
+    "dominant": "5-1"
+  }
+]

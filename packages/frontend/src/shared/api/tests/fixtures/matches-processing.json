@@ -1,0 +1,30 @@
+[
+  {
+    "match_id": "seed01",
+    "file_name": "",
+    "video_path": "",
+    "fps": 0.0,
+    "total_frames": 0,
+    "status": "done",
+    "date": null,
+    "duration": null,
+    "ingested_at": null,
+    "display_name": null,
+    "team_a_name": null,
+    "team_b_name": null
+  },
+  {
+    "match_id": "pending9",
+    "file_name": "",
+    "video_path": "",
+    "fps": 0.0,
+    "total_frames": 0,
+    "status": "processing",
+    "date": null,
+    "duration": null,
+    "ingested_at": null,
+    "display_name": null,
+    "team_a_name": null,
+    "team_b_name": null
+  }
+]
