@@ -1,0 +1,32 @@
+{
+  "playType": {
+    "kreuzen": "Kreuzen",
+    "einlaeufer": "Einläufer",
+    "parallelstoss": "Parallelstoß",
+    "tempogegenstoss": "Tempogegenstoß"
+  },
+  "formation": {
+    "6-0": "6-0",
+    "5-1": "5-1",
+    "4-2": "4-2"
+  },
+  "team": {
+    "A": "Team A",
+    "B": "Team B",
+    "U": "Ohne Teamzuordnung"
+  },
+  "phase": {
+    "attack": "Angriff",
+    "defense": "Abwehr",
+    "transition": "Umschaltspiel"
+  },
+  "position": {
+    "leftWing": "Links außen",
+    "leftBack": "Linker Rückraum",
+    "centreBack": "Rückraum Mitte",
+    "rightBack": "Rechter Rückraum",
+    "rightWing": "Rechts außen",
+    "pivot": "Kreisläufer",
+    "goalkeeper": "Torwart"
+  }
+}

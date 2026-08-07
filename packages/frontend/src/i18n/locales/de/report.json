@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "overview": "Übersicht",
+    "defense": "Abwehr",
+    "offense": "Angriff",
+    "players": "Spieler",
+    "heatmap": "Heatmap"
+  },
+  "video": {
+    "original": "Original",
+    "annotated": "Annotiert"
+  }
+}
