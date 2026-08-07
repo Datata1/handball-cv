@@ -1,0 +1,13 @@
+# pnpm >= 11 reads its settings from here, not from a "pnpm" field in
+# package.json. This package is its own single-package workspace — there is no
+# workspace root above it (see .moon/toolchain.yml:syncProjectWorkspaceDependencies).
+
+# pnpm gates dependency versions younger than its default minimum release age.
+# These were pinned deliberately and are exempt; the lockfile is the source of
+# truth for what actually gets installed.
+minimumReleaseAgeExclude:
+  - '@tanstack/react-router@1.170.22'
+  - '@tanstack/router-core@1.171.19'
+  - '@tanstack/router-generator@1.167.25'
+  - '@tanstack/router-plugin@1.168.27'
+  - lucide-react@1.30.0
