@@ -16,8 +16,8 @@ const RouterDevtools = import.meta.env.PROD
       })),
     )
 
-// Same treatment, and mounted here rather than in providers.tsx so it stays out
-// of the tree every story renders.
+// Here rather than in providers.tsx so it stays out of the tree every story
+// renders.
 const QueryDevtools = import.meta.env.PROD
   ? () => null
   : lazy(() =>
@@ -62,7 +62,6 @@ function AppShell() {
             />
           </Link>
 
-          {/* Renders nothing unless the stream is down. */}
           <LiveConnectionIndicator className="ms-auto" />
         </nav>
       </header>

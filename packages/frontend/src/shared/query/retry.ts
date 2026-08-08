@@ -9,25 +9,19 @@ import {
 
 import { qk } from './keys'
 
-/** Four attempts total: the initial one plus three retries. */
 export const MAX_RETRIES = 3
 
-/** 1s, 2s, 4s, … capped. Long enough for an ingest step to finish a write. */
 export function retryDelay(failureCount: number): number {
   return Math.min(1000 * 2 ** failureCount, 30_000)
 }
 
 /**
- * Is any match anywhere being ingested right now?
+ * Whether any match anywhere is being ingested.
  *
  * `packages/backend/src/backend/db.py:28` — `query_duckdb` returns `[]` while a
  * *global* `processing` status exists, not just for the match being ingested.
- * Every read endpoint therefore degrades to empty results or a **404** for the
- * duration, for every match. This predicate is how the rest of the app tells
- * "the data is not there" apart from "the database is closed for a minute".
- *
- * Read from the cache rather than passed in, so `retry` can consult it without
- * every feature having to thread it through.
+ * Every read endpoint degrades to empty results or a 404 for the duration, for
+ * every match.
  */
 export function hasProcessingMatch(queryClient: QueryClient): boolean {
   const matches = queryClient.getQueryData<MatchMeta[]>(qk.matches())
@@ -36,12 +30,11 @@ export function hasProcessingMatch(queryClient: QueryClient): boolean {
 }
 
 /**
- * True when a 404 might still be the freeze rather than a real absence — either
- * something is processing, or we have not loaded the list yet and cannot tell.
+ * Whether a 404 might be the freeze above rather than a real absence. **Check
+ * this before rendering a not-found state.**
  *
- * The second case is a deep link: opening `/matches/x/heatmap` in a fresh tab
- * fires the section's query alongside the list, not after it. Treating that as
- * terminal would render "not found" for a match that exists.
+ * An unloaded match list counts as ambiguous: a deep link fires the section's
+ * query alongside the list, not after it.
  */
 export function mayBeFrozen(queryClient: QueryClient): boolean {
   return (
@@ -53,18 +46,9 @@ export function mayBeFrozen(queryClient: QueryClient): boolean {
 /**
  * The query retry policy.
  *
- *  - **Transport failures** retry: offline, a dropped connection, a backend
- *    restarting mid-ingest.
- *  - **404** retries only while the read freeze could be the cause — see
- *    `mayBeFrozen`. Outside that window it is terminal, because the match
- *    really is gone.
- *  - **503** retries: the label endpoint returns it for `Database busy`, which
- *    is by definition transient.
- *  - **Other 4xx** are terminal. A 422 will fail identically forever.
- *  - **5xx** retry.
- *  - **Schema drift** (`ApiValidationError`) is terminal. The backend changed
- *    its contract; three more identical requests will not change it back, and
- *    retrying only delays the error the developer needs to see.
+ * `ApiValidationError` means the backend changed its contract, so retrying only
+ * delays an error someone has to read. 503 is the label endpoint's
+ * `Database busy`.
  */
 export function shouldRetryQuery(
   failureCount: number,
@@ -86,14 +70,12 @@ export function shouldRetryQuery(
 }
 
 /**
- * The mutation retry policy — deliberately narrower.
+ * The mutation retry policy, narrower than the query one.
  *
- * Every mutation in this API is idempotent (`PATCH` sets fields, `DELETE`
- * removes a match, `POST .../label` overwrites a verdict), so a retry cannot
- * double-apply. But a mutation that reached the server and failed there is a
- * user-visible action: retrying a 500 four times means the user stares at a
- * spinner before seeing the error. Only the two cases that are known-transient
- * get another attempt.
+ * Every mutation here is idempotent, so a retry cannot double-apply — but a
+ * mutation is a user-visible action, and retrying a 500 means the user watches
+ * a spinner before seeing an error they could have acted on. Only the two
+ * known-transient failures get another attempt.
  */
 export function shouldRetryMutation(failureCount: number, error: unknown): boolean {
   if (failureCount >= MAX_RETRIES) return false

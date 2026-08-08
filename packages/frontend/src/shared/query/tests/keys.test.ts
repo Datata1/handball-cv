@@ -29,9 +29,7 @@ describe('qk', () => {
     expect(invalidated(queryClient, qk.stats('m2'))).toBe(false)
   })
 
-  // The obvious key shape — ['matches'] for the list, ['matches', id] for one
-  // match — makes this fail: the list would be a prefix of every match subtree,
-  // and the SSE bridge invalidates the list on every single status event.
+  // The SSE bridge invalidates the list on every status event.
   it('does not touch any match when only the list is invalidated', () => {
     const queryClient = seeded()
 
@@ -65,8 +63,7 @@ describe('qk', () => {
     )
   })
 
-  // Filters arrive from URL search params, where property order is whatever the
-  // route builder happened to produce.
+  // Search params arrive in whatever order the route builder produced.
   it('hashes a filter object independently of property order', () => {
     const queryClient = new QueryClient()
     queryClient.setQueryData(

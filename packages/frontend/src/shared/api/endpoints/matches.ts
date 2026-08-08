@@ -12,13 +12,11 @@ import {
 } from '../schemas/matches'
 
 /**
- * The Server-Sent Events stream — the only push channel in the system.
+ * The Server-Sent Events stream, for `EventSource` rather than `fetch`.
  *
- * A URL rather than a function because it is consumed by `EventSource`, not by
- * `fetch`. The wire protocol: `event: connected` on open, `event: status` with
- * a `StatusEvent` payload on every transition, and a bare `: heartbeat` comment
- * every 25 idle seconds. There is no `id:` field, so a reconnect cannot resume
- * — whatever happened during the gap is simply missed.
+ * Protocol: `event: connected` on open, `event: status` with a `StatusEvent`
+ * payload on each transition, `: heartbeat` every 25 idle seconds. No `id:`
+ * field, so a reconnect cannot resume and loses whatever happened in the gap.
  */
 export function statusStreamUrl(): string {
   return apiUrl('/status/stream')
@@ -28,9 +26,8 @@ export function statusStreamUrl(): string {
  * The match list.
  *
  * Side-effecting despite being a GET: it rewrites `unknown`/`processing` status
- * files to `done`, and each rewrite emits an SSE `status` event. A handler that
- * refetches this on every event therefore feeds itself — `shared/query/sse.ts`
- * debounces the bridge for exactly this reason.
+ * files to `done`, and each rewrite emits an SSE `status` event. Refetching
+ * this on every event feeds the stream that triggered it.
  */
 export function listMatches(signal?: AbortSignal) {
   return request('/matches', matchListSchema, { signal })

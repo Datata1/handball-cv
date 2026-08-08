@@ -5,15 +5,10 @@ import { cn } from '@/lib/utils'
 import type { StreamState } from '../sse'
 
 /**
- * Tells the user the push channel is down.
+ * Warns that the push channel is down, so the view has stopped updating itself.
  *
- * Renders nothing while the stream is healthy — this is a fault indicator, not
- * a status light, and a permanent green dot teaches people to ignore it. The
- * legacy dashboard swallowed `EventSource` errors entirely, so a dropped stream
- * looked exactly like a match that had stopped progressing.
- *
- * Presentational: it takes the state as a prop so the story can render both
- * halves of it. `LiveConnectionIndicator` is the wired version.
+ * Renders nothing otherwise — including while connecting, which resolves in
+ * milliseconds and would flash a warning on every load.
  */
 export function ConnectionIndicator({
   state,
@@ -24,8 +19,6 @@ export function ConnectionIndicator({
 }) {
   const { t } = useTranslation()
 
-  // `connecting` is deliberately silent: the first connection resolves in
-  // milliseconds, and flashing a warning during it would cry wolf on every load.
   if (state !== 'interrupted') return null
 
   return (

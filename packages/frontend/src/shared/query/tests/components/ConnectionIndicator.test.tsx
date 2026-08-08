@@ -22,8 +22,6 @@ describe('ConnectionIndicator', () => {
     ).toBeInTheDocument()
   })
 
-  // A fault indicator, not a status light: a permanent healthy badge is one
-  // people stop reading, and then the fault state reads as decoration too.
   it.each([
     ['live', Live],
     ['connecting', Connecting],

@@ -11,22 +11,20 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** The stream is down. The only state that renders anything. */
+/** The stream is down — the only state that renders anything. */
 export const Interrupted: Story = {
   args: { state: 'interrupted' },
 }
 
-/** Healthy. A permanent green light would train people to ignore the red one. */
 export const Live: Story = {
   args: { state: 'live' },
 }
 
-/** The first few milliseconds after load — silent, so it cannot cry wolf. */
 export const Connecting: Story = {
   args: { state: 'connecting' },
 }
 
-/** In the shell it sits in the navy header and inherits its text colour. */
+/** In place: it inherits the header's text colour. */
 export const InHeader: Story = {
   args: { state: 'interrupted' },
   render: (args) => (

@@ -191,6 +191,39 @@ uv run wels-plays <match_id>
 
 ## Development Conventions
 
+### Comments
+
+A comment earns its place only by explaining **why** something non-obvious is
+there. The code already says what it does, and `git log` already says which
+change introduced it.
+
+Do not write:
+
+- **What the code does.** `// invalidate the list` above
+  `invalidateQueries({ queryKey: qk.matches() })` is noise.
+- **PR or roadmap references.** No `// PR 04 wraps this`, no `// added in #7`,
+  no `// corrected while building`. Nobody reading this file later cares which
+  PR did what, and the reference rots the moment the plan changes.
+- **Comparisons to code that no longer exists.** `frontend-legacy`'s mistakes
+  belong in the PR description, not in the file that replaced it.
+- **Justification of the choice made.** If a reviewer needs convincing, that
+  goes in the PR. If a *future maintainer* needs the constraint to avoid
+  breaking something, that is a real comment — state the constraint, not the
+  argument.
+- **Restating the type signature** in a docstring.
+
+Do write, briefly:
+
+- Constraints from outside the file, especially backend behaviour that would
+  otherwise look like a bug: `// db.py:28 empties every read while any match is
+  processing`.
+- Traps — code that looks removable but is not, or an ordering that matters.
+- The one-line purpose of a module or exported symbol, where it is not evident
+  from its name.
+
+Prefer one sentence to a paragraph. If a comment needs more than ~4 lines, ask
+whether the code should be clearer instead.
+
 ### Adding a new backend route
 1. Create a module in `packages/backend/src/backend/routes/`.
 2. Define an `APIRouter` and register it in `app.py`.

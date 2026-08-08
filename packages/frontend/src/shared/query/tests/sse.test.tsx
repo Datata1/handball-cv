@@ -8,13 +8,7 @@ import processingFixture from '../../api/tests/fixtures/matches-processing.json'
 import { qk } from '../keys'
 import { createStatusBridge, INVALIDATION_DEBOUNCE_MS, useStatusStream } from '../sse'
 
-/**
- * Stands in for the browser's EventSource, which jsdom does not implement.
- *
- * Built on EventTarget so `addEventListener` behaves exactly as it does in the
- * browser — including the part that matters most here: a `: heartbeat` comment
- * never becomes an event at all, so there is nothing for the fake to emit.
- */
+/** Stands in for EventSource, which jsdom does not implement. */
 class FakeEventSource extends EventTarget {
   static instances: FakeEventSource[] = []
 
@@ -31,7 +25,6 @@ class FakeEventSource extends EventTarget {
     this.readyState = 2
   }
 
-  /** The server's generator ack, re-sent on every reconnect. */
   connect() {
     this.readyState = 1
     this.dispatchEvent(new MessageEvent('connected', { data: '{}' }))
@@ -66,7 +59,6 @@ function mountStream(queryClient: QueryClient) {
   return { view, source: latestSource() }
 }
 
-/** The query keys an `invalidateQueries` spy was called with, in order. */
 function keysOf(invalidate: { mock: { calls: unknown[][] } }) {
   return invalidate.mock.calls.map(
     (call) => (call[0] as { queryKey: unknown }).queryKey,
@@ -101,7 +93,6 @@ describe('createStatusBridge', () => {
     expect(keysOf(invalidate)).toEqual([qk.matches(), qk.match('m1')])
   })
 
-  // Nothing became readable — the match has no data yet, or never will.
   it('invalidates only the list for processing and failed', () => {
     const { invalidate, bridge } = setup()
 
@@ -113,11 +104,7 @@ describe('createStatusBridge', () => {
     expect(keysOf(invalidate)).toEqual([qk.matches(), qk.matches()])
   })
 
-  /**
-   * While a match is processing, list endpoints answer `[]` — a successful
-   * response that gets cached for its full staleTime. When the last ingest
-   * finishes, everything cached during that window is suspect.
-   */
+  // List endpoints answer [] during the freeze, and that caches as a success.
   it('sweeps the whole cache when the last processing match finishes', () => {
     const { queryClient, invalidate, bridge } = setup()
     queryClient.setQueryData(qk.matches(), matchListSchema.parse(processingFixture))
@@ -174,9 +161,6 @@ describe('createStatusBridge', () => {
     expect(invalidate).not.toHaveBeenCalled()
   })
 
-  // GET /matches rewrites status files, each rewrite emits an event, and the
-  // handler refetches GET /matches. Without a counter, a regression here is a
-  // silent request storm.
   it('warns in dev once the rounds per minute stop looking like transitions', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const { bridge } = setup()
@@ -290,7 +274,7 @@ describe('useStatusStream', () => {
     expect(source.closed).toBe(true)
   })
 
-  // Every composed story mounts AppProviders, and jsdom has no EventSource.
+  // Every composed story mounts AppProviders, which mounts this hook.
   it('is a no-op where EventSource does not exist', () => {
     vi.stubGlobal('EventSource', undefined)
 

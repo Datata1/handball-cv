@@ -7,10 +7,8 @@ import {
   matchListSchema,
 } from '@/shared/api'
 
-// The captured shape of GET /matches, including the row that makes a 404
-// ambiguous. See ../../api/tests/fixtures/README.md — these are recordings of a
-// running backend, not hand-written objects, so the retry policy is exercised
-// against what the freeze actually looks like on the wire.
+// Recorded from a running backend during an ingest, so this is what the read
+// freeze actually looks like. See ../../api/tests/fixtures/README.md.
 import matchesFixture from '../../api/tests/fixtures/matches.json'
 import processingFixture from '../../api/tests/fixtures/matches-processing.json'
 import { qk } from '../keys'
@@ -47,7 +45,6 @@ describe('hasProcessingMatch', () => {
 })
 
 describe('mayBeFrozen', () => {
-  // A deep link fires a section's query alongside the list, not after it.
   it('treats a list we have not loaded as "cannot tell"', () => {
     expect(mayBeFrozen(unknown())).toBe(true)
     expect(mayBeFrozen(ingesting())).toBe(true)
@@ -59,7 +56,7 @@ describe('shouldRetryQuery', () => {
   const notFound = new ApiError(404, 'Match not found', '/matches/m1/stats')
 
   // db.py:28 empties every read while any match is processing, and a route that
-  // finds no row raises 404. Rendering "not found" there would be a lie.
+  // finds no row raises 404.
   it('retries a 404 while a match is processing', () => {
     expect(shouldRetryQuery(0, notFound, ingesting())).toBe(true)
   })
@@ -89,8 +86,6 @@ describe('shouldRetryQuery', () => {
     }
   })
 
-  // Schema drift is a backend contract change. Retrying it only delays the
-  // error the developer needs to see.
   it('gives up on schema drift', () => {
     expect(shouldRetryQuery(0, new ApiValidationError('/x', 'bad'), ingesting())).toBe(
       false,
@@ -111,8 +106,6 @@ describe('shouldRetryMutation', () => {
     expect(shouldRetryMutation(0, new ApiError(503, 'Database busy', '/x'))).toBe(true)
   })
 
-  // A failed rename is a user-visible action: four attempts means four seconds
-  // of spinner before the error the user could have acted on immediately.
   it('does not retry a 500 or a 404', () => {
     expect(shouldRetryMutation(0, new ApiError(500, 'boom', '/x'))).toBe(false)
     expect(shouldRetryMutation(0, new ApiError(404, 'gone', '/x'))).toBe(false)

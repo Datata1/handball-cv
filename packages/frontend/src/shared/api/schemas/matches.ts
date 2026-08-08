@@ -177,12 +177,8 @@ export type GoalRow = z.infer<typeof goalRowSchema>
 export const goalsSchema = z.array(goalRowSchema)
 
 /**
- * The payload of an SSE `status` event on `/status/stream`.
- *
- * The stream is a second door to the backend, so it gets validated at the same
- * seam as everything else — `JSON.parse` on a `MessageEvent` is exactly as
- * unchecked as a `fetch` body. The legacy client discarded the payload entirely
- * and blanket-reloaded the list on every event.
+ * The payload of an SSE `status` event. `JSON.parse` on a `MessageEvent` is as
+ * unchecked as a `fetch` body, so it is validated at the same seam.
  */
 export const statusEventSchema = z.object({
   match_id: z.string(),

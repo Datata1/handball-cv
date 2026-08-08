@@ -1,10 +1,4 @@
-/**
- * Everything server-state.
- *
- * `shared/api` is the door to the backend; this is the cache in front of it.
- * Features import `qk` and the staleTime table from here and never construct a
- * `QueryClient` of their own.
- */
+/** The cache in front of `shared/api`. Features never build a `QueryClient`. */
 
 export { createQueryClient, staleTime } from './client'
 export { ConnectionIndicator } from './components/ConnectionIndicator'

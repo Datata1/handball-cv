@@ -7,25 +7,15 @@ const SHORT = 30_000
 const MEDIUM = 5 * 60_000
 const LONG = 30 * 60_000
 
-/** The queries in `qk` — `all` and `match` are invalidation prefixes, not queries. */
+/** `all` and `match` are invalidation prefixes, not queries. */
 type QueryName = Exclude<keyof typeof qk, 'all' | 'match'>
 
 /**
- * How long each endpoint's data stays fresh.
- *
- * One global value would be wrong by orders of magnitude in both directions:
- * these endpoints range from a status list the SSE stream keeps current to a
- * ten-query aggregate that scans four tables. The annotation is per endpoint so
- * a feature PR picks a number rather than inventing one.
- *
- * Typed against `qk`, so a new query key without a staleTime is a compile error.
- *
- * The legacy app cached `/stats` in a module-level `Map` that never expired
- * except on `patchMatch`. A long staleTime buys the same avoided refetches, and
- * unlike that `Map` it is still invalidated when the match actually changes.
+ * How long each endpoint's data stays fresh. Typed against `qk`, so a new query
+ * key without an entry here is a compile error.
  */
 export const staleTime: Record<QueryName, number> = {
-  /** SSE pushes freshness; this only bounds the gap after a missed event. */
+  /** The SSE stream pushes freshness; this only bounds a missed event. */
   matches: SHORT,
   /** Ten DuckDB queries, four full table scans, up to 12 000 points. */
   stats: LONG,
@@ -35,28 +25,19 @@ export const staleTime: Record<QueryName, number> = {
   scoreboard: LONG,
   scoreboardSummary: LONG,
   goals: LONG,
-  /** Small and cheap; one row per scene, phase or play. */
   formationScenes: MEDIUM,
   plays: MEDIUM,
   playSummary: MEDIUM,
   attacks: MEDIUM,
   teamPhases: MEDIUM,
-  /** Up to 12 000 points, but per filter combination. */
   heatmap: MEDIUM,
   /** Flips from absent to present while the match is still processing. */
   outputVideo: SHORT,
 }
 
-/**
- * The app's `QueryClient`.
- *
- * Built by a factory rather than exported as a module singleton so tests and
- * stories get a clean cache per mount; the app calls it exactly once, in
- * `AppProviders`.
- */
+/** A factory, not a singleton, so tests and stories get a clean cache. */
 export function createQueryClient(): QueryClient {
-  // Annotated because `retry` closes over the client being constructed — the
-  // callback only runs after the constructor has returned.
+  // Annotated because `retry` closes over the client being constructed.
   const queryClient: QueryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -64,9 +45,8 @@ export function createQueryClient(): QueryClient {
         retry: (failureCount, error) =>
           shouldRetryQuery(failureCount, error, queryClient),
         retryDelay,
-        // The SSE stream is the push channel. Refetching on every tab focus on
-        // top of that is duplicated work, and `/matches` is side-effecting —
-        // each call can emit status events of its own.
+        // `GET /matches` is side-effecting (see sse.ts), so a focus refetch is
+        // not free.
         refetchOnWindowFocus: false,
       },
       mutations: {
