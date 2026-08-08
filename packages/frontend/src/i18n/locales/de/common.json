@@ -38,9 +38,15 @@
     "interrupted": "Verbindung unterbrochen",
     "reconnecting": "Es wird erneut verbunden. Neue Ergebnisse erscheinen verzögert."
   },
+  "stub": {
+    "title": "In Arbeit",
+    "description": "Dieser Bereich ist noch nicht gebaut."
+  },
   "nav": {
     "main": "Hauptnavigation",
-    "home": "WELS — zur Übersicht"
+    "home": "WELS — zur Übersicht",
+    "dashboard": "Übersicht",
+    "upload": "Upload"
   },
   "notFound": {
     "title": "Seite nicht gefunden",

@@ -1,31 +1,25 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router'
+import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { routeTree } from './routeTree.gen'
+import { AppProviders } from './app/providers'
+import { createAppRouter } from './app/router'
 import './styles/index.css'
 
-const router = createRouter({
-  routeTree,
-  defaultPreload: 'intent',
-  scrollRestoration: true,
-})
-
-// Makes <Link to="…"> and useParams() aware of the concrete route tree, so a
-// typo in a path is a type error rather than a runtime 404.
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
-}
+const router = createAppRouter()
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {
   throw new Error('#root is missing from index.html')
 }
 
+// The providers sit *above* the router, not inside `__root`'s component: a
+// route's error boundary wraps its component from the outside, so a boundary
+// mounted below the providers could not call t() or read the query cache.
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppProviders>
+      <RouterProvider router={router} />
+    </AppProviders>
   </StrictMode>,
 )

@@ -10,33 +10,133 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UploadRouteImport } from './routes/upload'
+import { Route as MatchesMatchIdRouteImport } from './routes/matches.$matchId'
+import { Route as MatchesMatchIdIndexRouteImport } from './routes/matches.$matchId.index'
+import { Route as MatchesMatchIdDefenseRouteImport } from './routes/matches.$matchId.defense'
+import { Route as MatchesMatchIdHeatmapRouteImport } from './routes/matches.$matchId.heatmap'
+import { Route as MatchesMatchIdOffenseRouteImport } from './routes/matches.$matchId.offense'
+import { Route as MatchesMatchIdOverviewRouteImport } from './routes/matches.$matchId.overview'
+import { Route as MatchesMatchIdPlayersRouteImport } from './routes/matches.$matchId.players'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchesMatchIdRoute = MatchesMatchIdRouteImport.update({
+  id: '/matches/$matchId',
+  path: '/matches/$matchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchesMatchIdIndexRoute = MatchesMatchIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
+const MatchesMatchIdDefenseRoute = MatchesMatchIdDefenseRouteImport.update({
+  id: '/defense',
+  path: '/defense',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
+const MatchesMatchIdHeatmapRoute = MatchesMatchIdHeatmapRouteImport.update({
+  id: '/heatmap',
+  path: '/heatmap',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
+const MatchesMatchIdOffenseRoute = MatchesMatchIdOffenseRouteImport.update({
+  id: '/offense',
+  path: '/offense',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
+const MatchesMatchIdOverviewRoute = MatchesMatchIdOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
+const MatchesMatchIdPlayersRoute = MatchesMatchIdPlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
+  getParentRoute: () => MatchesMatchIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/upload': typeof UploadRoute
+  '/matches/$matchId': typeof MatchesMatchIdRouteWithChildren
+  '/matches/$matchId/defense': typeof MatchesMatchIdDefenseRoute
+  '/matches/$matchId/heatmap': typeof MatchesMatchIdHeatmapRoute
+  '/matches/$matchId/offense': typeof MatchesMatchIdOffenseRoute
+  '/matches/$matchId/overview': typeof MatchesMatchIdOverviewRoute
+  '/matches/$matchId/players': typeof MatchesMatchIdPlayersRoute
+  '/matches/$matchId/': typeof MatchesMatchIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/upload': typeof UploadRoute
+  '/matches/$matchId/defense': typeof MatchesMatchIdDefenseRoute
+  '/matches/$matchId/heatmap': typeof MatchesMatchIdHeatmapRoute
+  '/matches/$matchId/offense': typeof MatchesMatchIdOffenseRoute
+  '/matches/$matchId/overview': typeof MatchesMatchIdOverviewRoute
+  '/matches/$matchId/players': typeof MatchesMatchIdPlayersRoute
+  '/matches/$matchId': typeof MatchesMatchIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/upload': typeof UploadRoute
+  '/matches/$matchId': typeof MatchesMatchIdRouteWithChildren
+  '/matches/$matchId/defense': typeof MatchesMatchIdDefenseRoute
+  '/matches/$matchId/heatmap': typeof MatchesMatchIdHeatmapRoute
+  '/matches/$matchId/offense': typeof MatchesMatchIdOffenseRoute
+  '/matches/$matchId/overview': typeof MatchesMatchIdOverviewRoute
+  '/matches/$matchId/players': typeof MatchesMatchIdPlayersRoute
+  '/matches/$matchId/': typeof MatchesMatchIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/upload'
+    | '/matches/$matchId'
+    | '/matches/$matchId/defense'
+    | '/matches/$matchId/heatmap'
+    | '/matches/$matchId/offense'
+    | '/matches/$matchId/overview'
+    | '/matches/$matchId/players'
+    | '/matches/$matchId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/upload'
+    | '/matches/$matchId/defense'
+    | '/matches/$matchId/heatmap'
+    | '/matches/$matchId/offense'
+    | '/matches/$matchId/overview'
+    | '/matches/$matchId/players'
+    | '/matches/$matchId'
+  id:
+    | '__root__'
+    | '/'
+    | '/upload'
+    | '/matches/$matchId'
+    | '/matches/$matchId/defense'
+    | '/matches/$matchId/heatmap'
+    | '/matches/$matchId/offense'
+    | '/matches/$matchId/overview'
+    | '/matches/$matchId/players'
+    | '/matches/$matchId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  UploadRoute: typeof UploadRoute
+  MatchesMatchIdRoute: typeof MatchesMatchIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +148,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matches/$matchId': {
+      id: '/matches/$matchId'
+      path: '/matches/$matchId'
+      fullPath: '/matches/$matchId'
+      preLoaderRoute: typeof MatchesMatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matches/$matchId/': {
+      id: '/matches/$matchId/'
+      path: '/'
+      fullPath: '/matches/$matchId/'
+      preLoaderRoute: typeof MatchesMatchIdIndexRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
+    '/matches/$matchId/defense': {
+      id: '/matches/$matchId/defense'
+      path: '/defense'
+      fullPath: '/matches/$matchId/defense'
+      preLoaderRoute: typeof MatchesMatchIdDefenseRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
+    '/matches/$matchId/heatmap': {
+      id: '/matches/$matchId/heatmap'
+      path: '/heatmap'
+      fullPath: '/matches/$matchId/heatmap'
+      preLoaderRoute: typeof MatchesMatchIdHeatmapRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
+    '/matches/$matchId/offense': {
+      id: '/matches/$matchId/offense'
+      path: '/offense'
+      fullPath: '/matches/$matchId/offense'
+      preLoaderRoute: typeof MatchesMatchIdOffenseRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
+    '/matches/$matchId/overview': {
+      id: '/matches/$matchId/overview'
+      path: '/overview'
+      fullPath: '/matches/$matchId/overview'
+      preLoaderRoute: typeof MatchesMatchIdOverviewRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
+    '/matches/$matchId/players': {
+      id: '/matches/$matchId/players'
+      path: '/players'
+      fullPath: '/matches/$matchId/players'
+      preLoaderRoute: typeof MatchesMatchIdPlayersRouteImport
+      parentRoute: typeof MatchesMatchIdRoute
+    }
   }
 }
 
+interface MatchesMatchIdRouteChildren {
+  MatchesMatchIdDefenseRoute: typeof MatchesMatchIdDefenseRoute
+  MatchesMatchIdHeatmapRoute: typeof MatchesMatchIdHeatmapRoute
+  MatchesMatchIdOffenseRoute: typeof MatchesMatchIdOffenseRoute
+  MatchesMatchIdOverviewRoute: typeof MatchesMatchIdOverviewRoute
+  MatchesMatchIdPlayersRoute: typeof MatchesMatchIdPlayersRoute
+  MatchesMatchIdIndexRoute: typeof MatchesMatchIdIndexRoute
+}
+
+const MatchesMatchIdRouteChildren: MatchesMatchIdRouteChildren = {
+  MatchesMatchIdDefenseRoute: MatchesMatchIdDefenseRoute,
+  MatchesMatchIdHeatmapRoute: MatchesMatchIdHeatmapRoute,
+  MatchesMatchIdOffenseRoute: MatchesMatchIdOffenseRoute,
+  MatchesMatchIdOverviewRoute: MatchesMatchIdOverviewRoute,
+  MatchesMatchIdPlayersRoute: MatchesMatchIdPlayersRoute,
+  MatchesMatchIdIndexRoute: MatchesMatchIdIndexRoute,
+}
+
+const MatchesMatchIdRouteWithChildren = MatchesMatchIdRoute._addFileChildren(
+  MatchesMatchIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  UploadRoute: UploadRoute,
+  MatchesMatchIdRoute: MatchesMatchIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
