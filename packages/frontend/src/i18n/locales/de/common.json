@@ -34,6 +34,9 @@
     "edit": "{{label}} bearbeiten",
     "empty": "Nicht gesetzt"
   },
+  "court": {
+    "label": "Handballfeld"
+  },
   "connection": {
     "interrupted": "Verbindung unterbrochen",
     "reconnecting": "Es wird erneut verbunden. Neue Ergebnisse erscheinen verzögert."

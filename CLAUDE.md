@@ -67,6 +67,7 @@ wels-monorepo/
 │   │       ├── components/     # components/ui/ is shadcn's target directory
 │   │       ├── shared/         # cross-feature sections, each with its own stories/ + tests/
 │   │       │   ├── api/        # typed fetch client + zod schema per backend router
+│   │       │   ├── court/      # the handball court: metres→SVG projection + zones
 │   │       │   ├── query/      # QueryClient, key factory, retry policy, SSE bridge
 │   │       │   └── ui/         # design kit: layout, state, data, EditableField
 │   │       ├── stores/         # MobX client state: RootStore, PlayerStore, video clock
@@ -270,6 +271,34 @@ Two things about it are load-bearing:
 `src/components/ui/` holds the shadcn primitives, added by the CLI as they are
 needed and **linted like any other source**. `src/testing/router.tsx` supplies
 `withRouter()`, the decorator a story needs before it can render a `<Link>`.
+
+### The court (`src/shared/court/`)
+
+Every spatial view — trajectories, shot maps, heatmaps — draws on **one**
+court. Import `Court` from `@/shared/court` rather than drawing markings again.
+
+```tsx
+<Court
+  zones="both"
+  data={{ label: t('…'), layer: <CourtLayer>…</CourtLayer>, alternative: <table/> }}
+/>
+```
+
+- **Consumers work in metres**, never pixels: `x ∈ [0,40]` goal to goal,
+  `y ∈ [0,20]` across — the frame the backend already reports in. The `viewBox`
+  is measured in metres too, so one user unit is one metre and nothing computes
+  a scale. `CourtLayer` carries the orientation transform; children inside it
+  are written in raw court coordinates whichever way the court is turned.
+- `useCourtProjection()` is the escape hatch for the few things the transform
+  would ruin — upright text, HTML overlays, hit testing.
+- **`orientation="vertical"` rotates, it does not transpose.** A transpose would
+  mirror the data and swap the wings.
+- The three fields of `data` travel together because the SVG is a single
+  `role="img"`: nothing inside `layer` reaches a screen reader, so a data layer
+  owes the court a name and a text alternative.
+- `zones.ts` holds the six `/stats` zone codes with their centres and splat
+  radii in metres. Labels come from the `domain` namespace via
+  `useBackendLabel`, never a local dictionary.
 
 ### Frontend server data (TanStack Query)
 

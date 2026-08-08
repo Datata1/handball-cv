@@ -20,6 +20,14 @@
     "defense": "Abwehr",
     "transition": "Umschaltspiel"
   },
+  "zone": {
+    "LA": "Linksaußen",
+    "RL": "Rückraum links",
+    "RM": "Rückraum Mitte",
+    "RR": "Rückraum rechts",
+    "RA": "Rechtsaußen",
+    "KL": "Kreisläufer"
+  },
   "position": {
     "leftWing": "Links außen",
     "leftBack": "Linker Rückraum",
