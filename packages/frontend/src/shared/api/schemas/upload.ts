@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 /**
  * The upload response. `match_id` is generated server-side, so this is the only
- * way to learn it — PR 10 navigates to it once the POST resolves.
+ * way to learn it.
  *
  * `message` is English backend prose. Do not render it; the upload feature has
  * its own copy in the `upload` namespace.
