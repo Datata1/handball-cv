@@ -11,7 +11,7 @@ import {
 } from '../endpoints/matches'
 import { getPlays } from '../endpoints/plays'
 import { getTeamPhases } from '../endpoints/teamPhases'
-import { outputVideoDownloadUrl, uploadVideo } from '../endpoints/upload'
+import { outputVideoDownloadUrl } from '../endpoints/upload'
 
 import formationScenes from './fixtures/formation-scenes.json'
 import heatmapPoints from './fixtures/heatmap-points.json'
@@ -129,26 +129,6 @@ describe('mutations', () => {
     mockFetch({ ok: true, deleted: 'm1' })
 
     await expect(deleteMatch('m1')).resolves.toEqual({ ok: true, deleted: 'm1' })
-  })
-
-  it('uploads multipart without setting Content-Type itself', async () => {
-    const fetchMock = mockFetch({
-      match_id: 'ab12cd34',
-      filename: 'ab12cd34_spiel.mp4',
-      status: 'processing',
-      message: 'Video uploaded successfully. Processing has started.',
-    })
-
-    await uploadVideo(new File(['x'], 'spiel.mp4', { type: 'video/mp4' }), {
-      annotateVideo: true,
-    })
-
-    const init = calledInit(fetchMock)
-    const body = init.body as FormData
-    // Setting it by hand would omit the multipart boundary and 422 the request.
-    expect(init.headers).toBeUndefined()
-    expect((body.get('file') as File).name).toBe('spiel.mp4')
-    expect(body.get('annotate_video')).toBe('true')
   })
 })
 

@@ -4,7 +4,7 @@ import { prettifyError } from 'zod'
 import { BACKEND_URL } from '@/lib/env'
 
 import { ApiError, ApiTransportError, ApiValidationError } from './errors'
-import { errorBodySchema } from './schemas/common'
+import { errorBodySchema, type ValidationIssue } from './schemas/common'
 
 /** Every route in this backend is mounted under one prefix. */
 export const API_PREFIX = '/api/v1'
@@ -112,7 +112,24 @@ export function formatTrackIds(trackIds?: readonly number[]): string | undefined
 /**
  * FastAPI's error body, or the raw text when a proxy or a crash produced
  * something else. Never throws: it is already handling a failure.
+ *
+ * Exported because the upload endpoint reads its error body off an
+ * `XMLHttpRequest` rather than a `Response`.
  */
+export function parseErrorDetail(
+  text: string,
+  fallback: string,
+): string | ValidationIssue[] {
+  try {
+    const parsed = errorBodySchema.safeParse(JSON.parse(text))
+    if (parsed.success) return parsed.data.detail
+  } catch {
+    // Not JSON — fall through to the raw text.
+  }
+
+  return text.slice(0, 500) || fallback
+}
+
 async function readDetail(response: Response) {
   let text: string
   try {
@@ -121,12 +138,5 @@ async function readDetail(response: Response) {
     return response.statusText
   }
 
-  try {
-    const parsed = errorBodySchema.safeParse(JSON.parse(text))
-    if (parsed.success) return parsed.data.detail
-  } catch {
-    // Not JSON — fall through to the raw text.
-  }
-
-  return text.slice(0, 500) || response.statusText
+  return parseErrorDetail(text, response.statusText)
 }

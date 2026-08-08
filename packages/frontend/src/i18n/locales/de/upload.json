@@ -1,8 +1,30 @@
 {
   "title": "Video hochladen",
+  "description": "Nach dem Upload startet die Verarbeitung automatisch. Der Fortschritt ist in der Übersicht zu sehen.",
   "dropzone": {
     "hint": "Video hierher ziehen oder klicken, um eine Datei auszuwählen",
-    "formats": "MP4, AVI, MOV, MKV",
-    "action": "Video auswählen"
-  }
+    "dropHint": "Datei hier loslassen",
+    "formats": "MP4, AVI, MOV, MKV"
+  },
+  "annotate": {
+    "label": "Annotiertes Debug-Video erzeugen (langsamer)",
+    "hint": "Zeichnet erkannte Spielerinnen und Spieler ins Video. Nur damit lässt sich der Bericht später zwischen Original und annotiert umschalten — die Verarbeitung dauert dafür deutlich länger."
+  },
+  "progress": {
+    "label": "Upload-Fortschritt",
+    "uploading": "Wird hochgeladen…",
+    "processing": "Wird verarbeitet…",
+    "processingHint": "Die Datei ist vollständig übertragen. Der Server liest sie einmal komplett ein, bevor die Verarbeitung startet — das dauert bei großen Videos einen Moment.",
+    "transferred": "{{loaded}} von {{total}}",
+    "rate": "{{rate}}/s",
+    "remaining": "noch etwa {{duration}}",
+    "cancel": "Abbrechen",
+    "largeFile": "Große Datei: der Server hält das Video während des Uploads vollständig im Arbeitsspeicher."
+  },
+  "errors": {
+    "unsupportedFormat": "„{{extension}}“ wird nicht unterstützt. Erlaubt sind MP4, AVI, MOV und MKV.",
+    "missingExtension": "„{{fileName}}“ hat keine Dateiendung. Erlaubt sind MP4, AVI, MOV und MKV.",
+    "failed": "Der Upload ist fehlgeschlagen."
+  },
+  "cancelled": "Upload von „{{fileName}}“ abgebrochen. Es wurde nichts verarbeitet."
 }
