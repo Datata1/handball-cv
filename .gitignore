@@ -44,9 +44,11 @@ htmlcov/
 # MkDocs build output
 site/
 
-# Data directory (large files, not committed)
-data/*.duckdb
-data/models/
+# Data directory (large files, not committed). Anchored with a leading slash:
+# unanchored, it also swallows source directories named `data` anywhere in the
+# tree, e.g. packages/frontend/src/shared/ui/data/.
+/data/*.duckdb
+/data/models/
 
 # Scripts logs
 scripts/*.log
@@ -59,7 +61,7 @@ scripts/*.log
 .stignore
 local-workspace/
 
-data/
+/data/
 .mycelium/
 **.mp4
 

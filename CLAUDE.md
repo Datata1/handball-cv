@@ -67,7 +67,8 @@ wels-monorepo/
 │   │       ├── components/     # components/ui/ is shadcn's target directory
 │   │       ├── shared/         # cross-feature sections, each with its own stories/ + tests/
 │   │       │   ├── api/        # typed fetch client + zod schema per backend router
-│   │       │   └── query/      # QueryClient, key factory, retry policy, SSE bridge
+│   │       │   ├── query/      # QueryClient, key factory, retry policy, SSE bridge
+│   │       │   └── ui/         # design kit: layout, state, data, EditableField
 │   │       ├── stores/         # MobX client state: RootStore, PlayerStore, video clock
 │   │       ├── i18n/           # i18next init, resources, typed keys, locales/de/*.json
 │   │       ├── lib/            # cn() helper, env.ts (single BACKEND_URL resolution)
@@ -240,6 +241,35 @@ whether the code should be clearer instead.
 6. Never hard-code a color. `bg-primary`, `text-muted-foreground`, `border-border`, `bg-wels-navy` all resolve through `src/styles/tokens.css`. If a shade is missing, add it to the raw palette there and give it a semantic role — do not reach for `bg-sky-600`. Hardcoding the palette away is exactly what sank the previous frontend.
 7. Never hard-code a user-facing string either. `t('...')` only — see below.
 8. Every component ships a `.stories.tsx`. See below — a component with no story is not covered by anything.
+
+### Frontend design kit (`src/shared/ui/`)
+
+The shared visual vocabulary. **Look here before building a card, a bar, a
+loading skeleton or an editable label** — the legacy app grew three
+`EditableField`s and four stat cards because there was no obvious right way.
+Nothing in the kit knows what a match is; it takes props.
+
+| Import from `@/shared/ui` | Use for |
+|---|---|
+| `AppHeader`, `Page`, `PageHeader`, `Section` | the frame. `__root.tsx` mounts `AppHeader` + `Page`, so a route is a `PageHeader` followed by `Section`s — it does not pick its own max-width or padding |
+| `LoadingState`, `EmptyState`, `ErrorState`, `InlineError` | the three ways a view can have no content. Features render these, not their own |
+| `StatTile`, `DataTable`, `Bar`, `SplitBar` | figures. `StatTile value={null}` renders "no data", which is how a field says it was never measured |
+| `EditableField` | click-to-edit text, in `light` or `dark` tone |
+
+Two things about it are load-bearing:
+
+- **`ErrorState` is the only translator of `ApiError` into German.** Pass
+  `processing` when `mayBeFrozen()` is true and its 404 copy changes from
+  "nicht gefunden" to "noch nicht verfügbar" — see the read freeze above.
+- **`EditableField` only saves deliberately** — Enter or the confirm button.
+  Escape, cancel and focus leaving the field all discard, so a mutation never
+  fires from a stray click. It also cancels the Enter/Escape keydown: focus
+  moves to the trigger mid-keystroke, and an uncancelled Enter would then press
+  that button and reopen the editor.
+
+`src/components/ui/` holds the shadcn primitives, added by the CLI as they are
+needed and **linted like any other source**. `src/testing/router.tsx` supplies
+`withRouter()`, the decorator a story needs before it can render a `<Link>`.
 
 ### Frontend server data (TanStack Query)
 

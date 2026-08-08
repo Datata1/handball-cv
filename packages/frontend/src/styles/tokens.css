@@ -32,6 +32,15 @@
   --wels-blue: #0f3460;
   --wels-accent: #e94560;
 
+  /* Legibility variants of the two brand colors. #e94560 reaches only 3.9:1
+     against the light background and 4.4:1 against the dark one, so it can
+     carry a focus ring or a chart series but never text or a filled button —
+     which is what the roles below actually need. --wels-blue has the mirror
+     problem: unreadable against the dark background. */
+  --wels-accent-deep: #c1223f;
+  --wels-accent-soft: #f2647c;
+  --wels-blue-bright: #6ea8dc;
+
   /* Neutrals — deliberately few. Reach for a role in layer 2 first. */
   --wels-neutral-50: #f9fafb;
   --wels-neutral-100: #f3f4f6;
@@ -72,11 +81,19 @@
   --muted-foreground: var(--wels-neutral-500);
   --accent: var(--wels-neutral-100);
   --accent-foreground: var(--wels-navy);
-  --destructive: var(--wels-accent);
+  --destructive: var(--wels-accent-deep);
   --destructive-foreground: var(--wels-white);
   --border: rgb(15 52 96 / 0.12);
-  --input: transparent;
+  --input: rgb(15 52 96 / 0.2);
+  /* The one role the raw accent still fills: a ring is not text, so 3:1 is
+     the bar, and the brand colour is what makes focus recognisably WELS. */
   --ring: var(--wels-accent);
+
+  /* Chrome — the header and anything sitting on it. Deliberately absent from
+     the dark block: the navy bar keeps its colour in both schemes, so text on
+     it needs a role that does not follow --foreground. */
+  --chrome: var(--wels-navy);
+  --chrome-foreground: var(--wels-white);
 
   --chart-1: var(--wels-blue);
   --chart-2: var(--wels-accent);
@@ -105,18 +122,18 @@
   --card-foreground: var(--wels-neutral-100);
   --popover: var(--wels-navy);
   --popover-foreground: var(--wels-neutral-100);
-  --primary: var(--wels-accent);
-  --primary-foreground: var(--wels-white);
+  --primary: var(--wels-blue-bright);
+  --primary-foreground: var(--wels-dark);
   --secondary: var(--wels-blue);
   --secondary-foreground: var(--wels-white);
   --muted: var(--wels-blue);
   --muted-foreground: var(--wels-neutral-400);
   --accent: var(--wels-blue);
   --accent-foreground: var(--wels-white);
-  --destructive: var(--wels-accent);
-  --destructive-foreground: var(--wels-white);
-  --border: rgb(255 255 255 / 0.08);
-  --input: rgb(255 255 255 / 0.05);
+  --destructive: var(--wels-accent-soft);
+  --destructive-foreground: var(--wels-dark);
+  --border: rgb(255 255 255 / 0.12);
+  --input: rgb(255 255 255 / 0.2);
   --ring: var(--wels-accent);
 
   --chart-1: var(--wels-accent);
@@ -127,8 +144,8 @@
 
   --sidebar: var(--wels-navy);
   --sidebar-foreground: var(--wels-neutral-100);
-  --sidebar-primary: var(--wels-accent);
-  --sidebar-primary-foreground: var(--wels-white);
+  --sidebar-primary: var(--wels-blue-bright);
+  --sidebar-primary-foreground: var(--wels-dark);
   --sidebar-accent: var(--wels-blue);
   --sidebar-accent-foreground: var(--wels-white);
   --sidebar-border: rgb(255 255 255 / 0.08);
@@ -180,6 +197,9 @@
   --color-wels-navy: var(--wels-navy);
   --color-wels-blue: var(--wels-blue);
   --color-wels-accent: var(--wels-accent);
+
+  --color-chrome: var(--chrome);
+  --color-chrome-foreground: var(--chrome-foreground);
 
   --font-sans: var(--wels-font-sans);
   --font-mono: var(--wels-font-mono);
