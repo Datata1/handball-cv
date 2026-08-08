@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { type ComponentProps, useState } from 'react'
 import { fn } from 'storybook/test'
 
 import { EditableField } from '../../form/EditableField'
@@ -40,6 +41,26 @@ export const Pending: Story = {
 
 export const Failed: Story = {
   args: { error: 'Der Name konnte nicht gespeichert werden.' },
+}
+
+/**
+ * A save that fails. The caller rolls its value back, so the field reopens on
+ * the text that failed rather than making the user type it again.
+ */
+export const SaveFails: Story = {
+  render: (args) => <FailingField {...args} />,
+}
+
+function FailingField(args: ComponentProps<typeof EditableField>) {
+  const [error, setError] = useState<string>()
+
+  return (
+    <EditableField
+      {...args}
+      error={error}
+      onSave={() => setError('Der Name konnte nicht gespeichert werden.')}
+    />
+  )
 }
 
 /** On the navy chrome, where the report header puts it. */

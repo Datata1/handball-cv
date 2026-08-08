@@ -36,12 +36,28 @@
   },
   "card": {
     "open": "Analyse öffnen",
+    "openMatch": "Analyse öffnen: {{title}}",
     "teamA": "Team A",
     "teamB": "Team B",
+    "nameLabel": "Spielname",
+    "teamALabel": "Heimmannschaft",
+    "teamBLabel": "Gastmannschaft",
     "versus": "gegen",
     "duration": "Spieldauer",
     "ingestedAt": "Analysiert am",
     "score": "Spielstand",
     "scoreSeparator": ":"
+  },
+  "rename": {
+    "error": "Der Name konnte nicht gespeichert werden."
+  },
+  "delete": {
+    "action": "Spiel löschen: {{title}}",
+    "title": "Spiel löschen?",
+    "description": "„{{title}}“ verschwindet aus der Übersicht. Gelöscht werden das annotierte Video sowie die Status- und Metadatei, und das Originalvideo dann, wenn es über WELS hochgeladen wurde.",
+    "retained": "Die Tracking-Daten in der Datenbank – Frames, Spieler, Formationen – bleiben erhalten.",
+    "confirm": "Endgültig löschen",
+    "error": "Das Spiel konnte nicht gelöscht werden.",
+    "blocked": "Löschen ist gerade nicht möglich: solange ein Video verarbeitet wird, liefert der Server für kein Spiel Daten. Bitte danach erneut versuchen."
   }
 }

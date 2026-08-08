@@ -12,7 +12,11 @@ import {
   sortMatches,
   summariseMatches,
 } from '@/features/dashboard/matches'
-import { useMatches, useMatchScores } from '@/features/dashboard/queries'
+import {
+  useMatches,
+  useMatchMutations,
+  useMatchScores,
+} from '@/features/dashboard/queries'
 import { dashboardSearch, type SortKey } from '@/features/dashboard/search'
 import { PageHeader, Section } from '@/shared/ui'
 
@@ -28,6 +32,7 @@ function Dashboard() {
 
   const matches = useMatches()
   const scores = useMatchScores(matches.data ?? [])
+  const mutations = useMatchMutations()
 
   const visible = useMemo(
     () =>
@@ -80,6 +85,7 @@ function Dashboard() {
         <MatchList
           matches={visible}
           scores={scores}
+          mutations={mutations}
           error={matches.error}
           searching={q !== undefined}
           onRetry={() => void matches.refetch()}

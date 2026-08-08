@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { done, unnamed } from '@/features/dashboard/stories/matches'
@@ -26,7 +26,7 @@ describe('dashboard route', () => {
   it('lists what the backend returns, newest first', async () => {
     renderApp('/')
 
-    await screen.findByRole('link', { name: 'Testspiel Nord vs Süd' })
+    await screen.findByRole('link', { name: 'Analyse öffnen: Testspiel Nord vs Süd' })
     expect(
       screen
         .getAllByRole('heading', { level: 3 })
@@ -48,7 +48,9 @@ describe('dashboard route', () => {
   it('treats a 404 from the score endpoint as "no score", not as an error', async () => {
     renderApp('/')
 
-    await screen.findByRole('link', { name: 'aufzeichnung-2026-05-02.mp4' })
+    await screen.findByRole('link', {
+      name: 'Analyse öffnen: aufzeichnung-2026-05-02.mp4',
+    })
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
@@ -62,7 +64,9 @@ describe('dashboard route', () => {
       expect(router.state.location.search).toEqual({ q: 'Nord', sort: 'recent' }),
     )
     expect(
-      screen.queryByRole('link', { name: 'aufzeichnung-2026-05-02.mp4' }),
+      screen.queryByRole('link', {
+        name: 'Analyse öffnen: aufzeichnung-2026-05-02.mp4',
+      }),
     ).not.toBeInTheDocument()
   })
 
@@ -70,10 +74,12 @@ describe('dashboard route', () => {
     renderApp('/?q=aufzeichnung')
 
     expect(
-      await screen.findByRole('link', { name: 'aufzeichnung-2026-05-02.mp4' }),
+      await screen.findByRole('link', {
+        name: 'Analyse öffnen: aufzeichnung-2026-05-02.mp4',
+      }),
     ).toBeVisible()
     expect(
-      screen.queryByRole('link', { name: 'Testspiel Nord vs Süd' }),
+      screen.queryByRole('link', { name: 'Analyse öffnen: Testspiel Nord vs Süd' }),
     ).not.toBeInTheDocument()
   })
 
@@ -96,7 +102,52 @@ describe('dashboard route', () => {
   it('restores the order a link arrived with', async () => {
     renderApp('/?sort=name')
 
-    await screen.findByRole('link', { name: 'Testspiel Nord vs Süd' })
+    await screen.findByRole('link', { name: 'Analyse öffnen: Testspiel Nord vs Süd' })
     expect(screen.getByRole('combobox')).toHaveValue('name')
+  })
+
+  it('rolls a failed rename back but keeps what was typed', async () => {
+    const user = userEvent.setup()
+    renderApp('/')
+
+    const heading = await screen.findByRole('heading', {
+      name: 'Testspiel Nord vs Süd',
+    })
+    await user.click(within(heading).getByRole('button'))
+
+    const input = screen.getByRole('textbox', { name: 'Spielname' })
+    await user.clear(input)
+    await user.type(input, 'Pokalspiel{Enter}')
+
+    // No PATCH route in the stub, so the save 404s the way an unreachable
+    // backend would.
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Der Name konnte nicht gespeichert werden.',
+    )
+    expect(screen.getByRole('textbox', { name: 'Spielname' })).toHaveValue('Pokalspiel')
+
+    await user.keyboard('{Escape}')
+    expect(within(heading).getByRole('button')).toHaveTextContent(
+      'Testspiel Nord vs Süd',
+    )
+  })
+
+  it('keeps the card when the delete 404s, because the row may only be frozen', async () => {
+    const user = userEvent.setup()
+    renderApp('/')
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Spiel löschen: Testspiel Nord vs Süd',
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Endgültig löschen' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Das Spiel konnte nicht gelöscht werden.',
+    )
+    expect(
+      screen.getByRole('link', { name: 'Analyse öffnen: Testspiel Nord vs Süd' }),
+    ).toBeVisible()
   })
 })

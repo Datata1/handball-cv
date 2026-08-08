@@ -7,7 +7,7 @@ import { expectNoA11yViolations } from '@/testing/axe'
 
 import * as stories from '../../stories/form/EditableField.stories'
 
-const { Default, Unset, Pending, Failed, OnChrome } = composeStories(stories)
+const { Default, Unset, Pending, Failed, SaveFails, OnChrome } = composeStories(stories)
 
 const TRIGGER = { name: 'Heimmannschaft bearbeiten' }
 const FIELD = { name: 'Heimmannschaft' }
@@ -166,6 +166,30 @@ describe('EditableField', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Der Name konnte nicht gespeichert werden.',
+    )
+  })
+
+  it('reopens on the text that failed, so the edit is not lost', async () => {
+    const user = userEvent.setup()
+    render(<SaveFails />)
+
+    await user.click(screen.getByRole('button', TRIGGER))
+    await type(user, 'SC Magdeburg{Enter}')
+
+    expect(screen.getByRole('textbox', FIELD)).toHaveValue('SC Magdeburg')
+    expect(screen.getByRole('alert')).toBeVisible()
+  })
+
+  it('lets go of the failed text once the user cancels', async () => {
+    const user = userEvent.setup()
+    render(<SaveFails />)
+
+    await user.click(screen.getByRole('button', TRIGGER))
+    await type(user, 'SC Magdeburg{Enter}')
+    await user.keyboard('{Escape}')
+
+    expect(screen.getByRole('button', TRIGGER)).toHaveTextContent(
+      'TSV Hannover-Burgdorf',
     )
   })
 
