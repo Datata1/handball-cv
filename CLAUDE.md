@@ -65,6 +65,9 @@ wels-monorepo/
 │   │       ├── routes/         # file-based routes: one file = one URL
 │   │       │                   # + stories/ and tests/ mirroring it (not routes)
 │   │       ├── components/     # components/ui/ is shadcn's target directory
+│   │       ├── shared/         # cross-feature sections, each with its own stories/ + tests/
+│   │       │   ├── api/        # typed fetch client + zod schema per backend router
+│   │       │   └── query/      # QueryClient, key factory, retry policy, SSE bridge
 │   │       ├── i18n/           # i18next init, resources, typed keys, locales/de/*.json
 │   │       ├── lib/            # cn() helper, env.ts (single BACKEND_URL resolution)
 │   │       ├── testing/        # harness: vitest setup + expectNoA11yViolations()
@@ -115,6 +118,7 @@ wels-monorepo/
 | API framework | FastAPI + Uvicorn |
 | Frontend stack | React 19 + Vite 8 + Tailwind CSS v4 + shadcn/ui (Radix) |
 | Frontend routing | **TanStack Router** (file-based, `src/routes/`) |
+| Frontend server state | **TanStack Query** (`src/shared/query/`), fed by an SSE bridge |
 | Data models | Pydantic v2 |
 | Config | pydantic-settings (`WELS_` prefix) |
 | HTTP client (Python) | httpx (async) |
@@ -187,6 +191,39 @@ uv run wels-plays <match_id>
 
 ## Development Conventions
 
+### Comments
+
+A comment earns its place only by explaining **why** something non-obvious is
+there. The code already says what it does, and `git log` already says which
+change introduced it.
+
+Do not write:
+
+- **What the code does.** `// invalidate the list` above
+  `invalidateQueries({ queryKey: qk.matches() })` is noise.
+- **PR or roadmap references.** No `// PR 04 wraps this`, no `// added in #7`,
+  no `// corrected while building`. Nobody reading this file later cares which
+  PR did what, and the reference rots the moment the plan changes.
+- **Comparisons to code that no longer exists.** `frontend-legacy`'s mistakes
+  belong in the PR description, not in the file that replaced it.
+- **Justification of the choice made.** If a reviewer needs convincing, that
+  goes in the PR. If a *future maintainer* needs the constraint to avoid
+  breaking something, that is a real comment — state the constraint, not the
+  argument.
+- **Restating the type signature** in a docstring.
+
+Do write, briefly:
+
+- Constraints from outside the file, especially backend behaviour that would
+  otherwise look like a bug: `// db.py:28 empties every read while any match is
+  processing`.
+- Traps — code that looks removable but is not, or an ordering that matters.
+- The one-line purpose of a module or exported symbol, where it is not evident
+  from its name.
+
+Prefer one sentence to a paragraph. If a comment needs more than ~4 lines, ask
+whether the code should be clearer instead.
+
 ### Adding a new backend route
 1. Create a module in `packages/backend/src/backend/routes/`.
 2. Define an `APIRouter` and register it in `app.py`.
@@ -201,6 +238,40 @@ uv run wels-plays <match_id>
 6. Never hard-code a color. `bg-primary`, `text-muted-foreground`, `border-border`, `bg-wels-navy` all resolve through `src/styles/tokens.css`. If a shade is missing, add it to the raw palette there and give it a semantic role — do not reach for `bg-sky-600`. Hardcoding the palette away is exactly what sank the previous frontend.
 7. Never hard-code a user-facing string either. `t('...')` only — see below.
 8. Every component ships a `.stories.tsx`. See below — a component with no story is not covered by anything.
+
+### Frontend server data (TanStack Query)
+
+Anything that arrived over HTTP lives in TanStack Query and **is never copied
+into React state or MobX**. `src/shared/api/` is the door to the backend — plain
+async functions, one zod schema per router — and `src/shared/query/` is the
+cache in front of it:
+
+```ts
+useQuery({
+  queryKey: qk.stats(matchId),          // src/shared/query/keys.ts — built nowhere else
+  queryFn: ({ signal }) => getMatchStats(matchId, signal),
+  staleTime: staleTime.stats,           // per endpoint, not one global value
+})
+```
+
+Three things about this backend leak into every query and are already encoded,
+so don't re-solve them per feature:
+
+- **The global read freeze.** `db.py:28` returns `[]` from *every* read while
+  *any* match is `processing`, so endpoints 404 or come back empty for matches
+  that are perfectly fine. `shouldRetryQuery` therefore retries a 404 while
+  something is processing (or while the match list has not loaded yet and it
+  cannot tell). **A 404 is not proof of absence** — check `mayBeFrozen()` before
+  rendering a not-found state.
+- **`GET /matches` has side effects.** It rewrites status files, each rewrite
+  emits an SSE event, and the SSE handler refetches `/matches`. `sse.ts`
+  debounces invalidation into rounds so that loop converges quietly.
+- **Key hierarchy.** `qk.matches()` (the list) is deliberately *not* a prefix of
+  `qk.match(id)` (one match's subtree), because the bridge invalidates the list
+  on every status event.
+
+One `QueryClient` and one `EventSource` for the whole app, both mounted in
+`src/app/providers.tsx`. Features add hooks, never a client of their own.
 
 ### Frontend strings (i18n)
 
@@ -266,7 +337,7 @@ render(<Default />)
 
 So a story alone already buys a rendered, axe-checked component; the test file adds behaviour on top. Both run in jsdom — no browser, no Playwright.
 
-Composed stories mount `AppProviders` (i18n today, Query and MobX later), so they render real German copy in both projects. `.storybook/preview.tsx` supplies the decorator; `src/testing/setup.ts` hands the same preview to `setProjectAnnotations` for the `unit` project, which `addon-vitest` does on its own for the `storybook` one. For the few things that are not components — hooks under `renderHook`, mostly — use `renderWithI18n` / `ProviderWrapper` from `src/testing/render.tsx`.
+Composed stories mount `AppProviders` (i18n and Query today, MobX later), so they render real German copy in both projects. `.storybook/preview.tsx` supplies the decorator; `src/testing/setup.ts` hands the same preview to `setProjectAnnotations` for the `unit` project, which `addon-vitest` does on its own for the `storybook` one. For the few things that are not components — hooks under `renderHook`, mostly — use `renderWithI18n` / `ProviderWrapper` from `src/testing/render.tsx`.
 
 Three settings look removable and are not:
 - `vitest.config.ts` does not extend `vite.config.ts`, and `.storybook/main.ts` strips the router plugin. Both because `autoCodeSplitting` rewrites route modules.
@@ -369,6 +440,7 @@ Custom skills are defined under `.claude/commands/` and invocable as slash comma
 - **Tokens are the only source of color**: `src/styles/tokens.css` layers a raw `--wels-*` palette → semantic roles (`--primary`, `--ring`) → a Tailwind `@theme inline` bridge. So `bg-primary` *is* WELS blue and the brand applies itself. The raw palette is namespaced `--wels-*` rather than `--color-*` so it cannot shadow Tailwind's own theme variables.
 - **i18n from the start, with one locale**: the legacy app carried ~250–300 German literals inline in JSX, plus German error text thrown from its data layer — retrofitting i18n there means reopening every component. Setting the seam up before any feature lands means each feature PR is born correct. Typed keys make a typo a compile error; backend-sent labels go through `useBackendLabel`, which falls back to the raw value so a new detector class is never invisible.
 - **TanStack Router with file-based routes**: every view has a real URL, so reports are deep-linkable, refreshable, and back-button-able. The previous frontend switched views with a `useState` union and could not link to a match at all.
+- **One cache, and SSE pushes into it**: every HTTP response lives in TanStack Query, and the backend's `/status/stream` translates into scoped, debounced `invalidateQueries` rather than a blanket reload. The legacy app cached `/stats` in a module-level `Map` that never expired, discarded the SSE payload, and refetched the whole match list on every event — including the events its own refetch caused.
 - **`frontend-legacy` is temporary**: kept only so features can be read off it during migration. It is out of CI, off the default setup path, and on port 3001. Delete it once empty.
 - **uv + pnpm for packages**: `uv` for Python, `pnpm` for the frontend — both are deterministic, both are fast.
 - **moon for task caching and toolchain provisioning**: tasks only re-run when inputs change; moon also installs Node + pnpm from `.moon/toolchains.yml` so contributors don't need to install them manually. Note the plural filename — moon 2 renamed it and **silently ignores** the 1.x `toolchain.yml`, which is how the previous Node pin came to have no effect.

@@ -2,8 +2,8 @@
  * The app's only door to the backend.
  *
  * Framework-free on purpose — plain async functions, no hooks, no caching, no
- * retry. PR 04 wraps these in TanStack Query; everything below stays testable
- * without a renderer.
+ * retry. `shared/query` wraps these in TanStack Query; everything below stays
+ * testable without a renderer.
  */
 
 export { API_PREFIX, apiUrl, formatTrackIds } from './client'

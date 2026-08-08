@@ -176,6 +176,16 @@ export type GoalRow = z.infer<typeof goalRowSchema>
 
 export const goalsSchema = z.array(goalRowSchema)
 
+/**
+ * The payload of an SSE `status` event. `JSON.parse` on a `MessageEvent` is as
+ * unchecked as a `fetch` body, so it is validated at the same seam.
+ */
+export const statusEventSchema = z.object({
+  match_id: z.string(),
+  status: matchStatusSchema,
+})
+export type StatusEvent = z.infer<typeof statusEventSchema>
+
 export const scoreboardSummarySchema = z.object({
   match_id: z.string(),
   final_score_home: z.int().nullable(),

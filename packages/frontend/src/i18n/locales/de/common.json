@@ -26,6 +26,10 @@
     "frames_one": "{{count}} Frame",
     "frames_other": "{{count}} Frames"
   },
+  "connection": {
+    "interrupted": "Verbindung unterbrochen",
+    "reconnecting": "Es wird erneut verbunden. Neue Ergebnisse erscheinen verzögert."
+  },
   "nav": {
     "main": "Hauptnavigation",
     "home": "WELS — zur Übersicht"
