@@ -1,5 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Inbox } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+import { EmptyState, PageHeader } from '@/shared/ui'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -10,14 +13,14 @@ export function Home() {
   const { t } = useTranslation('dashboard')
 
   return (
-    <section>
-      <h1 className="text-3xl font-bold text-primary">{t('title')}</h1>
-      <p className="mt-1 text-muted-foreground">{t('tagline')}</p>
+    <>
+      <PageHeader title={t('title')} description={t('tagline')} />
 
-      <div className="mt-8 rounded-lg border bg-card p-6 text-card-foreground">
-        <h2 className="font-semibold">{t('empty.title')}</h2>
-        <p className="mt-1 text-muted-foreground">{t('empty.description')}</p>
-      </div>
-    </section>
+      <EmptyState
+        icon={<Inbox />}
+        title={t('empty.title')}
+        description={t('empty.description')}
+      />
+    </>
   )
 }

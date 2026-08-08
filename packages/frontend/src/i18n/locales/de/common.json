@@ -5,26 +5,34 @@
     "delete": "Löschen",
     "back": "Zurück",
     "retry": "Erneut versuchen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "edit": "Bearbeiten"
   },
   "states": {
     "loading": "Wird geladen…",
     "empty": "Keine Daten",
-    "error": "Fehler"
+    "error": "Fehler",
+    "saving": "Wird gespeichert…"
   },
   "errors": {
     "unreachable": "Der Server ist nicht erreichbar.",
     "notFound": "Nicht gefunden.",
     "invalidResponse": "Die Antwort des Servers war unerwartet aufgebaut.",
-    "unexpected": "Unerwarteter Fehler."
+    "unexpected": "Unerwarteter Fehler.",
+    "processing": "Noch nicht verfügbar. Solange ein Video verarbeitet wird, liefert der Server für alle Spiele vorübergehend keine Daten."
   },
   "units": {
     "seconds": "{{value}} s",
     "minutes": "{{value}} min",
     "metres": "{{value}} m",
     "fps": "{{value}} fps",
+    "percent": "{{value}} %",
     "frames_one": "{{count}} Frame",
     "frames_other": "{{count}} Frames"
+  },
+  "editable": {
+    "edit": "{{label}} bearbeiten",
+    "empty": "Nicht gesetzt"
   },
   "connection": {
     "interrupted": "Verbindung unterbrochen",
