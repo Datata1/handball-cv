@@ -1,8 +1,47 @@
 {
   "title": "WELS",
   "tagline": "Handballanalyse für Trainer und Analysten.",
+  "newUpload": "Neues Video",
+  "summary": {
+    "total": "Analysen gesamt",
+    "videoTime": "Gesamte Videozeit",
+    "minutesUnit": "min",
+    "lastAnalysis": "Letzte Analyse"
+  },
+  "filters": {
+    "search": "Spiele durchsuchen",
+    "searchPlaceholder": "Dateiname oder Team",
+    "sort": "Sortierung",
+    "sortRecent": "Neueste zuerst",
+    "sortName": "Name A–Z"
+  },
+  "list": {
+    "title": "Match-Historie",
+    "loading": "Spiele werden geladen…"
+  },
   "empty": {
     "title": "Noch keine Analysen",
-    "description": "Laden Sie ein Spielvideo hoch, um die erste Analyse zu starten."
+    "description": "Laden Sie ein Spielvideo hoch, um die erste Analyse zu starten.",
+    "action": "Video hochladen"
+  },
+  "noResults": {
+    "title": "Keine Treffer",
+    "description": "Zu dieser Suche gibt es kein Spiel."
+  },
+  "status": {
+    "done": "Fertig",
+    "processing": "Wird verarbeitet",
+    "failed": "Fehlgeschlagen",
+    "unknown": "Unbekannt"
+  },
+  "card": {
+    "open": "Analyse öffnen",
+    "teamA": "Team A",
+    "teamB": "Team B",
+    "versus": "gegen",
+    "duration": "Spieldauer",
+    "ingestedAt": "Analysiert am",
+    "score": "Spielstand",
+    "scoreSeparator": ":"
   }
 }
