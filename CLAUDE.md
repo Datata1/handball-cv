@@ -261,9 +261,11 @@ Two things about it are load-bearing:
 - **`ErrorState` is the only translator of `ApiError` into German.** Pass
   `processing` when `mayBeFrozen()` is true and its 404 copy changes from
   "nicht gefunden" to "noch nicht verfügbar" — see the read freeze above.
-- **`EditableField` cancels the keydown** for Enter and Escape. It moves focus
-  back to the trigger, and an uncancelled Enter would then press that button and
-  reopen the editor.
+- **`EditableField` only saves deliberately** — Enter or the confirm button.
+  Escape, cancel and focus leaving the field all discard, so a mutation never
+  fires from a stray click. It also cancels the Enter/Escape keydown: focus
+  moves to the trigger mid-keystroke, and an uncancelled Enter would then press
+  that button and reopen the editor.
 
 `src/components/ui/` holds the shadcn primitives, added by the CLI as they are
 needed and **linted like any other source**. `src/testing/router.tsx` supplies

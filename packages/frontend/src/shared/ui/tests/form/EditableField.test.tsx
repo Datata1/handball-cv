@@ -25,6 +25,12 @@ async function startEditing() {
   return { user, input: screen.getByRole('textbox', FIELD) }
 }
 
+async function type(user: ReturnType<typeof userEvent.setup>, text: string) {
+  const input = screen.getByRole('textbox', FIELD)
+  await user.clear(input)
+  await user.type(input, text)
+}
+
 describe('EditableField', () => {
   it('names the trigger after the field, not "bearbeiten"', () => {
     render(<Default />)
@@ -41,57 +47,48 @@ describe('EditableField', () => {
     expect(input).toHaveFocus()
   })
 
-  it('commits on Enter', async () => {
+  it('sizes the input to the draft rather than jumping to a fixed width', async () => {
     const { user, input } = await startEditing()
+    const opened = input.getAttribute('size')
 
-    await user.clear(input)
-    await user.type(input, 'SC Magdeburg{Enter}')
+    await type(user, 'Ein deutlich längerer Mannschaftsname')
+
+    expect(Number(input.getAttribute('size'))).toBeGreaterThan(Number(opened))
+  })
+
+  it('commits on Enter', async () => {
+    const { user } = await startEditing()
+
+    await type(user, 'SC Magdeburg{Enter}')
+
+    expect(Default.args.onSave).toHaveBeenCalledExactlyOnceWith('SC Magdeburg')
+  })
+
+  it('commits from the confirm button', async () => {
+    const { user } = await startEditing()
+
+    await type(user, 'SC Magdeburg')
+    await user.click(screen.getByRole('button', { name: 'Speichern' }))
+
+    expect(Default.args.onSave).toHaveBeenCalledExactlyOnceWith('SC Magdeburg')
+  })
+
+  it('reaches the confirm button by keyboard without losing the draft', async () => {
+    const { user } = await startEditing()
+
+    await type(user, 'SC Magdeburg')
+    await user.tab()
+    await user.keyboard('{Enter}')
 
     expect(Default.args.onSave).toHaveBeenCalledExactlyOnceWith('SC Magdeburg')
   })
 
   it('trims what it commits', async () => {
-    const { user, input } = await startEditing()
+    const { user } = await startEditing()
 
-    await user.clear(input)
-    await user.type(input, '  SC Magdeburg  {Enter}')
-
-    expect(Default.args.onSave).toHaveBeenCalledExactlyOnceWith('SC Magdeburg')
-  })
-
-  it('reverts on Escape without saving', async () => {
-    const { user, input } = await startEditing()
-
-    await user.clear(input)
-    await user.type(input, 'Falscheingabe{Escape}')
-
-    expect(Default.args.onSave).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', TRIGGER)).toHaveTextContent(
-      'TSV Hannover-Burgdorf',
-    )
-  })
-
-  it('commits on blur', async () => {
-    const { user, input } = await startEditing()
-
-    await user.clear(input)
-    await user.type(input, 'SC Magdeburg')
-    await user.tab()
+    await type(user, '  SC Magdeburg  {Enter}')
 
     expect(Default.args.onSave).toHaveBeenCalledExactlyOnceWith('SC Magdeburg')
-  })
-
-  // The trap the legacy component's cancelledRef existed to avoid: the cancel
-  // button's mousedown fires before the input's blur, so an unguarded blur
-  // handler saves the very edit the user just abandoned.
-  it('does not save when the blur came from pressing cancel', async () => {
-    const { user, input } = await startEditing()
-
-    await user.clear(input)
-    await user.type(input, 'Falscheingabe')
-    await user.click(screen.getByRole('button', { name: 'Abbrechen' }))
-
-    expect(Default.args.onSave).not.toHaveBeenCalled()
   })
 
   it('does not save an unchanged value', async () => {
@@ -102,19 +99,47 @@ describe('EditableField', () => {
     expect(Default.args.onSave).not.toHaveBeenCalled()
   })
 
-  it('returns focus to the trigger after a keyboard commit', async () => {
-    const { user, input } = await startEditing()
-
-    await user.clear(input)
-    await user.type(input, 'SC Magdeburg{Enter}')
-
-    expect(screen.getByRole('button', TRIGGER)).toHaveFocus()
-  })
-
-  it('returns focus to the trigger after Escape', async () => {
+  it('reverts on Escape without saving', async () => {
     const { user } = await startEditing()
 
-    await user.keyboard('{Escape}')
+    await type(user, 'Falscheingabe{Escape}')
+
+    expect(Default.args.onSave).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', TRIGGER)).toHaveTextContent(
+      'TSV Hannover-Burgdorf',
+    )
+  })
+
+  it('discards from the cancel button', async () => {
+    const { user } = await startEditing()
+
+    await type(user, 'Falscheingabe')
+    await user.click(screen.getByRole('button', { name: 'Abbrechen' }))
+
+    expect(Default.args.onSave).not.toHaveBeenCalled()
+  })
+
+  // The legacy component committed here, so clicking anywhere on the page saved
+  // whatever was half-typed. Saving is deliberate now; leaving discards.
+  it('discards when focus leaves the field', async () => {
+    const { user } = await startEditing()
+
+    await type(user, 'Falscheingabe')
+    await user.click(document.body)
+
+    expect(Default.args.onSave).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', TRIGGER)).toHaveTextContent(
+      'TSV Hannover-Burgdorf',
+    )
+  })
+
+  it.each([
+    ['Enter', '{Enter}'],
+    ['Escape', '{Escape}'],
+  ])('returns focus to the trigger after %s', async (_key, sequence) => {
+    const { user } = await startEditing()
+
+    await user.keyboard(sequence)
 
     expect(screen.getByRole('button', TRIGGER)).toHaveFocus()
   })

@@ -1,5 +1,12 @@
-import { Pencil, X } from 'lucide-react'
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react'
+import { Check, Pencil, X } from 'lucide-react'
+import {
+  type FocusEvent,
+  type ReactNode,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
@@ -23,12 +30,17 @@ const TONES = {
   },
 } as const
 
+/** Room for the caret and a couple of characters of headroom. */
+const MIN_COLUMNS = 12
+
 /**
  * A value that turns into an input when you click it.
  *
- * Enter commits, Escape reverts, blur commits — except when the blur came from
- * pressing cancel, which is what `cancelled` guards: the button's mousedown
- * fires before the input's blur, so without it every cancel would save.
+ * **Saving is always deliberate**: Enter or the confirm button, nothing else.
+ * Escape, the cancel button and moving focus out of the field all discard the
+ * draft. The legacy component committed on blur, so clicking anywhere saved an
+ * edit the user may have been in the middle of abandoning — and it needed a
+ * `cancelledRef` to stop its own cancel button from triggering that save.
  */
 export function EditableField({
   value,
@@ -59,10 +71,10 @@ export function EditableField({
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
 
-  const cancelled = useRef(false)
   const restoreFocus = useRef(false)
   const trigger = useRef<HTMLButtonElement>(null)
   const input = useRef<HTMLInputElement>(null)
+  const group = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     if (editing) {
@@ -72,8 +84,8 @@ export function EditableField({
       return
     }
 
-    // Only the keyboard paths (Enter, Escape, cancel) ask for focus back — a
-    // blur-commit means focus already went where the user sent it.
+    // Only the deliberate exits (Enter, Escape, the two buttons) ask for focus
+    // back. Focus leaving the field means the user already sent it somewhere.
     if (!restoreFocus.current) return
     restoreFocus.current = false
     trigger.current?.focus()
@@ -81,7 +93,6 @@ export function EditableField({
 
   function startEditing() {
     setDraft(value)
-    cancelled.current = false
     setEditing(true)
   }
 
@@ -94,16 +105,24 @@ export function EditableField({
   }
 
   function cancel(returnFocus: boolean) {
-    cancelled.current = true
     restoreFocus.current = returnFocus
     setDraft(value)
     setEditing(false)
   }
 
+  // Every control in the editor shares this, so that tabbing from the input to
+  // the confirm button does not read as leaving — which would unmount the
+  // button before it could be pressed.
+  function discardOnLeave(event: FocusEvent) {
+    if (group.current?.contains(event.relatedTarget)) return
+
+    cancel(false)
+  }
+
   return (
     <span className={cn('inline-flex flex-col items-start gap-1', className)}>
       {editing ? (
-        <span className="inline-flex items-center gap-1">
+        <span ref={group} className="inline-flex items-center gap-1">
           <Label htmlFor={fieldId} className="sr-only">
             {label}
           </Label>
@@ -112,9 +131,13 @@ export function EditableField({
             ref={input}
             id={fieldId}
             value={draft}
+            // Grows with the draft, so opening the editor does not shove the
+            // rest of the row sideways.
+            size={Math.max(draft.length + 1, MIN_COLUMNS)}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? errorId : undefined}
             onChange={(event) => setDraft(event.target.value)}
+            onBlur={discardOnLeave}
             onKeyDown={(event) => {
               if (event.key !== 'Enter' && event.key !== 'Escape') return
 
@@ -126,23 +149,27 @@ export function EditableField({
               if (event.key === 'Enter') commit(true)
               else cancel(true)
             }}
-            onBlur={() => {
-              if (!cancelled.current) commit(false)
-            }}
-            className={cn('h-8 w-48 text-sm', tones.input)}
+            className={cn('h-8 w-auto max-w-full text-sm', tones.input)}
           />
 
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
+            aria-label={t('actions.save')}
+            onBlur={discardOnLeave}
+            onClick={() => commit(true)}
+          >
+            <Check />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
             aria-label={t('actions.cancel')}
-            // preventDefault keeps focus on the input, so the blur that follows
-            // is the one we cause below — after `cancelled` is set.
-            onMouseDown={(event) => {
-              event.preventDefault()
-              cancel(true)
-            }}
+            onBlur={discardOnLeave}
+            onClick={() => cancel(true)}
           >
             <X />
           </Button>
