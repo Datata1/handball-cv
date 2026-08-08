@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { MatchMeta } from '@/shared/api'
 import { EmptyState, ErrorState } from '@/shared/ui'
 
-import type { MatchScores } from '../queries'
+import type { MatchMutations, MatchScores } from '../queries'
 import { MatchCard } from './MatchCard'
 
 const grid = 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3'
@@ -24,12 +24,15 @@ const SKELETONS = ['a', 'b', 'c']
 export function MatchList({
   matches,
   scores,
+  mutations,
   error,
   searching = false,
   onRetry,
 }: {
   matches: readonly MatchMeta[] | undefined
   scores?: MatchScores
+  /** Rename and delete, shared by every card — see `useMatchMutations`. */
+  mutations: MatchMutations
   error?: unknown
   /** Picks the empty copy: nothing ingested yet, or nothing matching the search. */
   searching?: boolean
@@ -88,6 +91,7 @@ export function MatchList({
           key={match.match_id}
           match={match}
           score={scores?.get(match.match_id)}
+          mutations={mutations}
         />
       ))}
     </div>

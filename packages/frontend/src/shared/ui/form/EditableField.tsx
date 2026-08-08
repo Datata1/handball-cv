@@ -41,6 +41,9 @@ const MIN_COLUMNS = 12
  * draft. The legacy component committed on blur, so clicking anywhere saved an
  * edit the user may have been in the middle of abandoning — and it needed a
  * `cancelledRef` to stop its own cancel button from triggering that save.
+ *
+ * Setting `error` after a save reopens the editor on the text that failed, so a
+ * caller that rolls its value back does not also throw the edit away.
  */
 export function EditableField({
   value,
@@ -72,6 +75,7 @@ export function EditableField({
   const [draft, setDraft] = useState(value)
 
   const restoreFocus = useRef(false)
+  const submitted = useRef<string | undefined>(undefined)
   const trigger = useRef<HTMLButtonElement>(null)
   const input = useRef<HTMLInputElement>(null)
   const group = useRef<HTMLSpanElement>(null)
@@ -91,7 +95,23 @@ export function EditableField({
     trigger.current?.focus()
   }, [editing])
 
+  // A save that failed reopens the editor holding what the user typed. The
+  // value itself has rolled back to what the server still has, so without this
+  // the edit is simply gone and has to be typed again. The error arrives a
+  // render or more after the save, which is why the text waits in a ref.
+  useEffect(() => {
+    if (editing || !error) return
+
+    const failed = submitted.current
+    if (failed === undefined) return
+
+    submitted.current = undefined
+    setDraft(failed)
+    setEditing(true)
+  }, [editing, error])
+
   function startEditing() {
+    submitted.current = undefined
     setDraft(value)
     setEditing(true)
   }
@@ -101,7 +121,10 @@ export function EditableField({
     setEditing(false)
 
     const next = draft.trim()
-    if (next !== value) onSave(next)
+    if (next === value) return
+
+    submitted.current = next
+    onSave(next)
   }
 
   function cancel(returnFocus: boolean) {

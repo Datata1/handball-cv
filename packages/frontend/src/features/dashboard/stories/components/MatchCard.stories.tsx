@@ -12,6 +12,7 @@ import {
   thumbnailSrc,
   unnamed,
 } from '../matches'
+import { mutations } from '../mutations'
 
 const meta = {
   title: 'Dashboard/MatchCard',
@@ -25,7 +26,7 @@ const meta = {
       </div>
     ),
   ],
-  args: { match: done, thumbnailSrc },
+  args: { match: done, thumbnailSrc, mutations: mutations() },
 } satisfies Meta<typeof MatchCard>
 
 export default meta
@@ -50,4 +51,43 @@ export const Failed: Story = { args: { match: failed } }
 
 export const MissingThumbnail: Story = {
   args: { thumbnailSrc: brokenThumbnailSrc, score: { home: 18, away: 21 } },
+}
+
+/** A name is being saved. The field stays focusable so Enter does not strand focus. */
+export const Renaming: Story = {
+  args: {
+    score: { home: 24, away: 22 },
+    mutations: mutations({ saving: { matchId: done.match_id, field: 'team_a_name' } }),
+  },
+}
+
+/** The save failed: the value rolled back, and the field says so. */
+export const RenameFailed: Story = {
+  args: {
+    score: { home: 24, away: 22 },
+    mutations: mutations({
+      renameFailed: { matchId: done.match_id, field: 'team_a_name' },
+    }),
+  },
+}
+
+export const DeleteFailed: Story = {
+  args: {
+    score: { home: 24, away: 22 },
+    mutations: mutations({
+      deleteFailed: { matchId: done.match_id, blocked: false },
+    }),
+  },
+}
+
+/**
+ * The delete 404'd while a match was being ingested — which is what the backend
+ * answers for a match that is perfectly present. Different sentence, and the
+ * card stays.
+ */
+export const DeleteBlocked: Story = {
+  args: {
+    score: { home: 24, away: 22 },
+    mutations: mutations({ deleteFailed: { matchId: done.match_id, blocked: true } }),
+  },
 }

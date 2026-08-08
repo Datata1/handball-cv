@@ -5,6 +5,7 @@ import { withRouter } from '@/testing/router'
 
 import { MatchList } from '../../components/MatchList'
 import { done, mixed, unnamed } from '../matches'
+import { mutations } from '../mutations'
 
 const scores = new Map([
   ['seed01', { home: 24, away: 22 }],
@@ -16,7 +17,7 @@ const meta = {
   component: MatchList,
   parameters: { layout: 'padded' },
   decorators: [withRouter()],
-  args: { matches: [done, unnamed], scores },
+  args: { matches: [done, unnamed], scores, mutations: mutations() },
 } satisfies Meta<typeof MatchList>
 
 export default meta
