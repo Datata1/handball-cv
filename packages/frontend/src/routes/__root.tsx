@@ -1,11 +1,10 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
-import { useTranslation } from 'react-i18next'
 
-import { AppProviders } from '@/app/providers'
-import { Button } from '@/components/ui/button'
+import { MainNav } from '@/app/components/MainNav'
+import { RouteNotFound } from '@/app/components/RouteNotFound'
 import { LiveConnectionIndicator } from '@/shared/query'
-import { AppHeader, Page, PageHeader } from '@/shared/ui'
+import { AppHeader, Page } from '@/shared/ui'
 
 // Devtools are dev-only: in a production build this resolves to a component
 // that renders nothing, so the package never reaches the bundle.
@@ -28,25 +27,18 @@ const QueryDevtools = import.meta.env.PROD
     )
 
 export const Route = createRootRoute({
-  component: RootLayout,
-  notFoundComponent: NotFound,
+  component: AppShell,
+  // Also set as the router's default, but a URL matching no route at all is
+  // resolved against the root route's own option — the default only covers a
+  // notFound() thrown from somewhere deeper.
+  notFoundComponent: RouteNotFound,
 })
-
-// Providers wrap the shell rather than living inside it, so everything that
-// calls t() — including notFoundComponent, rendered through the Outlet — is
-// below them.
-function RootLayout() {
-  return (
-    <AppProviders>
-      <AppShell />
-    </AppProviders>
-  )
-}
 
 function AppShell() {
   return (
     <div className="flex min-h-dvh flex-col">
       <AppHeader>
+        <MainNav />
         <LiveConnectionIndicator className="ms-auto" />
       </AppHeader>
 
@@ -61,21 +53,5 @@ function AppShell() {
         <QueryDevtools buttonPosition="bottom-left" />
       </Suspense>
     </div>
-  )
-}
-
-function NotFound() {
-  const { t } = useTranslation()
-
-  return (
-    <PageHeader
-      title={t('notFound.title')}
-      description={t('notFound.description')}
-      actions={
-        <Button asChild variant="outline" size="sm">
-          <Link to="/">{t('notFound.action')}</Link>
-        </Button>
-      }
-    />
   )
 }

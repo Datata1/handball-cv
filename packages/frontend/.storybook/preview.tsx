@@ -3,6 +3,14 @@ import type { Preview } from '@storybook/react-vite'
 import { AppProviders } from '../src/app/providers'
 import '../src/styles/index.css'
 
+// jsdom has no layout and so no scrollTo, which the router calls on mount and
+// on every navigation — unstubbed it prints a "Not implemented" notice per
+// story and drowns the run. Here rather than in `src/testing/setup.ts` because
+// both vitest projects reach this file and only one reads that one.
+if (import.meta.env.MODE === 'test') {
+  window.scrollTo = () => {}
+}
+
 const preview: Preview = {
   // Stories mount the app's providers, so they render real German copy rather
   // than raw keys — and a missing key is visible in the workshop.
