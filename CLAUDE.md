@@ -68,9 +68,10 @@ wels-monorepo/
 │   │       ├── shared/         # cross-feature sections, each with its own stories/ + tests/
 │   │       │   ├── api/        # typed fetch client + zod schema per backend router
 │   │       │   └── query/      # QueryClient, key factory, retry policy, SSE bridge
+│   │       ├── stores/         # MobX client state: RootStore, PlayerStore, video clock
 │   │       ├── i18n/           # i18next init, resources, typed keys, locales/de/*.json
 │   │       ├── lib/            # cn() helper, env.ts (single BACKEND_URL resolution)
-│   │       ├── testing/        # harness: vitest setup + expectNoA11yViolations()
+│   │       ├── testing/        # harness: vitest setup, axe helper, Storybook decorators
 │   │       ├── assets/         # logo + static assets
 │   │       └── styles/         # index.css → tailwind.css, tokens.css
 │   ├── frontend-legacy/  # SUPERSEDED. Reference only while features are migrated
@@ -119,6 +120,7 @@ wels-monorepo/
 | Frontend stack | React 19 + Vite 8 + Tailwind CSS v4 + shadcn/ui (Radix) |
 | Frontend routing | **TanStack Router** (file-based, `src/routes/`) |
 | Frontend server state | **TanStack Query** (`src/shared/query/`), fed by an SSE bridge |
+| Frontend client state | **MobX** (`src/stores/`) — view state only, never server data |
 | Data models | Pydantic v2 |
 | Config | pydantic-settings (`WELS_` prefix) |
 | HTTP client (Python) | httpx (async) |
@@ -273,6 +275,42 @@ so don't re-solve them per feature:
 One `QueryClient` and one `EventSource` for the whole app, both mounted in
 `src/app/providers.tsx`. Features add hooks, never a client of their own.
 
+### Frontend client state (MobX)
+
+`src/stores/` owns what neither the server nor the URL does: the video clock,
+edit buffers, expanded/hover state. **Nothing fetched ever lands here** — server
+data stays in Query, and filters and drill-ins stay in the URL.
+
+`PlayerStore` is why the dependency exists. It updates once per rendered video
+frame, and `observer()` re-renders exactly the components that read the field
+that changed — the playhead, not the section tree around it.
+
+```tsx
+const player = usePlayer()                      // src/stores/context.tsx
+player.isWithin(phase.start, phase.end)         // tracked, so "now" re-renders
+```
+
+Three things about this store are load-bearing:
+
+- **The `<video>` element owns the time.** `seek()` records an intent in
+  `pendingSeek`; `ClippedVideo` applies it to the element, clears it, and the
+  element's own events feed the store back through `bindVideoClock`. The store
+  never drives `currentTime` on its own.
+- **`bindVideoClock` reads `requestVideoFrameCallback`, not `timeupdate`** —
+  the latter fires at ~4Hz, enough to overshoot a clip end by ~250ms. Browsers
+  without rVFC fall back to `timeupdate` automatically.
+- **`isWithin` is deliberately annotated `false`** in `makeAutoObservable`.
+  `makeAutoObservable` turns methods into actions, and an action does not track
+  its reads — a component calling it would never re-render as time advances.
+
+`configure()` in `src/stores/configure.ts` runs `enforceActions: 'observed'`, so
+mutating an observed field outside an action reports the field by name instead of
+silently failing to re-render. The three `*RequiresReaction` diagnostics are on
+everywhere except under vitest, where store tests read state directly by design.
+
+Stories that need a player in a specific state use `withStores()` from
+`src/testing/stores.tsx`, which mounts a fresh `RootStore` per story.
+
 ### Frontend strings (i18n)
 
 German is the only locale, but every user-facing string goes through
@@ -337,7 +375,7 @@ render(<Default />)
 
 So a story alone already buys a rendered, axe-checked component; the test file adds behaviour on top. Both run in jsdom — no browser, no Playwright.
 
-Composed stories mount `AppProviders` (i18n and Query today, MobX later), so they render real German copy in both projects. `.storybook/preview.tsx` supplies the decorator; `src/testing/setup.ts` hands the same preview to `setProjectAnnotations` for the `unit` project, which `addon-vitest` does on its own for the `storybook` one. For the few things that are not components — hooks under `renderHook`, mostly — use `renderWithI18n` / `ProviderWrapper` from `src/testing/render.tsx`.
+Composed stories mount `AppProviders` (i18n, Query and the MobX stores), so they render real German copy in both projects. `.storybook/preview.tsx` supplies the decorator; `src/testing/setup.ts` hands the same preview to `setProjectAnnotations` for the `unit` project, which `addon-vitest` does on its own for the `storybook` one. For the few things that are not components — hooks under `renderHook`, mostly — use `renderWithI18n` / `ProviderWrapper` from `src/testing/render.tsx`.
 
 Three settings look removable and are not:
 - `vitest.config.ts` does not extend `vite.config.ts`, and `.storybook/main.ts` strips the router plugin. Both because `autoCodeSplitting` rewrites route modules.
@@ -441,6 +479,7 @@ Custom skills are defined under `.claude/commands/` and invocable as slash comma
 - **i18n from the start, with one locale**: the legacy app carried ~250–300 German literals inline in JSX, plus German error text thrown from its data layer — retrofitting i18n there means reopening every component. Setting the seam up before any feature lands means each feature PR is born correct. Typed keys make a typo a compile error; backend-sent labels go through `useBackendLabel`, which falls back to the raw value so a new detector class is never invisible.
 - **TanStack Router with file-based routes**: every view has a real URL, so reports are deep-linkable, refreshable, and back-button-able. The previous frontend switched views with a `useState` union and could not link to a match at all.
 - **One cache, and SSE pushes into it**: every HTTP response lives in TanStack Query, and the backend's `/status/stream` translates into scoped, debounced `invalidateQueries` rather than a blanket reload. The legacy app cached `/stats` in a module-level `Map` that never expired, discarded the SSE payload, and refetched the whole match list on every event — including the events its own refetch caused.
+- **MobX for the video clock, and little else**: the playhead updates several times a second and is read by the timeline, the active-phase badge and every section that highlights "now". React state re-renders the report tree on every tick and the URL thrashes history; an observable re-renders exactly its subscribers. That narrow job is the whole mandate — three state owners only stay comprehensible while each one's boundary is obvious.
 - **`frontend-legacy` is temporary**: kept only so features can be read off it during migration. It is out of CI, off the default setup path, and on port 3001. Delete it once empty.
 - **uv + pnpm for packages**: `uv` for Python, `pnpm` for the frontend — both are deterministic, both are fast.
 - **moon for task caching and toolchain provisioning**: tasks only re-run when inputs change; moon also installs Node + pnpm from `.moon/toolchains.yml` so contributors don't need to install them manually. Note the plural filename — moon 2 renamed it and **silently ignores** the 1.x `toolchain.yml`, which is how the previous Node pin came to have no effect.
