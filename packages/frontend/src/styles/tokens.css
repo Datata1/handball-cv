@@ -95,6 +95,14 @@
   --chrome: var(--wels-navy);
   --chrome-foreground: var(--wels-white);
 
+  /* Ingestion lifecycle. These tint a dot beside a written label, never the
+     label itself — the four statuses have to stay apart for a colourblind
+     reader, and none of these values carries text at 4.5:1. */
+  --status-done: var(--wels-positive);
+  --status-processing: var(--wels-caution);
+  --status-failed: var(--wels-accent-deep);
+  --status-unknown: var(--wels-neutral-400);
+
   --chart-1: var(--wels-blue);
   --chart-2: var(--wels-accent);
   --chart-3: var(--wels-navy);
@@ -135,6 +143,8 @@
   --border: rgb(255 255 255 / 0.12);
   --input: rgb(255 255 255 / 0.2);
   --ring: var(--wels-accent);
+
+  --status-failed: var(--wels-accent-soft);
 
   --chart-1: var(--wels-accent);
   --chart-2: var(--wels-neutral-400);
@@ -200,6 +210,11 @@
 
   --color-chrome: var(--chrome);
   --color-chrome-foreground: var(--chrome-foreground);
+
+  --color-status-done: var(--status-done);
+  --color-status-processing: var(--status-processing);
+  --color-status-failed: var(--status-failed);
+  --color-status-unknown: var(--status-unknown);
 
   --font-sans: var(--wels-font-sans);
   --font-mono: var(--wels-font-mono);
