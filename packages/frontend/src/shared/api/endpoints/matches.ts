@@ -12,12 +12,25 @@ import {
 } from '../schemas/matches'
 
 /**
+ * The Server-Sent Events stream — the only push channel in the system.
+ *
+ * A URL rather than a function because it is consumed by `EventSource`, not by
+ * `fetch`. The wire protocol: `event: connected` on open, `event: status` with
+ * a `StatusEvent` payload on every transition, and a bare `: heartbeat` comment
+ * every 25 idle seconds. There is no `id:` field, so a reconnect cannot resume
+ * — whatever happened during the gap is simply missed.
+ */
+export function statusStreamUrl(): string {
+  return apiUrl('/status/stream')
+}
+
+/**
  * The match list.
  *
  * Side-effecting despite being a GET: it rewrites `unknown`/`processing` status
  * files to `done`, and each rewrite emits an SSE `status` event. A handler that
- * refetches this on every event therefore feeds itself — PR 04 debounces the
- * bridge for exactly this reason.
+ * refetches this on every event therefore feeds itself — `shared/query/sse.ts`
+ * debounces the bridge for exactly this reason.
  */
 export function listMatches(signal?: AbortSignal) {
   return request('/matches', matchListSchema, { signal })

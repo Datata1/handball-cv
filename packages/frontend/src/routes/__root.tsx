@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { AppProviders } from '@/app/providers'
 import logoIconUrl from '@/assets/logo-icon.webp'
+import { LiveConnectionIndicator } from '@/shared/query'
 
 // Devtools are dev-only: in a production build this resolves to a component
 // that renders nothing, so the package never reaches the bundle.
@@ -12,6 +13,16 @@ const RouterDevtools = import.meta.env.PROD
   : lazy(() =>
       import('@tanstack/react-router-devtools').then((mod) => ({
         default: mod.TanStackRouterDevtools,
+      })),
+    )
+
+// Same treatment, and mounted here rather than in providers.tsx so it stays out
+// of the tree every story renders.
+const QueryDevtools = import.meta.env.PROD
+  ? () => null
+  : lazy(() =>
+      import('@tanstack/react-query-devtools').then((mod) => ({
+        default: mod.ReactQueryDevtools,
       })),
     )
 
@@ -50,6 +61,9 @@ function AppShell() {
               className="size-8"
             />
           </Link>
+
+          {/* Renders nothing unless the stream is down. */}
+          <LiveConnectionIndicator className="ms-auto" />
         </nav>
       </header>
 
@@ -59,6 +73,7 @@ function AppShell() {
 
       <Suspense>
         <RouterDevtools position="bottom-right" />
+        <QueryDevtools buttonPosition="bottom-left" />
       </Suspense>
     </div>
   )
