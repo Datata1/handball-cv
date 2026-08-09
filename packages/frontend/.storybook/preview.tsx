@@ -40,6 +40,12 @@ const preview: Preview = {
             // jsdom cannot compute rendered colour. Panel only.
             enabled: import.meta.env.MODE !== 'test',
           },
+          {
+            id: 'video-caption',
+            // A match recording has no speech to caption; WCAG 1.2.2 is about
+            // audio. Revisit if commentary is ever ingested with the video.
+            enabled: false,
+          },
         ],
       },
     },

@@ -37,6 +37,19 @@
   "court": {
     "label": "Handballfeld"
   },
+  "video": {
+    "label": "Spielvideo",
+    "unsupported": "Ihr Browser kann dieses Video nicht abspielen.",
+    "clip": "Ausschnitt {{start}} bis {{end}}"
+  },
+  "timeline": {
+    "label": "Zeitleiste des Spiels",
+    "playhead": "Abspielposition",
+    "interval": "{{label}}, {{start}} bis {{end}}",
+    "marker": "{{label}}, {{time}}",
+    "selected": "Ausgewählt: {{label}}",
+    "empty": "Für dieses Spiel sind noch keine Ereignisse erkannt."
+  },
   "connection": {
     "interrupted": "Verbindung unterbrochen",
     "reconnecting": "Es wird erneut verbunden. Neue Ergebnisse erscheinen verzögert."
