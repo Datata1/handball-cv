@@ -247,7 +247,7 @@ async def get_attacks(match_id: str) -> list[AttackSequence]:
 
 
 @router.post("/matches/{match_id}/plays/{event_id}/label")
-def set_play_label(match_id: str, event_id: int, body: PlayLabel) -> dict:
+def set_play_label(match_id: str, event_id: int, body: PlayLabel) -> dict[str, Any]:
     """
     Store or clear the coach verdict for a detected play event.
 

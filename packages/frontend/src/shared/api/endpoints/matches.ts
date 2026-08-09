@@ -136,12 +136,27 @@ export function getGoals(matchId: string, signal?: AbortSignal) {
   })
 }
 
+/** Which file the player asks for. `auto` takes the render when there is one. */
+export type VideoSourceParam = 'auto' | 'original' | 'annotated'
+
 /**
  * The match video, range-capable and inline — this is the `src` for the report
- * player. Serves the annotated file when one exists, the original otherwise.
+ * player, and the only endpoint a `<video>` can use.
+ *
+ * `source` is the report's original ⇄ annotiert switch: `annotated` 404s when
+ * no render exists, so a caller offering the choice has to know whether one
+ * does (`getOutputVideo`).
  */
-export function matchVideoUrl(matchId: string): string {
-  return apiUrl(`/matches/${encodeURIComponent(matchId)}/video`)
+export function matchVideoUrl(
+  matchId: string,
+  source: VideoSourceParam = 'auto',
+): string {
+  return apiUrl(
+    `/matches/${encodeURIComponent(matchId)}/video`,
+    // Left off the URL entirely at the default, so the src of a player with no
+    // toggle does not change and the browser keeps its cached ranges.
+    source === 'auto' ? undefined : { source },
+  )
 }
 
 /**

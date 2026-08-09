@@ -137,6 +137,18 @@ describe('binary endpoints are URL builders, never fetches', () => {
     expect(matchVideoUrl('m1')).toBe(`${BACKEND_URL}/api/v1/matches/m1/video`)
   })
 
+  // Absent at the default so a player with no toggle keeps one stable src, and
+  // with it the ranges the browser has already cached.
+  it('leaves the source off the URL unless one was asked for', () => {
+    expect(matchVideoUrl('m1', 'auto')).toBe(matchVideoUrl('m1'))
+    expect(matchVideoUrl('m1', 'original')).toBe(
+      `${BACKEND_URL}/api/v1/matches/m1/video?source=original`,
+    )
+    expect(matchVideoUrl('m1', 'annotated')).toBe(
+      `${BACKEND_URL}/api/v1/matches/m1/video?source=annotated`,
+    )
+  })
+
   it('builds a thumbnail src', () => {
     expect(matchThumbnailUrl('m1')).toBe(`${BACKEND_URL}/api/v1/matches/m1/thumbnail`)
   })

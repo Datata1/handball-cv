@@ -86,12 +86,11 @@ export function getOutputVideo(matchId: string, signal?: AbortSignal) {
 }
 
 /**
- * The annotated video file.
+ * The annotated video file, as a download.
  *
- * Sent with `Content-Disposition: attachment`, so a browser **downloads** this
- * rather than playing it. It cannot be a `<video src>`; the report player uses
- * `matchVideoUrl`, which already prefers the annotated file and serves it
- * inline. Use this for an explicit download link only.
+ * Sent with `Content-Disposition: attachment`, so a browser saves this rather
+ * than playing it — deliberately, and it therefore cannot be a `<video src>`.
+ * To *play* the render, ask `matchVideoUrl(matchId, 'annotated')`.
  */
 export function outputVideoDownloadUrl(matchId: string): string {
   return apiUrl(`/videos/${encodeURIComponent(matchId)}/output/video`)
