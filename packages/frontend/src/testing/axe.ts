@@ -9,6 +9,10 @@ const OPTIONS: axe.RunOptions = {
     // jsdom cannot compute rendered colour; contrast is checked in
     // Storybook's a11y panel instead.
     'color-contrast': { enabled: false },
+
+    // A match recording has no speech, and WCAG 1.2.2 is about captioning
+    // audio. Revisit if commentary is ever ingested alongside the video.
+    'video-caption': { enabled: false },
   },
 }
 

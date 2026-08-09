@@ -69,7 +69,8 @@ wels-monorepo/
 │   │       │   ├── api/        # typed fetch client + zod schema per backend router
 │   │       │   ├── court/      # the handball court: metres→SVG projection + zones
 │   │       │   ├── query/      # QueryClient, key factory, retry policy, SSE bridge
-│   │       │   └── ui/         # design kit: layout, state, data, EditableField
+│   │       │   ├── ui/         # design kit: layout, state, data, EditableField
+│   │       │   └── video/      # ClippedVideo + Timeline, both driven by PlayerStore
 │   │       ├── stores/         # MobX client state: RootStore, PlayerStore, video clock
 │   │       ├── i18n/           # i18next init, resources, typed keys, locales/de/*.json
 │   │       ├── lib/            # cn() helper, env.ts (single BACKEND_URL resolution)
@@ -299,6 +300,34 @@ court. Import `Court` from `@/shared/court` rather than drawing markings again.
 - `zones.ts` holds the six `/stats` zone codes with their centres and splat
   radii in metres. Labels come from the `domain` namespace via
   `useBackendLabel`, never a local dictionary.
+
+### The player and the timeline (`src/shared/video/`)
+
+One `<video>` and one timeline for the whole report. A section that wants to
+show a scene renders `ClippedVideo` with a `clip`, or hands intervals to
+`Timeline`; it never mounts a video of its own.
+
+```tsx
+<ClippedVideo src={matchVideoUrl(matchId)} clip={{ start, end }} autoLoop />
+<Timeline duration={seconds} tracks={tracks} selectedId={id} onSelect={…} />
+```
+
+- **The element owns the clock**, `PlayerStore` mirrors it, and clip
+  enforcement lives in the store on `requestVideoFrameCallback`. One
+  consequence: with a clip set, scrubbing the native controls past its end
+  snaps back. Pass no clip where free scrubbing matters.
+- **`Timeline` is a pure prop consumer** apart from the seek: items carry their
+  own `label`, which is the accessible name a screen reader gets, so backend
+  labels are looked up by the caller and never here.
+- **Only the playhead observes the clock.** It is a separate `observer`
+  component and the tracks are not, so playback re-renders one element.
+  `tests/Playhead.test.tsx` counts row renders to keep it that way.
+- **There is no click-the-background-to-clear**: an unnamed full-width click
+  surface is invisible to keyboard and screen readers. Clicking the selected
+  item again clears it, and so does Escape.
+- The **annotated video cannot be played inline** — `/videos/{id}/output/video`
+  sends `Content-Disposition: attachment` (issue #15). `matchVideoUrl` is the
+  only player source; it already prefers the annotated file when one exists.
 
 ### Frontend server data (TanStack Query)
 
