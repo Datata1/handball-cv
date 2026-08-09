@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type resources from './resources'
@@ -16,15 +17,20 @@ export type BackendLabel = (group: BackendLabelGroup, value: string) => string
  *
  * Never key a component off a frontend dictionary instead — that was the legacy
  * `PLAY_TYPE_META` bug, where an unrecognised play type rendered nothing at all.
+ *
+ * Stable across renders, so a caller can memoize the labels it builds from it.
  */
 export function useBackendLabel(): BackendLabel {
   const { t } = useTranslation('domain')
 
-  return (group, value) => {
-    // Typed keys cannot describe a set the backend may extend, so this one
-    // lookup is deliberately untyped. The fallback is what makes it safe.
-    const lookup = t as (key: string, options: { defaultValue: string }) => string
+  return useCallback(
+    (group, value) => {
+      // Typed keys cannot describe a set the backend may extend, so this one
+      // lookup is deliberately untyped. The fallback is what makes it safe.
+      const lookup = t as (key: string, options: { defaultValue: string }) => string
 
-    return lookup(`${group}.${value}`, { defaultValue: value })
-  }
+      return lookup(`${group}.${value}`, { defaultValue: value })
+    },
+    [t],
+  )
 }

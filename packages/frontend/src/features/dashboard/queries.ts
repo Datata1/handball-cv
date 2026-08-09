@@ -5,16 +5,17 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
+import { ApiError, deleteMatch, listMatches, type MatchMeta } from '@/shared/api'
 import {
-  ApiError,
-  deleteMatch,
-  getScoreboardSummary,
-  listMatches,
-  type MatchMeta,
-  type MatchPatch,
-  patchMatch,
-} from '@/shared/api'
-import { hasProcessingMatch, mayBeFrozen, qk, staleTime } from '@/shared/query'
+  finalScore,
+  type MatchNameField,
+  type MatchScore,
+  scoreboardSummaryOptions,
+  useRenameMatch,
+} from '@/shared/matches'
+import { hasProcessingMatch, qk, staleTime } from '@/shared/query'
+
+export type { MatchNameField, MatchScore }
 
 export function useMatches() {
   return useQuery({
@@ -22,11 +23,6 @@ export function useMatches() {
     queryFn: ({ signal }) => listMatches(signal),
     staleTime: staleTime.matches,
   })
-}
-
-export interface MatchScore {
-  home: number
-  away: number
 }
 
 export type MatchScores = ReadonlyMap<string, MatchScore | null>
@@ -47,32 +43,7 @@ export function useMatchScores(matches: readonly MatchMeta[]): MatchScores {
     .map((match) => match.match_id)
 
   const results = useQueries({
-    queries: ids.map((matchId) => ({
-      queryKey: qk.scoreboardSummary(matchId),
-      queryFn: async ({ signal }) => {
-        try {
-          const summary = await getScoreboardSummary(matchId, signal)
-
-          return summary.final_score_home === null || summary.final_score_away === null
-            ? null
-            : { home: summary.final_score_home, away: summary.final_score_away }
-        } catch (error) {
-          // A match with no readings 404s, and "no score" is an answer rather
-          // than a failure — but every match 404s while reads are frozen, and
-          // that one has to stay retryable.
-          if (
-            error instanceof ApiError &&
-            error.status === 404 &&
-            !mayBeFrozen(queryClient)
-          ) {
-            return null
-          }
-
-          throw error
-        }
-      },
-      staleTime: staleTime.scoreboardSummary,
-    })),
+    queries: ids.map((matchId) => scoreboardSummaryOptions(matchId, queryClient)),
   })
 
   return new Map(
@@ -81,13 +52,10 @@ export function useMatchScores(matches: readonly MatchMeta[]): MatchScores {
 
       return matchId === undefined || result.data === undefined
         ? []
-        : [[matchId, result.data] as const]
+        : [[matchId, finalScore(result.data)] as const]
     }),
   )
 }
-
-/** The three names `PATCH /matches/{id}` accepts. */
-export type MatchNameField = 'display_name' | 'team_a_name' | 'team_b_name'
 
 export interface MatchMutations {
   rename: (matchId: string, field: MatchNameField, value: string) => void
@@ -105,44 +73,17 @@ export interface MatchMutations {
 }
 
 /**
- * Rename and delete, as one bundle the list threads down to its cards.
+ * Rename and delete, as one bundle the list threads down to its cards. The
+ * rename half is shared with the report's header — see `useRenameMatch`.
  *
- * One mutation each rather than one per card: an optimistic delete unmounts the
- * card that started it, and a hook that unmounts takes its own error state with
- * it. Only one match is ever being renamed or deleted at a time, so the mutation
- * variables are enough to say which card the pending or failed state belongs to.
+ * One delete mutation rather than one per card: an optimistic delete unmounts
+ * the card that started it, and a hook that unmounts takes its own error state
+ * with it. Only one match is ever being deleted at a time, so the mutation
+ * variables are enough to say which card the failed state belongs to.
  */
 export function useMatchMutations(): MatchMutations {
   const queryClient = useQueryClient()
-
-  const rename = useMutation({
-    mutationFn: ({ matchId, field, value }: RenameVariables) =>
-      patchMatch(matchId, namePatch(field, value)),
-
-    onMutate: async ({ matchId, field, value }) => {
-      await queryClient.cancelQueries({ queryKey: qk.matches() })
-      const previous = queryClient.getQueryData<MatchMeta[]>(qk.matches())
-
-      queryClient.setQueryData<MatchMeta[]>(qk.matches(), (matches) =>
-        matches?.map((match) =>
-          match.match_id === matchId ? { ...match, ...namePatch(field, value) } : match,
-        ),
-      )
-
-      return { previous }
-    },
-
-    onError: (_error, _variables, context) => {
-      queryClient.setQueryData(qk.matches(), context?.previous)
-    },
-
-    // The backend keys its stats cache on the match meta it just rewrote.
-    onSuccess: (_result, { matchId }) => {
-      void queryClient.invalidateQueries({ queryKey: qk.stats(matchId) })
-    },
-
-    onSettled: () => queryClient.invalidateQueries({ queryKey: qk.matches() }),
-  })
+  const rename = useRenameMatch()
 
   const remove = useMutation({
     mutationFn: (matchId: string) => deleteMatch(matchId),
@@ -172,20 +113,11 @@ export function useMatchMutations(): MatchMutations {
     },
   })
 
-  const renamingVariables = rename.isPending ? rename.variables : undefined
-  const failedRename = rename.isError ? rename.variables : undefined
-
   return {
-    rename: (matchId, field, value) => rename.mutate({ matchId, field, value }),
+    rename: rename.rename,
     remove: (matchId) => remove.mutate(matchId),
-
-    saving: renamingVariables
-      ? { matchId: renamingVariables.matchId, field: renamingVariables.field }
-      : null,
-
-    renameFailed: failedRename
-      ? { matchId: failedRename.matchId, field: failedRename.field }
-      : null,
+    saving: rename.saving,
+    renameFailed: rename.failed,
 
     deleteFailed:
       remove.isError && remove.variables !== undefined
@@ -200,19 +132,4 @@ export function useMatchMutations(): MatchMutations {
           }
         : null,
   }
-}
-
-interface RenameVariables {
-  matchId: string
-  field: MatchNameField
-  value: string
-}
-
-// A body with no fields at all is a 400, and `null` means "leave this alone" —
-// so a patch always carries exactly the one field being renamed.
-function namePatch(field: MatchNameField, value: string): MatchPatch {
-  const patch: MatchPatch = {}
-  patch[field] = value
-
-  return patch
 }

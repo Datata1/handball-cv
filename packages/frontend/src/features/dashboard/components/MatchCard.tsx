@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next'
 
 import { Card } from '@/components/ui/card'
 import { type MatchMeta, matchThumbnailUrl } from '@/shared/api'
+import { formatMatchDate } from '@/shared/matches'
 import { EditableField, InlineError } from '@/shared/ui'
 
-import { formatDate, matchTitle } from '../matches'
+import { matchTitle } from '../matches'
 import type { MatchMutations, MatchNameField, MatchScore } from '../queries'
 import { DeleteMatchDialog } from './DeleteMatchDialog'
 import { MatchThumbnail } from './MatchThumbnail'
@@ -37,7 +38,7 @@ export function MatchCard({
 
   const title = matchTitle(match)
   const openable = match.status === 'done'
-  const ingestedAt = formatDate(match.ingested_at, i18n.language)
+  const ingestedAt = formatMatchDate(match.ingested_at, i18n.language)
 
   const saving =
     mutations.saving?.matchId === match.match_id ? mutations.saving.field : null

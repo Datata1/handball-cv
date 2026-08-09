@@ -68,6 +68,7 @@ wels-monorepo/
 │   │       ├── shared/         # cross-feature sections, each with its own stories/ + tests/
 │   │       │   ├── api/        # typed fetch client + zod schema per backend router
 │   │       │   ├── court/      # the handball court: metres→SVG projection + zones
+│   │       │   ├── matches/    # the match resource: rename, scoreboard, date
 │   │       │   ├── query/      # QueryClient, key factory, retry policy, SSE bridge
 │   │       │   ├── ui/         # design kit: layout, state, data, EditableField
 │   │       │   └── video/      # ClippedVideo + Timeline, both driven by PlayerStore
@@ -331,6 +332,32 @@ show a scene renders `ClippedVideo` with a `clip`, or hands intervals to
   `matchVideoUrl(id, 'original' | 'annotated')`; the default, `auto`, takes the
   render when one exists and leaves the parameter off the URL.
 
+### The report shell (`src/routes/matches.$matchId.tsx` + `src/features/report/`)
+
+The layout route every section renders inside: the match named, one
+`ClippedVideo`, one `Timeline`, the section links, then the `<Outlet/>`. A
+section is content — it owns no player, no header, and no match-wide query.
+
+- **The shell loads the report's data once** (`features/report/queries.ts`:
+  match meta, team phases, scoreboard summary, plays, formation scenes, output
+  video) and sections read it back out of the Query cache. It stays mounted
+  across a section change, which is what keeps playback running —
+  `routes/tests/report.test.tsx` asserts the `<video>` is the same DOM node
+  after navigating.
+- **A track is only drawn for a source that answered.** `buildTimelineTracks`
+  skips an `undefined` source: an empty lane would claim the detector looked and
+  found nothing.
+- **The source toggle names both files** — `source=original` as well as
+  `source=annotated`. The endpoint's own `auto` prefers the render, so leaving
+  the parameter off could not hold the original. The toggle is absent when no
+  render exists and disabled while one is being made.
+- **`?at=` is written on one deliberate click** (`ShareMomentButton`) and
+  applied when it changes. Nothing writes it per tick, or the history floods.
+- **The active phase is a `computed` over a binary search**, in its own
+  `observer`. The legacy version scanned every phase on every `timeupdate`.
+- **A 404-shaped absence is not proof**: a match missing from `GET /matches` is
+  only "not found" once `mayBeFrozen()` is false.
+
 ### Frontend server data (TanStack Query)
 
 Anything that arrived over HTTP lives in TanStack Query and **is never copied
@@ -364,6 +391,11 @@ so don't re-solve them per feature:
 
 One `QueryClient` and one `EventSource` for the whole app, both mounted in
 `src/app/providers.tsx`. Features add hooks, never a client of their own.
+
+A query two features read lives in `src/shared/matches/`, not in one of them:
+the dashboard and the report both edit a match's three names (`useRenameMatch`)
+and both read its scoreboard (`scoreboardSummaryOptions`). Describing one key
+twice is how two shapes end up racing for one cache entry.
 
 ### Frontend client state (MobX)
 

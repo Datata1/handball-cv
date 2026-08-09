@@ -10,8 +10,56 @@
     "players": "Spieler",
     "heatmap": "Heatmap"
   },
+  "header": {
+    "nameLabel": "Spielname",
+    "teamALabel": "Mannschaft A",
+    "teamBLabel": "Mannschaft B",
+    "teamA": "Mannschaft A",
+    "teamB": "Mannschaft B",
+    "versus": "gegen",
+    "recordedAt": "Aufgenommen am",
+    "duration": "Spieldauer",
+    "renameError": "Der Name konnte nicht gespeichert werden."
+  },
   "video": {
     "original": "Original",
-    "annotated": "Annotiert"
+    "annotated": "Annotiert",
+    "sourceLabel": "Videoquelle",
+    "annotatedPending": "Das annotierte Video wird noch erstellt.",
+    "originalLabel": "Spielvideo, Originalaufnahme",
+    "annotatedLabel": "Spielvideo mit erkannten Spielern",
+    "processing": {
+      "title": "Das Spiel wird noch verarbeitet",
+      "description": "Sobald die Analyse durchgelaufen ist, erscheinen hier Video und Zeitleiste."
+    },
+    "unavailable": {
+      "title": "Kein abspielbares Video",
+      "description": "Für dieses Spiel liegt keine Aufnahme vor, die abgespielt werden kann."
+    }
+  },
+  "moment": {
+    "action": "Diesen Moment verlinken"
+  },
+  "phase": {
+    "offense": "Angriff",
+    "defense": "Abwehr",
+    "transition": "Umschaltspiel"
+  },
+  "timeline": {
+    "goals": "Tore",
+    "phases": "Ballbesitz",
+    "plays": "Spielzüge",
+    "formations": "Formationen",
+    "goalItem": "Tor {{team}}, {{home}}:{{away}}",
+    "phaseItem": "{{type}}: {{team}}",
+    "playItem": "{{play}}, {{team}}",
+    "formationItem": "{{formation}}, {{team}}"
+  },
+  "teams": {
+    "home": "Heim",
+    "away": "Gast"
+  },
+  "frozen": {
+    "title": "Noch nicht verfügbar"
   }
 }

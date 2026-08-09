@@ -1,6 +1,8 @@
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { match } from '@/features/report/stories/report'
+import { stubApi } from '@/testing/api'
 import { renderApp } from '@/testing/app'
 
 /**
@@ -8,6 +10,17 @@ import { renderApp } from '@/testing/app'
  * navigation, and what happens when neither is well formed. Component-level
  * behaviour lives with the components.
  */
+
+// The report shell loads the match list, so every match URL below is a real
+// match. What it renders around the sections is `report.test.tsx`.
+beforeEach(() => {
+  stubApi({ '/matches': [{ ...match, match_id: 'abc123' }] })
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
+
 describe('route tree', () => {
   it('renders the dashboard at the root', async () => {
     renderApp('/')

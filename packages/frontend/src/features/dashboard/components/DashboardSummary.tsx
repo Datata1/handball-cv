@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next'
 
+import { formatMatchDate } from '@/shared/matches'
 import { StatTile } from '@/shared/ui'
 
-import { formatDate, type MatchListSummary } from '../matches'
+import type { MatchListSummary } from '../matches'
 
 /**
  * The three figures above the list. Each one is either measured or a dash —
@@ -24,7 +25,7 @@ export function DashboardSummary({ summary }: { summary: MatchListSummary }) {
 
       <StatTile
         label={t('summary.lastAnalysis')}
-        value={formatDate(summary.lastAnalysis, i18n.language)}
+        value={formatMatchDate(summary.lastAnalysis, i18n.language)}
       />
     </div>
   )
