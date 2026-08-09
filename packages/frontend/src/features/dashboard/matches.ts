@@ -102,16 +102,3 @@ export function parseDuration(duration: string | null): number | null {
 
   return Number.isFinite(parsed) && seconds !== undefined ? parsed : null
 }
-
-export function formatDate(iso: string | null, locale?: string): string | null {
-  if (!iso) return null
-
-  const at = new Date(iso)
-  if (Number.isNaN(at.getTime())) return null
-
-  return at.toLocaleDateString(locale, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-}
