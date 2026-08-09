@@ -325,9 +325,11 @@ show a scene renders `ClippedVideo` with a `clip`, or hands intervals to
 - **There is no click-the-background-to-clear**: an unnamed full-width click
   surface is invisible to keyboard and screen readers. Clicking the selected
   item again clears it, and so does Escape.
-- The **annotated video cannot be played inline** — `/videos/{id}/output/video`
-  sends `Content-Disposition: attachment` (issue #15). `matchVideoUrl` is the
-  only player source; it already prefers the annotated file when one exists.
+- **`matchVideoUrl` is the only thing a `<video>` can play.**
+  `/videos/{id}/output/video` sends `Content-Disposition: attachment`, so it is
+  a download link and nothing else. Pick the file with
+  `matchVideoUrl(id, 'original' | 'annotated')`; the default, `auto`, takes the
+  render when one exists and leaves the parameter off the URL.
 
 ### Frontend server data (TanStack Query)
 

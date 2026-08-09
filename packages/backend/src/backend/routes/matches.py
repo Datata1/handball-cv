@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, TypedDict, cast
+from typing import Any, Literal, TypedDict, cast
 
 import cv2
 from fastapi import APIRouter, HTTPException, Query, Response
@@ -802,18 +802,30 @@ def get_goals(match_id: str):
 
 
 @router.get("/matches/{match_id}/video")
-def stream_match_video(match_id: str) -> FileResponse:
+def stream_match_video(
+    match_id: str,
+    source: Literal["auto", "original", "annotated"] = Query(default="auto"),
+) -> FileResponse:
     """
     Stream the match video with HTTP range-request support for frontend seeking.
 
-    Prefers the annotated output video (with player overlays); falls back to the
-    original uploaded video. Used by the formation scene player in the frontend.
+    This is the only endpoint that serves a video *inline*, so it is the only one
+    a `<video src>` can use — `/videos/{match_id}/output/video` sets
+    `Content-Disposition: attachment` on purpose, for an explicit download link.
+    That makes `source` the report player's original-versus-annotated switch:
+
+    - `auto` — the annotated render if one exists, else the original.
+    - `original` — the uploaded file, even when an annotated render exists.
+    - `annotated` — the render only; 404 when it has not been produced.
     """
     from backend.routes.upload import DATA_OUTPUT_VIDEOS
 
     annotated = DATA_OUTPUT_VIDEOS / f"{match_id}_annotated.mp4"
-    if annotated.exists():
+    if source in ("auto", "annotated") and annotated.exists():
         return FileResponse(path=str(annotated), media_type="video/mp4")
+
+    if source == "annotated":
+        raise HTTPException(status_code=404, detail="Annotated video not found")
 
     rows = query_duckdb("SELECT video_path FROM matches WHERE match_id = ?", [match_id])
     if not rows:
