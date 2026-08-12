@@ -1,5 +1,5 @@
-INPUT="../video.mp4"
-OUTPUT="../video_cropped.mp4"
+INPUT="./match.mp4"
+OUTPUT="./video_cropped.mp4"
 
 # 1. Get the total duration of the video in seconds
 DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$INPUT")
