@@ -1,3 +1,4 @@
+import { UNASSIGNED } from '@/features/report/teams'
 import type { PlayerStat } from '@/shared/api'
 
 import {
@@ -6,9 +7,6 @@ import {
   isTrackSortKey,
   nextSort,
   sortTracks,
-  teamBucket,
-  teamBuckets,
-  UNASSIGNED,
 } from '../tracks'
 
 function track(id: number, team: string | null, frames = 100): PlayerStat {
@@ -20,43 +18,6 @@ function track(id: number, team: string | null, frames = 100): PlayerStat {
     distance_m: 1_000,
   }
 }
-
-describe('teamBucket', () => {
-  it('keeps a team the classifier assigned', () => {
-    expect(teamBucket('A')).toBe('A')
-    expect(teamBucket('b')).toBe('B')
-  })
-
-  // `player_stats.team` is `ANY_VALUE(team)` with no normalisation, so both
-  // reach the client and mean the same thing.
-  it('reads a null and the classifier’s "unknown" as the same bucket', () => {
-    expect(teamBucket(null)).toBe(UNASSIGNED)
-    expect(teamBucket('unknown')).toBe(UNASSIGNED)
-    expect(teamBucket('  ')).toBe(UNASSIGNED)
-  })
-
-  it('leaves a team id nobody knows as itself', () => {
-    expect(teamBucket('C')).toBe('C')
-  })
-})
-
-describe('teamBuckets', () => {
-  it('lists each bucket once, with the unassigned one last', () => {
-    const buckets = teamBuckets([
-      track(1, null),
-      track(2, 'B'),
-      track(3, 'A'),
-      track(4, 'unknown'),
-      track(5, 'B'),
-    ])
-
-    expect(buckets).toEqual(['A', 'B', UNASSIGNED])
-  })
-
-  it('is empty when there are no tracks', () => {
-    expect(teamBuckets([])).toEqual([])
-  })
-})
 
 describe('filterTracks', () => {
   const tracks = [track(1, 'A'), track(2, 'B'), track(3, null), track(4, 'unknown')]

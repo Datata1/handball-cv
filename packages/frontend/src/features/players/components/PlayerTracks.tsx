@@ -1,16 +1,10 @@
 import { useTranslation } from 'react-i18next'
 
-import type { TeamName } from '@/features/report/teams'
+import { type TeamName, teamBuckets } from '@/features/report/teams'
 import type { MatchStats } from '@/shared/api'
 import { EmptyState, ErrorState, LoadingState } from '@/shared/ui'
 
-import {
-  filterTracks,
-  sortTracks,
-  type TrackSort,
-  type TrackSortKey,
-  teamBuckets,
-} from '../tracks'
+import { filterTracks, sortTracks, type TrackSort, type TrackSortKey } from '../tracks'
 import { TeamFilter } from './TeamFilter'
 import { TrackTable } from './TrackTable'
 
@@ -62,7 +56,7 @@ export function PlayerTracks({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <TeamFilter
-          teams={teamBuckets(all)}
+          teams={teamBuckets(all.map((track) => track.team))}
           selected={team}
           onSelect={onTeamChange}
           teamName={teamName}

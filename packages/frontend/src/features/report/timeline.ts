@@ -29,10 +29,10 @@ export interface TimelineLabels {
 }
 
 /**
- * The timeline ids of the two things a section can point at.
+ * The timeline ids of the three things a section can point at.
  *
- * Exported because defense and offense highlight items they did not draw: they
- * have to name them exactly as the builder below does.
+ * Exported because defense, offense and the heatmap highlight items they did not
+ * draw: they have to name them exactly as the builder below does.
  */
 export function formationItemId(sceneId: number): string {
   return `formation-${sceneId}`
@@ -40,6 +40,24 @@ export function formationItemId(sceneId: number): string {
 
 export function playItemId(eventId: number): string {
   return `play-${eventId}`
+}
+
+export function phaseItemId(phaseId: number): string {
+  return `phase-${phaseId}`
+}
+
+/**
+ * The phase a timeline item names, or `null` for an item that is not one.
+ *
+ * The heatmap reads the selection in this direction: the timeline is its phase
+ * picker, and a click on a goal or a play must leave its filter alone rather
+ * than register as "no phase".
+ */
+export function phaseIdFromItem(itemId: string | null): number | null {
+  const id =
+    itemId?.startsWith('phase-') === true ? Number(itemId.slice(6)) : Number.NaN
+
+  return Number.isInteger(id) ? id : null
 }
 
 /** Emphasis only — every item's accessible name already says whose it is. */
@@ -81,7 +99,7 @@ export function buildTimelineTracks(
       kind: 'interval',
       items: sources.phases.map(
         (phase): TimelineItem => ({
-          id: `phase-${phase.phase_id}`,
+          id: phaseItemId(phase.phase_id),
           start: phase.start_time_s,
           end: phase.end_time_s,
           label: labels.phase(phase),
