@@ -1,6 +1,7 @@
 import common from './locales/de/common.json'
 import dashboard from './locales/de/dashboard.json'
 import domain from './locales/de/domain.json'
+import overview from './locales/de/overview.json'
 import report from './locales/de/report.json'
 import upload from './locales/de/upload.json'
 
@@ -16,6 +17,7 @@ const resources = {
   dashboard,
   upload,
   report,
+  overview,
 } as const
 
 export default resources

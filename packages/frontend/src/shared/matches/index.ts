@@ -4,3 +4,4 @@
 export { formatMatchDate } from './format'
 export { type MatchNameField, type MatchRename, useRenameMatch } from './rename'
 export { finalScore, type MatchScore, scoreboardSummaryOptions } from './scoreboard'
+export { matchStatsOptions } from './stats'
