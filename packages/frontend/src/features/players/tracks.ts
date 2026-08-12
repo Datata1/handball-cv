@@ -1,3 +1,4 @@
+import { teamBucket } from '@/features/report/teams'
 import type { PlayerStat } from '@/shared/api'
 
 /**
@@ -10,14 +11,6 @@ import type { PlayerStat } from '@/shared/api'
 
 /** `player_stats` is `ORDER BY frame_count DESC LIMIT 25` — the longest-lived tracks. */
 export const TRACK_LIMIT = 25
-
-/**
- * The bucket for a track the team classifier did not place. `player_stats.team`
- * is the raw column and SQL-nullable, so both `null` and the classifier's own
- * `"unknown"` arrive here and mean the same thing; `U` is what the normalised
- * `team` of every other endpoint calls it.
- */
-export const UNASSIGNED = 'U'
 
 /** Also the table's column ids and the values `?sort=` may take. */
 export const TRACK_SORT_KEYS = [
@@ -41,28 +34,6 @@ export function isTrackSortKey(value: string): value is TrackSortKey {
 
 /** The order the backend already sent the rows in. */
 export const DEFAULT_TRACK_SORT: TrackSort = { key: 'frames', direction: 'descending' }
-
-/**
- * Anything the classifier writes keeps its own bucket — a team id it invents is
- * shown as itself rather than collapsed into "unassigned".
- */
-export function teamBucket(team: string | null): string {
-  const raw = team?.trim().toUpperCase() ?? ''
-
-  return raw === '' || raw === 'UNKNOWN' ? UNASSIGNED : raw
-}
-
-/** The buckets present in these rows, unassigned last so it reads as the rest. */
-export function teamBuckets(tracks: readonly PlayerStat[]): string[] {
-  const buckets = [...new Set(tracks.map((track) => teamBucket(track.team)))]
-
-  return buckets.sort((a, b) => {
-    if (a === UNASSIGNED) return 1
-    if (b === UNASSIGNED) return -1
-
-    return a < b ? -1 : a > b ? 1 : 0
-  })
-}
 
 export function filterTracks(
   tracks: readonly PlayerStat[],

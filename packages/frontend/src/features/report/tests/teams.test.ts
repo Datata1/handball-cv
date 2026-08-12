@@ -1,5 +1,5 @@
 import { match, unnamedMatch } from '../stories/report'
-import { teamNamer } from '../teams'
+import { teamBucket, teamBuckets, teamNamer, UNASSIGNED } from '../teams'
 
 const fallback = (team: string) => `Team ${team}`
 
@@ -25,5 +25,38 @@ describe('teamNamer', () => {
   // emits later.
   it('passes an unrecognised team to the label lookup', () => {
     expect(teamNamer(match, fallback)('unknown')).toBe('Team unknown')
+  })
+})
+
+describe('teamBucket', () => {
+  it('keeps a team the classifier assigned', () => {
+    expect(teamBucket('A')).toBe('A')
+    expect(teamBucket('b')).toBe('B')
+  })
+
+  // `player_stats.team` is `ANY_VALUE(team)` and `available_track_ids[].team` is
+  // the raw column, so both reach the client and mean the same thing.
+  it('reads a null and the classifier’s "unknown" as the same bucket', () => {
+    expect(teamBucket(null)).toBe(UNASSIGNED)
+    expect(teamBucket('unknown')).toBe(UNASSIGNED)
+    expect(teamBucket('  ')).toBe(UNASSIGNED)
+  })
+
+  it('leaves a team id nobody knows as itself', () => {
+    expect(teamBucket('C')).toBe('C')
+  })
+})
+
+describe('teamBuckets', () => {
+  it('lists each bucket once, with the unassigned one last', () => {
+    expect(teamBuckets([null, 'B', 'A', 'unknown', 'B'])).toEqual([
+      'A',
+      'B',
+      UNASSIGNED,
+    ])
+  })
+
+  it('is empty when there is nothing to bucket', () => {
+    expect(teamBuckets([])).toEqual([])
   })
 })

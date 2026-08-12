@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import type { TeamName } from '@/features/report/teams'
+import { type TeamName, teamBucket } from '@/features/report/teams'
 import type { PlayerStat } from '@/shared/api'
 import { type Column, DataTable } from '@/shared/ui'
 
@@ -9,7 +9,6 @@ import {
   TRACK_LIMIT,
   type TrackSort,
   type TrackSortKey,
-  teamBucket,
 } from '../tracks'
 
 /**

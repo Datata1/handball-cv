@@ -1,0 +1,75 @@
+{
+  "title": "Heatmap",
+  "tagline": "Wo sich die erkannten Spieler auf dem Feld aufgehalten haben.",
+  "mode": {
+    "label": "Ansicht",
+    "density": "Dichte",
+    "tiles": "Kacheln"
+  },
+  "perspective": {
+    "label": "Perspektive",
+    "offense": "Angriff",
+    "defense": "Abwehr",
+    "both": "Beide"
+  },
+  "phase": {
+    "label": "Phase",
+    "all": "Ganzes Spiel",
+    "hint": "Eine Phase in der Zeitleiste auswählen, um die Heatmap darauf zu beschränken.",
+    "current": "{{team}} {{type}} ({{start}}–{{end}})",
+    "number": "Phase {{id}}",
+    "clear": "Phase aufheben"
+  },
+  "tracks": {
+    "title": "Spieler filtern",
+    "hint": "Ohne Auswahl zählen alle erkannten Spieler.",
+    "clear": "Auswahl aufheben",
+    "selectTeam": "alle wählen",
+    "clearTeam": "alle abwählen",
+    "selected": "{{count}} von {{total}} ausgewählt",
+    "track": "Spieler {{id}}",
+    "range": "{{start}}–{{end}}",
+    "loading": "Spieler werden geladen…",
+    "empty": {
+      "title": "Keine Spieler in dieser Auswahl",
+      "description": "Für den gewählten Ausschnitt hat der Tracker keine Positionen gespeichert."
+    }
+  },
+  "window": {
+    "title": "Zeitfenster",
+    "from": "Von",
+    "to": "Bis",
+    "fromSeconds": "Von, Sekunde im Spiel",
+    "toSeconds": "Bis, Sekunde im Spiel",
+    "reset": "Ganzes Spiel",
+    "current": "{{start}} bis {{end}}"
+  },
+  "tiles": {
+    "left": "Linke Spielfeldhälfte",
+    "right": "Rechte Spielfeldhälfte",
+    "hint": "Die Kacheln fassen das ganze Spiel zusammen. Die Filter der Dichteansicht wirken hier nicht.",
+    "loading": "Zonen werden geladen…",
+    "intensity": "{{value}} % der stärksten Zone",
+    "split": "Aufteilung nach Mannschaft",
+    "share": "{{team}}: {{count, number}}",
+    "silent": "In dieser Zone wurde niemand erkannt.",
+    "empty": {
+      "title": "Noch keine Positionen erkannt",
+      "description": "Für dieses Spiel hat der Tracker keine Spielerpositionen auf dem Feld gespeichert."
+    }
+  },
+  "points": {
+    "count_one": "{{count, number}} Positionsmessung in dieser Auswahl",
+    "count_other": "{{count, number}} Positionsmessungen in dieser Auswahl",
+    "loading": "Positionen werden geladen…",
+    "sparse": "Das sind zu wenige Messungen für ein aussagekräftiges Bild. Gespeichert wird nur etwa jede vierte Sekunde eine Position — je enger der Filter, desto weniger bleibt übrig.",
+    "empty": {
+      "title": "Keine Positionen in dieser Auswahl",
+      "description": "Filter zurücknehmen oder ein größeres Zeitfenster wählen."
+    },
+    "pending": {
+      "title": "Dichtedarstellung folgt",
+      "description": "Die Filter wirken bereits auf die Daten; gezeichnet wird die Dichte auf dem Feld noch nicht. Die Kachelansicht zeigt die Zonen schon jetzt."
+    }
+  }
+}
