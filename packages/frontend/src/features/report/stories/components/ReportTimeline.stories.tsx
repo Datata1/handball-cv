@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { fn } from 'storybook/test'
 
 import { withStores } from '@/testing/stores'
 
@@ -28,7 +27,7 @@ const tracks = buildTimelineTracks({ goals, phases, plays, formations }, labels)
 const meta = {
   title: 'Report/ReportTimeline',
   component: ReportTimeline,
-  args: { duration: DURATION_S, tracks, selectedId: null, onSelect: fn() },
+  args: { duration: DURATION_S, tracks },
   parameters: { layout: 'padded' },
   decorators: [
     withStores((store) => {
@@ -45,8 +44,14 @@ type Story = StoryObj<typeof meta>
 /** All four tracks the shell loads, with the playhead across them. */
 export const Default: Story = {}
 
+/** A section below the shell pointed at an item; the store is how it got here. */
 export const WithSelection: Story = {
-  args: { selectedId: 'phase-2' },
+  decorators: [
+    withStores((store) => {
+      store.player.setDuration(DURATION_S)
+      store.selection.select('phase-2')
+    }),
+  ],
 }
 
 /**

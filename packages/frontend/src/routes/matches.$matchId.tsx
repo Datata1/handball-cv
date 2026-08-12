@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Outlet, retainSearchParams } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { RouteNotFound } from '@/app/components/RouteNotFound'
@@ -59,8 +59,6 @@ function ReportLayout() {
   const plays = usePlays(matchId)
   const formations = useFormationScenes(matchId)
   const output = useOutputVideo(matchId)
-
-  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const match = meta.data ?? null
   const teamName = useMemo(
@@ -155,12 +153,7 @@ function ReportLayout() {
             }
           />
 
-          <ReportTimeline
-            duration={matchDurationSeconds(match)}
-            tracks={tracks}
-            selectedId={selectedId}
-            onSelect={(selection) => setSelectedId(selection?.item.id ?? null)}
-          />
+          <ReportTimeline duration={matchDurationSeconds(match)} tracks={tracks} />
         </>
       )}
 
