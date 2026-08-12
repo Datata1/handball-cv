@@ -26,14 +26,6 @@ function Invoke-SetupFrontend {
     finally { Pop-Location }
 }
 
-# Superseded frontend — not part of Invoke-Setup. Opt in only when you need to
-# run it side by side for reference.
-function Invoke-SetupFrontendLegacy {
-    Push-Location packages\frontend-legacy
-    try { pnpm install }
-    finally { Pop-Location }
-}
-
 function Invoke-SetupMoon {
     if (Test-Path $MOON_BIN) { return }
     New-Item -ItemType Directory -Force -Path tools | Out-Null
@@ -101,13 +93,6 @@ function Invoke-RunBackend {
 
 function Invoke-RunFrontend {
     Push-Location packages\frontend
-    try { pnpm dev }
-    finally { Pop-Location }
-}
-
-function Invoke-RunFrontendLegacy {
-    Write-Host "Legacy frontend -> http://localhost:3001 (superseded, reference only)"
-    Push-Location packages\frontend-legacy
     try { pnpm dev }
     finally { Pop-Location }
 }
@@ -201,7 +186,7 @@ function Invoke-Clean {
         Remove-Item -Recurse -Force "$pkg\.venv"  -ErrorAction SilentlyContinue
         Remove-Item -Force         "$pkg\uv.lock" -ErrorAction SilentlyContinue
     }
-    foreach ($pkg in @("packages\frontend", "packages\frontend-legacy")) {
+    foreach ($pkg in @("packages\frontend")) {
         Write-Host "Cleaning $pkg..."
         Remove-Item -Recurse -Force "$pkg\node_modules" -ErrorAction SilentlyContinue
         Remove-Item -Recurse -Force "$pkg\dist"         -ErrorAction SilentlyContinue
@@ -218,7 +203,6 @@ Setup:
   setup                  Set up all packages (backend + frontend + moon + hooks)
   setup-backend          Install backend dependencies
   setup-frontend         Install frontend dependencies (pnpm install via moon)
-  setup-frontend-legacy  Install the superseded frontend's dependencies
   setup-moon             Download moon binary
   setup-hooks            Install pre-commit hooks
 
@@ -226,7 +210,6 @@ Development:
   dev                    Start all services (backend + frontend)
   run-backend            Start backend only  (http://localhost:8000)
   run-frontend           Start frontend only (http://localhost:3000, Vite)
-  run-frontend-legacy    Start the superseded frontend (http://localhost:3001)
   build-frontend         Production build of the React frontend
 
 Code Quality:
@@ -257,13 +240,11 @@ switch ($Target) {
     "setup"              { Invoke-Setup }
     "setup-backend"      { Invoke-SetupBackend }
     "setup-frontend"     { Invoke-SetupFrontend }
-    "setup-frontend-legacy" { Invoke-SetupFrontendLegacy }
     "setup-moon"         { Invoke-SetupMoon }
     "setup-hooks"        { Invoke-SetupHooks }
     "dev"                { Invoke-Dev }
     "run-backend"        { Invoke-RunBackend }
     "run-frontend"       { Invoke-RunFrontend }
-    "run-frontend-legacy" { Invoke-RunFrontendLegacy }
     "build-frontend"     { Invoke-BuildFrontend }
     "lint"               { Invoke-Lint }
     "lint-backend"       { Invoke-LintBackend }

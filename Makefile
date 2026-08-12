@@ -1,5 +1,5 @@
-.PHONY: setup setup-backend setup-frontend setup-frontend-legacy setup-moon setup-hooks bootstrap \
-       dev run-backend run-frontend run-frontend-legacy build-frontend \
+.PHONY: setup setup-backend setup-frontend setup-moon setup-hooks bootstrap \
+       dev run-backend run-frontend build-frontend \
        lint lint-backend lint-frontend \
        typecheck typecheck-backend typecheck-frontend \
        format format-backend format-frontend \
@@ -14,10 +14,7 @@ MOON_BIN         := tools/moon
 DUCKDB_FILE      := data/output/duckdb/matches.duckdb
 
 PY_PACKAGES := packages/backend packages/ingestion packages/ml
-# frontend-legacy is superseded and scheduled for deletion. It is listed here so
-# `make clean` reclaims its node_modules, but it is deliberately absent from
-# setup/lint/typecheck/CI — see packages/frontend-legacy/moon.yml.
-JS_PACKAGES := packages/frontend packages/frontend-legacy
+JS_PACKAGES := packages/frontend
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
@@ -60,11 +57,6 @@ setup-backend:
 setup-frontend: $(MOON_BIN)
 	COREPACK_ENABLE_DOWNLOAD_PROMPT=0 $(MOON_BIN) run frontend:setup
 
-## Install the superseded frontend's dependencies. Not part of `make setup` —
-## opt in only when you need to run it side by side for reference.
-setup-frontend-legacy: $(MOON_BIN)
-	COREPACK_ENABLE_DOWNLOAD_PROMPT=0 $(MOON_BIN) run frontend-legacy:setup
-
 setup-hooks:
 	cd packages/backend && uv run pre-commit install
 
@@ -98,11 +90,6 @@ run-backend:
 
 run-frontend: $(MOON_BIN)
 	$(MOON_BIN) run frontend:run
-
-## Run the superseded frontend on port 3001, alongside the new one on 3000.
-run-frontend-legacy: $(MOON_BIN)
-	@echo "Legacy frontend → http://localhost:3001 (superseded, reference only)"
-	$(MOON_BIN) run frontend-legacy:run
 
 build-frontend: $(MOON_BIN)
 	$(MOON_BIN) run frontend:build

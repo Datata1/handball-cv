@@ -50,8 +50,6 @@ jobs:
         run: cd packages/backend && uv sync --all-extras
 
       - name: Install frontend dependencies
-        # packages/frontend-legacy is deliberately not installed, linted, or
-        # built here: it is superseded, frozen, and scheduled for deletion.
         run: cd packages/frontend && pnpm install --frozen-lockfile
 
       - name: Install ingestion dependencies
