@@ -4,6 +4,7 @@ import {
   type CourtPoint,
   courtLayerTransform,
   courtViewBox,
+  courtViewBoxSize,
   createCourtProjection,
 } from '../projection'
 
@@ -148,6 +149,14 @@ describe('court projection', () => {
     expect(minY).toBe(-COURT_MARGIN_M)
     expect(width).toBe(orientation === 'horizontal' ? long : short)
     expect(height).toBe(orientation === 'horizontal' ? short : long)
+  })
+
+  // A pixel surface laid over the court is sized from this, so it has to be
+  // the same box the viewBox names.
+  it.each(ORIENTATIONS)('reports that frame as a size too, in %s', (orientation) => {
+    const [, , width, height] = courtViewBox(orientation).split(' ').map(Number)
+
+    expect(courtViewBoxSize(orientation)).toEqual({ width, height })
   })
 
   it.each(ORIENTATIONS)(

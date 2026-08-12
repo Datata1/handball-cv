@@ -109,6 +109,14 @@
   --chart-4: var(--wels-caution);
   --chart-5: var(--wels-positive);
 
+  /* Who a mark belongs to: the two teams and the tracks the classifier could
+     not place. Three fills that have to stay apart from each other in both
+     schemes — the chart roles do not, because --chart-2 and --muted-foreground
+     are the same grey in the dark one. Fills only; nothing sets text on them. */
+  --team-a: var(--wels-blue);
+  --team-b: var(--wels-accent-deep);
+  --team-u: var(--wels-neutral-500);
+
   --sidebar: var(--wels-white);
   --sidebar-foreground: var(--wels-neutral-900);
   --sidebar-primary: var(--wels-navy);
@@ -152,6 +160,10 @@
   --chart-4: var(--wels-positive);
   --chart-5: var(--wels-info);
 
+  --team-a: var(--wels-blue-bright);
+  --team-b: var(--wels-accent-soft);
+  --team-u: var(--wels-neutral-400);
+
   --sidebar: var(--wels-navy);
   --sidebar-foreground: var(--wels-neutral-100);
   --sidebar-primary: var(--wels-blue-bright);
@@ -193,6 +205,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  --color-team-a: var(--team-a);
+  --color-team-b: var(--team-b);
+  --color-team-u: var(--team-u);
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
