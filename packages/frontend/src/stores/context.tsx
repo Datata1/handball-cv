@@ -2,6 +2,7 @@ import { createContext, type ReactNode, use, useState } from 'react'
 
 import type { PlayerStore } from './player'
 import { createRootStore, type RootStore } from './root'
+import type { SelectionStore } from './selection'
 
 const StoreContext = createContext<RootStore | null>(null)
 
@@ -31,4 +32,8 @@ export function useStores(): RootStore {
 
 export function usePlayer(): PlayerStore {
   return useStores().player
+}
+
+export function useSelection(): SelectionStore {
+  return useStores().selection
 }

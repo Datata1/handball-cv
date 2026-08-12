@@ -28,6 +28,16 @@ export interface TimelineLabels {
   formation: (scene: FormationScene) => string
 }
 
+/**
+ * The timeline id of a formation scene.
+ *
+ * Exported because the defense section highlights a scene it did not draw: it
+ * has to name the item exactly as the builder below did.
+ */
+export function formationItemId(sceneId: number): string {
+  return `formation-${sceneId}`
+}
+
 /** Emphasis only — every item's accessible name already says whose it is. */
 export function teamTone(team: string): TimelineTone {
   const code = team.toUpperCase()
@@ -102,7 +112,7 @@ export function buildTimelineTracks(
       kind: 'interval',
       items: sources.formations.map(
         (scene): TimelineItem => ({
-          id: `formation-${scene.scene_id}`,
+          id: formationItemId(scene.scene_id),
           start: scene.start_time_s,
           end: scene.end_time_s,
           label: labels.formation(scene),

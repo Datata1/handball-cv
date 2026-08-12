@@ -1,0 +1,37 @@
+{
+  "title": "Abwehrformationen",
+  "tagline": "Wie die Mannschaften in der Abwehr gestanden haben, gezählt über die klassifizierten Frames. Angriffs- und Umschaltphasen sind herausgerechnet — sie beschreiben, was eine Mannschaft getan hat, nicht wie sie gestanden hat.",
+  "loading": "Formationen werden geladen…",
+  "empty": {
+    "title": "Noch keine Formationen erkannt",
+    "description": "Für dieses Spiel liegt keine Formationsanalyse vor. Sie entsteht im Analyselauf nach der Videoverarbeitung; bis dahin bleibt dieser Bereich leer."
+  },
+  "team": {
+    "frames_one": "{{count, number}} klassifizierter Frame",
+    "frames_other": "{{count, number}} klassifizierte Frames",
+    "none": "Für diese Mannschaft wurde keine Abwehrformation klassifiziert."
+  },
+  "formation": {
+    "dominant": "Häufigste",
+    "value": "{{percent}} % · {{frames, number}} Frames",
+    "hint": "Formation auswählen, um ihre Szenen zu sehen."
+  },
+  "scenes": {
+    "title": "Szenen: {{formation}}",
+    "hint": "Eine Szene auswählen, um sie im Video zu sehen. Das Video bleibt danach auf diesen Ausschnitt begrenzt.",
+    "caption_one": "{{count}} Szene in dieser Formation.",
+    "caption_other": "{{count}} Szenen in dieser Formation.",
+    "columns": {
+      "index": "Nr.",
+      "window": "Zeitraum",
+      "duration": "Dauer"
+    },
+    "window": "{{start}} – {{end}}",
+    "play": "Szene {{index}} abspielen, {{start}} bis {{end}}",
+    "clear": "Auswahl aufheben",
+    "empty": {
+      "title": "Keine Szenen gespeichert",
+      "description": "Diese Formation wurde einzelnen Frames zugeordnet, aber es wurde kein zusammenhängender Abschnitt daraus gespeichert."
+    }
+  }
+}

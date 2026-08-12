@@ -1,6 +1,7 @@
 import './configure'
 
 import { PlayerStore } from './player'
+import { SelectionStore } from './selection'
 
 /**
  * Client state only — view state that no URL and no server response owns.
@@ -8,6 +9,7 @@ import { PlayerStore } from './player'
  */
 export class RootStore {
   readonly player = new PlayerStore()
+  readonly selection = new SelectionStore()
 }
 
 export function createRootStore(): RootStore {

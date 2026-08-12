@@ -1,5 +1,6 @@
 import common from './locales/de/common.json'
 import dashboard from './locales/de/dashboard.json'
+import defense from './locales/de/defense.json'
 import domain from './locales/de/domain.json'
 import overview from './locales/de/overview.json'
 import players from './locales/de/players.json'
@@ -20,6 +21,7 @@ const resources = {
   report,
   overview,
   players,
+  defense,
 } as const
 
 export default resources
