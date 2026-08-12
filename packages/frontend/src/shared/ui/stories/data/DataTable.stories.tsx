@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 
 import { type Column, DataTable } from '../../data/DataTable'
 
@@ -10,18 +11,20 @@ type Track = {
 }
 
 const columns: Column<Track>[] = [
-  { id: 'id', header: 'Track', cell: (track) => track.id },
+  { id: 'id', header: 'Track', cell: (track) => track.id, sortable: true },
   { id: 'team', header: 'Mannschaft', cell: (track) => track.team },
   {
     id: 'frames',
     header: 'Frames',
     numeric: true,
+    sortable: true,
     cell: (track) => track.frames.toLocaleString('de-DE'),
   },
   {
     id: 'distance',
     header: 'Distanz (m)',
     numeric: true,
+    sortable: true,
     cell: (track) => track.distance.toLocaleString('de-DE'),
   },
 ]
@@ -62,4 +65,11 @@ export const NoRows: Story = {
 
 export const NoRowsWithOwnMessage: Story = {
   args: { rows: [], empty: 'Für diesen Abschnitt wurde kein Track erkannt.' },
+}
+
+/** A sortable column only becomes a button once the table is told the order. */
+export const Sorted: Story = {
+  args: {
+    sort: { columnId: 'frames', direction: 'descending', onSort: fn() },
+  },
 }
