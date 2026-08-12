@@ -26,12 +26,25 @@ export type CourtProjection = {
  * test and in a 200px-wide container.
  */
 export function courtViewBox(orientation: CourtOrientation): string {
+  const { width, height } = courtViewBoxSize(orientation)
+
+  return `${-COURT_MARGIN_M} ${-COURT_MARGIN_M} ${width} ${height}`
+}
+
+/**
+ * The viewBox as metres across and down, margins included — the aspect ratio a
+ * pixel surface laid over the court has to match.
+ */
+export function courtViewBoxSize(orientation: CourtOrientation): {
+  width: number
+  height: number
+} {
   const [length, width] =
     orientation === 'horizontal'
       ? [COURT_LENGTH_M, COURT_WIDTH_M]
       : [COURT_WIDTH_M, COURT_LENGTH_M]
 
-  return `${-COURT_MARGIN_M} ${-COURT_MARGIN_M} ${length + 2 * COURT_MARGIN_M} ${width + 2 * COURT_MARGIN_M}`
+  return { width: length + 2 * COURT_MARGIN_M, height: width + 2 * COURT_MARGIN_M }
 }
 
 /**

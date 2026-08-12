@@ -63,3 +63,41 @@ export function courtZone(half: CourtHalf, code: ZoneCode): CourtZone {
 export function zonesForHalf(half: CourtHalf): CourtZone[] {
   return ZONE_CODES.map((code) => courtZone(half, code))
 }
+
+/**
+ * `/stats` groups positions into zones with a SQL `CASE` per half — first
+ * branch wins, and the halfway line decides which half a position belongs to.
+ * These are those branches (`backend/routes/matches.py:389`).
+ */
+function leftCode({ x, y }: CourtPoint): ZoneCode {
+  if (x < 7 && y >= 5 && y <= 15) return 'KL'
+  if (x < 12 && y >= 15) return 'LA'
+  if (x < 12 && y <= 5) return 'RA'
+  if (y > 12) return 'RL'
+  if (y < 8) return 'RR'
+
+  return 'RM'
+}
+
+function rightCode({ x, y }: CourtPoint): ZoneCode {
+  if (x > 33 && y >= 5 && y <= 15) return 'KL'
+  if (x > 28 && y <= 5) return 'LA'
+  if (x > 28 && y >= 15) return 'RA'
+  if (y < 8) return 'RL'
+  if (y > 12) return 'RR'
+
+  return 'RM'
+}
+
+/**
+ * The zone a single position falls in.
+ *
+ * A deliberate copy of the server's own grouping: a client-side summary of the
+ * points has to bucket them the way `/stats` bucketed the ones behind the
+ * tiles, or the two views would describe the same match differently.
+ */
+export function zoneAt(point: CourtPoint): CourtZone {
+  const half: CourtHalf = point.x < COURT_LENGTH_M / 2 ? 'left' : 'right'
+
+  return courtZone(half, half === 'left' ? leftCode(point) : rightCode(point))
+}

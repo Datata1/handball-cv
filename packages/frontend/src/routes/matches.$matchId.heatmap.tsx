@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { DensityMap } from '@/features/heatmap/components/DensityMap'
 import { HeatmapControls } from '@/features/heatmap/components/HeatmapControls'
 import { PointSummary } from '@/features/heatmap/components/PointSummary'
 import { TimeWindow } from '@/features/heatmap/components/TimeWindow'
@@ -214,6 +215,12 @@ function HeatmapSection() {
           <PointSummary
             points={points.data?.heatmap_points}
             filtered={isFiltered(search)}
+          />
+
+          <DensityMap
+            points={points.data?.heatmap_points ?? []}
+            teamName={teamName}
+            label={label}
           />
         </>
       )}

@@ -4,6 +4,7 @@
 export { Court, type CourtData, CourtLayer, type CourtProps } from './Court'
 export {
   COURT_LENGTH_M,
+  COURT_MARGIN_M,
   COURT_WIDTH_M,
   type CourtEnd,
   goalLineX,
@@ -13,6 +14,8 @@ export {
   type CourtOrientation,
   type CourtPoint,
   type CourtProjection,
+  courtViewBoxSize,
+  createCourtProjection,
   useCourtProjection,
 } from './projection'
 export {
@@ -21,5 +24,6 @@ export {
   courtZone,
   ZONE_CODES,
   type ZoneCode,
+  zoneAt,
   zonesForHalf,
 } from './zones'

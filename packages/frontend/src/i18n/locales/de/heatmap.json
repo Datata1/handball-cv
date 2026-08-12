@@ -66,10 +66,17 @@
     "empty": {
       "title": "Keine Positionen in dieser Auswahl",
       "description": "Filter zurücknehmen oder ein größeres Zeitfenster wählen."
-    },
-    "pending": {
-      "title": "Dichtedarstellung folgt",
-      "description": "Die Filter wirken bereits auf die Daten; gezeichnet wird die Dichte auf dem Feld noch nicht. Die Kachelansicht zeigt die Zonen schon jetzt."
+    }
+  },
+  "density": {
+    "label": "Verteilung von {{count, number}} gemessenen Spielerpositionen auf dem Spielfeld",
+    "legend": "{{team}}: {{count, number}}",
+    "hint": "Je kräftiger eine Fläche, desto häufiger wurden dort Positionen gemessen. Die Farbe zeigt, welche Mannschaft dort war.",
+    "alternative": {
+      "intro": "{{count, number}} gemessene Positionen, zusammengefasst nach Zonen. Die stärksten Zonen dieser Auswahl:",
+      "zone": "{{half}}, {{zone}}: {{count, number}} Positionen ({{shares}})",
+      "share": "{{team}} {{count, number}}",
+      "tiles": "Die Kachelansicht zeigt alle Zonen als Zahlen, allerdings für das ganze Spiel."
     }
   }
 }

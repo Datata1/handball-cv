@@ -46,6 +46,32 @@ describe('heatmap section', () => {
     expect(screen.getByRole('heading', { name: 'Spieler filtern' })).toBeVisible()
   })
 
+  // The drawing is a canvas over the shared court, so what the section can be
+  // held to is that the court is there and says what it is showing.
+  it('draws the selected points on the shared court', async () => {
+    backend()
+    renderApp('/matches/seed01/heatmap')
+
+    expect(
+      await screen.findByRole('img', {
+        name: 'Verteilung von 1.240 gemessenen Spielerpositionen auf dem Spielfeld',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('has nothing to draw for a selection with no points in it', async () => {
+    backend({
+      '/matches/seed01/heatmap-points': {
+        available_track_ids: [],
+        heatmap_points: [],
+      },
+    })
+    renderApp('/matches/seed01/heatmap')
+
+    expect(await screen.findByText('Keine Positionen in dieser Auswahl')).toBeVisible()
+    expect(screen.queryByRole('img', { name: /Verteilung von/ })).toBeNull()
+  })
+
   it('restores every filter from a cold deep link', async () => {
     const fetchMock = backend()
     renderApp(

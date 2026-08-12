@@ -50,11 +50,6 @@ export function PointSummary({
           {t('points.sparse')}
         </p>
       ) : null}
-
-      <EmptyState
-        title={t('points.pending.title')}
-        description={t('points.pending.description')}
-      />
     </div>
   )
 }

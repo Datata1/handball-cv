@@ -1,5 +1,6 @@
 import { COURT_LENGTH_M, COURT_WIDTH_M } from '../geometry'
-import { courtZone, ZONE_CODES, zonesForHalf } from '../zones'
+import type { CourtPoint } from '../projection'
+import { courtZone, ZONE_CODES, zoneAt, zonesForHalf } from '../zones'
 
 describe('court zones', () => {
   it('carries the six /stats zones in the order the backend returns them', () => {
@@ -53,5 +54,39 @@ describe('court zones', () => {
     for (const code of ZONE_CODES) {
       expect(courtZone('right', code).spread).toBe(courtZone('left', code).spread)
     }
+  })
+})
+
+describe('zoneAt', () => {
+  it('puts a position in the half it was measured in', () => {
+    expect(zoneAt({ x: 5, y: 10 }).half).toBe('left')
+    expect(zoneAt({ x: 35, y: 10 }).half).toBe('right')
+    expect(zoneAt({ x: COURT_LENGTH_M / 2, y: 10 }).half).toBe('right')
+  })
+
+  // The centres are the seeds each zone's summary is drawn at, so a centre that
+  // does not fall in its own zone would draw the summary somewhere else.
+  it.each(['left', 'right'] as const)('finds every %s zone at its centre', (half) => {
+    for (const zone of zonesForHalf(half)) {
+      expect(zoneAt(zone.centre)).toMatchObject({ half, code: zone.code })
+    }
+  })
+
+  const LEFT: [CourtPoint, string][] = [
+    [{ x: 3, y: 10 }, 'KL'],
+    [{ x: 10, y: 18 }, 'LA'],
+    [{ x: 10, y: 2 }, 'RA'],
+    [{ x: 15, y: 14 }, 'RL'],
+    [{ x: 15, y: 6 }, 'RR'],
+    [{ x: 15, y: 10 }, 'RM'],
+  ]
+
+  it.each(LEFT)('groups %o the way /stats groups it', (point, code) => {
+    expect(zoneAt(point).code).toBe(code)
+
+    // The right half is the left one turned about the centre point, and the
+    // server's two `CASE`s say the same.
+    const turned = { x: COURT_LENGTH_M - point.x, y: COURT_WIDTH_M - point.y }
+    expect(zoneAt(turned).code).toBe(code)
   })
 })

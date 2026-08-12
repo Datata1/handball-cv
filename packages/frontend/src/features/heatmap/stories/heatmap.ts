@@ -9,6 +9,7 @@ import {
   type ZoneCount,
   type ZoneIntensity,
 } from '@/shared/api'
+import { zonesForHalf } from '@/shared/court'
 
 /**
  * Names the teams the way the shell does — including the unassigned bucket,
@@ -145,19 +146,55 @@ export const availableTracks: AvailableTrack[] = [
   track(28, 'unknown', 1_500, 1_560, 900),
 ]
 
-function points(count: number): HeatmapPoint[] {
-  const teams: NormalisedTeam[] = ['A', 'B', 'U']
+/** Seeded, so a density story draws the same cloud on every run. */
+function pseudoRandom(seed: number): () => number {
+  let state = seed
 
-  return Array.from({ length: count }, (_, index) => ({
-    x: 2 + ((index * 7.3) % 36),
-    y: 1 + ((index * 3.1) % 18),
-    team: teams[index % 3] ?? 'U',
-  }))
+  return () => {
+    state = (state * 1_664_525 + 1_013_904_223) % 4_294_967_296
+    return state / 4_294_967_296
+  }
+}
+
+/**
+ * Positions scattered around the zone centres rather than spread evenly: a real
+ * cloud has hot spots, and a density map that never has to resolve one proves
+ * nothing.
+ */
+function points(
+  count: number,
+  teams: readonly NormalisedTeam[] = ['A', 'B', 'U'],
+  seed = 7,
+): HeatmapPoint[] {
+  const random = pseudoRandom(seed)
+  const zones = [...zonesForHalf('left'), ...zonesForHalf('right')]
+
+  return Array.from({ length: count }, (_, index) => {
+    const zone = zones[index % zones.length]
+
+    return {
+      x: zone.centre.x + (random() - 0.5) * 7,
+      y: zone.centre.y + (random() - 0.5) * 6,
+      team: teams[index % teams.length] ?? 'U',
+    }
+  })
 }
 
 export const heatmapPoints: HeatmapPoints = {
   available_track_ids: availableTracks,
   heatmap_points: points(1_240),
+}
+
+/** The cap `/heatmap-points` returns for an unfiltered match, in full. */
+export const denseHeatmapPoints: HeatmapPoints = {
+  available_track_ids: availableTracks,
+  heatmap_points: points(12_000),
+}
+
+/** Every point placed, and all of them the same team. */
+export const oneTeamHeatmapPoints: HeatmapPoints = {
+  available_track_ids: availableTracks,
+  heatmap_points: points(880, ['A'], 23),
 }
 
 /** One track over a minute of the match: below what a density view can say anything about. */

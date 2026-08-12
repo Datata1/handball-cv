@@ -9,6 +9,12 @@ import '../src/styles/index.css'
 // both vitest projects reach this file and only one reads that one.
 if (import.meta.env.MODE === 'test') {
   window.scrollTo = () => {}
+
+  // Same for the canvas: jsdom has no rasteriser, and the density map already
+  // bails when it cannot get a context. Stubbed rather than left to print,
+  // because the notice arrives once per story that draws one.
+  HTMLCanvasElement.prototype.getContext = (() =>
+    null) as typeof HTMLCanvasElement.prototype.getContext
 }
 
 const preview: Preview = {

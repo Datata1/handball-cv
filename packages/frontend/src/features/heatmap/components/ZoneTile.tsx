@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 
 import type { TeamName } from '@/features/report/teams'
 import { cn } from '@/lib/utils'
-import type { NormalisedTeam } from '@/shared/api'
 
+import { TEAM_TONES } from '../palette'
 import {
   TEAM_BUCKETS,
   teamShare,
@@ -11,13 +11,6 @@ import {
   tileFillStyle,
   type ZoneTileData,
 } from '../tiles'
-
-/** The team colours the timeline already uses for the same three buckets. */
-const TEAM_TONES: Record<NormalisedTeam, string> = {
-  A: 'bg-chart-1',
-  B: 'bg-chart-2',
-  U: 'bg-muted-foreground',
-}
 
 /**
  * One zone, carrying both of the things `/stats` reports about it: how busy it
