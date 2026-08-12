@@ -1,0 +1,30 @@
+{
+  "title": "Spieler-Tracking",
+  "tagline": "Das System verfolgt jede Person als eigenen Track. Kameraschnitte, Verdeckungen und Auswechslungen zerlegen einen Spieler in mehrere Tracks — mehr Tracks als Spieler ist erwartet und kein Fehler. Die Tabelle ist eine Diagnose der Verfolgung, keine Spielstatistik.",
+  "table": {
+    "caption": "Die langlebigsten Tracks dieses Spiels. Der Server liefert höchstens {{limit}} davon, ausgewählt nach sichtbaren Frames.",
+    "loading": "Tracks werden geladen…",
+    "count_one": "{{count}} Track",
+    "count_other": "{{count}} Tracks",
+    "countFiltered": "{{shown}} von {{total}} Tracks"
+  },
+  "columns": {
+    "track": "Track-ID",
+    "team": "Mannschaft",
+    "frames": "Frames sichtbar",
+    "confidence": "Ø Konfidenz",
+    "distance": "Distanz"
+  },
+  "cells": {
+    "track": "#{{id}}"
+  },
+  "filter": {
+    "team": "Mannschaft",
+    "all": "Alle Mannschaften"
+  },
+  "empty": {
+    "title": "Keine Tracks gespeichert",
+    "description": "Für dieses Spiel wurde keine verfolgte Person gespeichert. Läuft die Verarbeitung noch, erscheinen die Tracks danach."
+  },
+  "noneInTeam": "Für diese Auswahl wurde kein Track gespeichert."
+}

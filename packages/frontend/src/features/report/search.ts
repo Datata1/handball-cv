@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { TRACK_SORT_KEYS } from '@/features/players/tracks'
+
 /**
  * The report's URL contract — every drill-in a section offers, as a search
  * param rather than a path segment. Picking a formation *filters* the section;
@@ -40,6 +42,21 @@ export const offenseSearch = z.object({
   playType: label,
 })
 
+/**
+ * The tracks table's order and team filter, so a trainer can send someone the
+ * table as they are reading it.
+ *
+ * Neither has a zod `.default()`: a defaulted param is re-serialised into the
+ * URL by any navigation, including one that does not touch it, so `?sort=` would
+ * appear the first time a section link is followed. The section resolves the
+ * default instead.
+ */
+export const playersSearch = z.object({
+  team: label,
+  sort: z.enum(TRACK_SORT_KEYS).optional().catch(undefined),
+  dir: z.enum(['ascending', 'descending']).optional().catch(undefined),
+})
+
 export const heatmapSearch = z
   .object({
     mode: z.enum(['density', 'tiles']).default('density').catch('density'),
@@ -69,4 +86,5 @@ export const heatmapDefaults = {
 export type ReportSearch = z.infer<typeof reportSearch>
 export type DefenseSearch = z.infer<typeof defenseSearch>
 export type OffenseSearch = z.infer<typeof offenseSearch>
+export type PlayersSearch = z.infer<typeof playersSearch>
 export type HeatmapSearch = z.infer<typeof heatmapSearch>

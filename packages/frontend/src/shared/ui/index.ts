@@ -2,7 +2,7 @@
 // Nothing here knows what a match is.
 
 export { Bar } from './data/Bar'
-export { type Column, DataTable } from './data/DataTable'
+export { type Column, DataTable, type TableSort } from './data/DataTable'
 export { toPercent } from './data/percent'
 export { SplitBar, type SplitSide } from './data/SplitBar'
 export { StatTile } from './data/StatTile'
