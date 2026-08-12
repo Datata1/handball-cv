@@ -1,0 +1,50 @@
+{
+  "title": "Übersicht",
+  "tagline": "Alles auf dieser Seite ist gemessen. Wo nichts steht, wurde nichts erkannt.",
+  "scoreboard": {
+    "title": "Spielstand",
+    "hint": "Heim und Gast stehen so auf der Anzeigetafel. Welche Mannschaft das ist, sagt die Erkennung nicht.",
+    "home": "Heim",
+    "away": "Gast",
+    "final": "Endstand",
+    "finalAt": "Endstand bei Spielzeit {{time}}",
+    "empty": {
+      "title": "Keine Anzeigetafel erkannt",
+      "description": "Für dieses Spiel wurde keine einzige Anzeigetafel gelesen."
+    },
+    "noFinal": {
+      "title": "Kein Endstand erkannt",
+      "description": "Die Anzeigetafel wurde gelesen, aber nie mit beiden Spielständen zugleich."
+    }
+  },
+  "goals": {
+    "title": "Tore",
+    "empty": "Keine Tore erkannt.",
+    "item": "{{clock}} {{time}}, {{team}}, {{score}}",
+    "gameTime": "Spielzeit",
+    "videoTime": "Videozeit"
+  },
+  "possession": {
+    "title": "Ballbesitz",
+    "unassigned": "{{value}} ohne Teamzuordnung",
+    "empty": {
+      "title": "Kein Ballbesitz gemessen",
+      "description": "In keinem Frame ließ sich der Ball einem Spieler zuordnen."
+    }
+  },
+  "figures": {
+    "title": "Kennzahlen",
+    "frames": "Frames ausgewertet",
+    "duration": "Videolänge",
+    "tracks": "Erkannte Tracks",
+    "tracksHint": "Ein Spieler kann in mehrere Tracks zerfallen.",
+    "loading": "Kennzahlen werden geladen…"
+  },
+  "quality": {
+    "title": "Verarbeitungsqualität",
+    "description": "Wie oft die Erkennung im Video gegriffen hat. Diagnose der Verarbeitung, keine Spielstatistik.",
+    "ball": "Erkennungsrate Ball",
+    "player": "Erkennungsrate Spieler",
+    "field": "Erkennungsrate Feldposition"
+  }
+}
