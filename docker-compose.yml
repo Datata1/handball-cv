@@ -41,8 +41,6 @@ services:
     restart: unless-stopped
 
   # ── Frontend (React, served by nginx) ────────────────────────────────────
-  # packages/frontend-legacy is superseded and has no service here — port 3000
-  # can only be claimed once. Run it locally with `make run-frontend-legacy`.
   frontend:
     build:
       context: .

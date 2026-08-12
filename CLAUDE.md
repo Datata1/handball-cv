@@ -78,8 +78,6 @@ wels-monorepo/
 │   │       ├── testing/        # harness: vitest setup, axe helper, Storybook decorators
 │   │       ├── assets/         # logo + static assets
 │   │       └── styles/         # index.css → tailwind.css, tokens.css
-│   ├── frontend-legacy/  # SUPERSEDED. Reference only while features are migrated
-│   │                     # to frontend/; run on :3001, absent from CI. Delete when empty.
 │   ├── ingestion/        # CV pipeline: video → DuckDB
 │   │   └── src/ingestion/
 │   │       ├── pipeline/     # detection, pose, team, court (pure functions)
@@ -160,10 +158,6 @@ make run-backend    # → http://localhost:8000
 make run-frontend   # → http://localhost:3000 (Vite dev server)
 make build-frontend # production build to packages/frontend/dist/
 
-# Superseded frontend — reference only, not installed by `make setup`
-make setup-frontend-legacy
-make run-frontend-legacy  # → http://localhost:3001
-
 # Code quality
 make lint           # ruff (Python) + biome (frontend)
 make format         # ruff format (Python) + biome (frontend)
@@ -210,8 +204,9 @@ Do not write:
 - **PR or roadmap references.** No `// PR 04 wraps this`, no `// added in #7`,
   no `// corrected while building`. Nobody reading this file later cares which
   PR did what, and the reference rots the moment the plan changes.
-- **Comparisons to code that no longer exists.** `frontend-legacy`'s mistakes
-  belong in the PR description, not in the file that replaced it.
+- **Comparisons to code that no longer exists.** The mistakes of the frontend
+  this one replaced belong in the PR description, not in the file that replaced
+  it.
 - **Justification of the choice made.** If a reviewer needs convincing, that
   goes in the PR. If a *future maintainer* needs the constraint to avoid
   breaking something, that is a real comment — state the constraint, not the
@@ -615,7 +610,6 @@ surface whatever has accumulated behind it.
 Ingestion installs without the `[cv]` extras (no torch/ultralytics on CI).
 ML installs normally; torch runs on CPU on the GitHub runner and is cached between runs.
 Frontend installs with `pnpm install --frozen-lockfile`; the pnpm store is cached between runs via `actions/setup-node`.
-`packages/frontend-legacy` is **not** installed, linted, or built by CI — it is frozen and scheduled for deletion, and its code was never lint-clean.
 The frontend `build` script is `vite build && tsc -b --noEmit` in that order on purpose: the router plugin has to regenerate `routeTree.gen.ts` before `tsc` sees it, otherwise a newly added route is type-checked against a stale tree.
 
 ## Available Claude Skills
@@ -645,7 +639,6 @@ Custom skills are defined under `.claude/commands/` and invocable as slash comma
 - **TanStack Router with file-based routes**: every view has a real URL, so reports are deep-linkable, refreshable, and back-button-able. The previous frontend switched views with a `useState` union and could not link to a match at all.
 - **One cache, and SSE pushes into it**: every HTTP response lives in TanStack Query, and the backend's `/status/stream` translates into scoped, debounced `invalidateQueries` rather than a blanket reload. The legacy app cached `/stats` in a module-level `Map` that never expired, discarded the SSE payload, and refetched the whole match list on every event — including the events its own refetch caused.
 - **MobX for the video clock, and little else**: the playhead updates several times a second and is read by the timeline, the active-phase badge and every section that highlights "now". React state re-renders the report tree on every tick and the URL thrashes history; an observable re-renders exactly its subscribers. That narrow job is the whole mandate — three state owners only stay comprehensible while each one's boundary is obvious.
-- **`frontend-legacy` is temporary**: kept only so features can be read off it during migration. It is out of CI, off the default setup path, and on port 3001. Delete it once empty.
 - **uv + pnpm for packages**: `uv` for Python, `pnpm` for the frontend — both are deterministic, both are fast.
 - **moon for task caching and toolchain provisioning**: tasks only re-run when inputs change; moon also installs Node + pnpm from `.moon/toolchains.yml` so contributors don't need to install them manually. Note the plural filename — moon 2 renamed it and **silently ignores** the 1.x `toolchain.yml`, which is how the previous Node pin came to have no effect.
 - **ruff + ty, not black/mypy**: both written in Rust; order-of-magnitude faster.
