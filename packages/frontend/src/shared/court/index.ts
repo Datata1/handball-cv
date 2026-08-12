@@ -2,7 +2,13 @@
 // data in metres — the same frame the backend reports in.
 
 export { Court, type CourtData, CourtLayer, type CourtProps } from './Court'
-export { COURT_LENGTH_M, COURT_WIDTH_M, type CourtEnd, goalLineX } from './geometry'
+export {
+  COURT_LENGTH_M,
+  COURT_WIDTH_M,
+  type CourtEnd,
+  goalLineX,
+  goalRect,
+} from './geometry'
 export {
   type CourtOrientation,
   type CourtPoint,

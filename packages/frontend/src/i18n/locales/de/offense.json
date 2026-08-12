@@ -1,0 +1,48 @@
+{
+  "title": "Offensive Spielzüge",
+  "tagline": "Welche Spielzüge die regelbasierte Erkennung gefunden hat, wie oft und mit welchem Ausgang. Die Namen kommen aus der Erkennung selbst — ein neu erkannter Spielzug erscheint hier unter seiner eigenen Bezeichnung.",
+  "loading": "Spielzüge werden geladen…",
+  "empty": {
+    "title": "Noch keine Spielzüge erkannt",
+    "description": "Für dieses Spiel liegt keine Spielzugerkennung vor. Sie entsteht im Analyselauf nach der Videoverarbeitung; bis dahin bleibt dieser Bereich leer."
+  },
+  "frozen": {
+    "title": "Noch nicht verfügbar"
+  },
+  "playType": {
+    "hint": "Spielzug auswählen, um seine Szenen zu sehen.",
+    "count_one": "{{count, number}} Szene",
+    "count_other": "{{count, number}} Szenen",
+    "team": "{{team}}: {{count, number}}×",
+    "success": "{{percent}} % mit Tor ({{goals}} von {{rated}} Angriffen)",
+    "unrated": "Keine Bewertung",
+    "confidence": "Ø Konfidenz {{percent}} %"
+  },
+  "scenes": {
+    "title": "Szenen: {{playType}}",
+    "hint": "Eine Szene auswählen, um sie im Video zu sehen. Das Video bleibt danach auf diesen Ausschnitt begrenzt, und die Laufwege erscheinen unter der Liste.",
+    "caption_one": "{{count}} Szene dieses Spielzugs.",
+    "caption_other": "{{count}} Szenen dieses Spielzugs.",
+    "window": "{{start}} – {{end}}",
+    "confidence": "Konfidenz {{percent}} %",
+    "outcomeUnknown": "Ausgang unbekannt",
+    "verdict": "Trainerbewertung: {{verdict}}",
+    "empty": {
+      "title": "Keine Szenen zu diesem Spielzug",
+      "description": "Dieser Spielzug taucht in der Zählung auf, aber es ist keine einzelne Szene dazu gespeichert."
+    }
+  },
+  "trajectory": {
+    "title": "Laufwege",
+    "label": "Laufwege: {{playType}}, {{team}}",
+    "hint": "Kreis offen: Anfang der Szene, Kreis gefüllt: Ende. Der Teamschwerpunkt ist gestrichelt — er ist ein Mittelwert, kein Spieler.",
+    "none": "Für diese Szene sind keine Laufwege gespeichert.",
+    "centroid": "Teamschwerpunkt",
+    "track": "Track {{id}}",
+    "goal": "Angegriffenes Tor",
+    "summary_one": "{{count}} Laufweg, {{start}} bis {{end}}.",
+    "summary_other": "{{count}} Laufwege, {{start}} bis {{end}}.",
+    "path": "{{name}}: von {{fromX, number}} m / {{fromY, number}} m nach {{toX, number}} m / {{toY, number}} m",
+    "attacked": "Angegriffen wird das Tor bei {{metres, number}} m."
+  }
+}

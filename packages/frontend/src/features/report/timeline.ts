@@ -29,13 +29,17 @@ export interface TimelineLabels {
 }
 
 /**
- * The timeline id of a formation scene.
+ * The timeline ids of the two things a section can point at.
  *
- * Exported because the defense section highlights a scene it did not draw: it
- * has to name the item exactly as the builder below did.
+ * Exported because defense and offense highlight items they did not draw: they
+ * have to name them exactly as the builder below does.
  */
 export function formationItemId(sceneId: number): string {
   return `formation-${sceneId}`
+}
+
+export function playItemId(eventId: number): string {
+  return `play-${eventId}`
 }
 
 /** Emphasis only — every item's accessible name already says whose it is. */
@@ -95,7 +99,7 @@ export function buildTimelineTracks(
       kind: 'interval',
       items: sources.plays.map(
         (play): TimelineItem => ({
-          id: `play-${play.event_id}`,
+          id: playItemId(play.event_id),
           start: play.start_time_s,
           end: play.end_time_s,
           label: labels.play(play),

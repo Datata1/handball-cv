@@ -10,6 +10,15 @@
     "5-1": "5-1",
     "4-2": "4-2"
   },
+  "outcome": {
+    "goal": "Tor",
+    "no_goal": "Kein Tor",
+    "unknown": "Unbekannt"
+  },
+  "verdict": {
+    "correct": "Richtig erkannt",
+    "wrong": "Falsch erkannt"
+  },
   "team": {
     "A": "Team A",
     "B": "Team B",
