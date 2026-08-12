@@ -15,6 +15,7 @@
     "uploading": "Wird hochgeladen…",
     "processing": "Wird verarbeitet…",
     "processingHint": "Die Datei ist vollständig übertragen. Der Server liest sie einmal komplett ein, bevor die Verarbeitung startet — das dauert bei großen Videos einen Moment.",
+    "announce": "Upload zu {{value}} % übertragen",
     "transferred": "{{loaded}} von {{total}}",
     "rate": "{{rate}}/s",
     "remaining": "noch etwa {{duration}}",

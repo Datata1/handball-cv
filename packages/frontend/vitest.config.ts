@@ -43,6 +43,10 @@ export default defineConfig({
         test: {
           ...shared.test,
           name: 'storybook',
+          // Every story is also an axe run, and axe walks each focusable node:
+          // the timeline's Dense story alone renders 320 bars, which takes a
+          // few seconds on a loaded runner. The default 5s trips on that.
+          testTimeout: 20_000,
           server: {
             deps: {
               // Required for a11y violations to fail the run: addon-a11y gates

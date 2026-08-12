@@ -76,6 +76,14 @@ export function UploadProgress({
         aria-valuetext={t('common:units.percent', { value: Math.round(percent) })}
       />
 
+      {/* Quarters, not percent: the bar moves several times a second on a fast
+          connection, and a live region reading every value announces nothing. */}
+      <p role="status" className="sr-only">
+        {uploading
+          ? t('upload:progress.announce', { value: Math.floor(percent / 25) * 25 })
+          : ''}
+      </p>
+
       <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-sm text-muted-foreground tabular-nums">
         <span>
           {t('upload:progress.transferred', {

@@ -3,6 +3,7 @@ import { createFileRoute, Outlet, retainSearchParams } from '@tanstack/react-rou
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useRouteFocus } from '@/app/components/RouteFocus'
 import { RouteNotFound } from '@/app/components/RouteNotFound'
 import { ReportHeader } from '@/features/report/components/ReportHeader'
 import { ReportPlayer } from '@/features/report/components/ReportPlayer'
@@ -51,6 +52,9 @@ function ReportLayout() {
   const label = useBackendLabel()
   const queryClient = useQueryClient()
   const player = usePlayer()
+  // The shell survives a section change, so it is this — not `<main>` — that
+  // focus lands in: the player above it stays where the user left it.
+  const section = useRouteFocus<HTMLDivElement>()
 
   const meta = useMatchMeta(matchId)
   const rename = useRenameMatch()
@@ -161,7 +165,9 @@ function ReportLayout() {
           match list that failed says nothing about whether it will answer. */}
       <SectionNav matchId={matchId} />
 
-      <Outlet />
+      <div ref={section} tabIndex={-1} className="flex flex-col gap-8">
+        <Outlet />
+      </div>
     </>
   )
 }

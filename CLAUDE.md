@@ -464,6 +464,43 @@ safe.
 
 `src/i18n/` is a section like any other: its tests live in `src/i18n/tests/`.
 
+### Frontend accessibility
+
+Every component ships an axe assertion, so what is written down here is the part
+axe on one component cannot see.
+
+- **Focus follows navigation.** `useRouteFocus()`
+  (`src/app/components/RouteFocus.tsx`) marks the element a route change should
+  focus. There are two targets — `<main id="main-content">` in `__root.tsx` and
+  the wrapper around the report's `<Outlet/>` — and the **innermost mounted one
+  claims the navigation**, which is why switching report section lands in the
+  section instead of scrolling back over the player. The provider also carries
+  the polite region that names the view landed on; it waits for
+  `router.state.status === 'idle'`, because route modules are code-split and the
+  heading does not exist yet when the location changes.
+- **Anything that changes without a user action announces itself.** Three
+  `role="status"` regions: the route announcer above, `StatusAnnouncer` on the
+  dashboard (SSE-driven status changes), and upload progress — in quarters, not
+  percent, or a live region reads out noise. A test looking for "the" status
+  region will now find several; query by text.
+- **Colour is never the only signal.** `--team-a` and `--team-b` are one hue
+  apart and, in the dark scheme, the same lightness. Every mark carries a name:
+  a written legend, a bar label, an `aria-label`, and `title` on timeline bars
+  too narrow to hold text. `--team-foreground` is the one role that may be
+  written on a team fill.
+- **Contrast is a test, not a panel.** jsdom computes no rendered colour, so
+  axe's `color-contrast` rule is off and Storybook's panel only ever sees one
+  scheme. `src/styles/tests/contrast.test.ts` checks every composed pair in
+  **both** schemes against `tokens.css` (4.5:1 text, 3:1 marks and rings), and
+  `src/features/heatmap/tests/tile-contrast.test.ts` walks the tile ramp across
+  its flip. A token changed to something unreadable fails there.
+- **Motion is decoration.** `src/styles/motion.css` disables every animation and
+  transition under `prefers-reduced-motion`. If something ever animates
+  *information*, that blanket rule would silently delete it — give it a
+  reduced-motion form of its own.
+- Biome's whole `a11y` group is on, `noNoninteractiveElementInteractions`
+  included; it is the one the `recommended` preset leaves off.
+
 ### Testing a frontend component
 
 **Stories and tests are not co-located.** Each section carries a `stories/` and a `tests/` directory at its root, mirroring the structure below it:
@@ -568,6 +605,12 @@ GitHub Actions runs on every PR across all four packages:
 2. Type check — ty (Python, GitHub annotation format) + tsc (frontend)
 3. Tests — `pytest -m "not integration"` for Python packages; the frontend runs `pnpm build` (Vite + tsc as a single compile check) **and** `pnpm test` (both vitest projects) as two separate gates
 4. Posts a pass/fail summary comment on the PR
+
+**A step only fails the run if it declares `shell: bash`.** Every step pipes
+into `tee`, and without `pipefail` the exit code is `tee`'s — always `0` — so
+`steps.*.outcome` is `success` no matter what the command did. The four frontend
+steps declare it; the Python ones do not yet, and turning it on there will
+surface whatever has accumulated behind it.
 
 Ingestion installs without the `[cv]` extras (no torch/ultralytics on CI).
 ML installs normally; torch runs on CPU on the GitHub runner and is cached between runs.

@@ -28,6 +28,11 @@
     "title": "Keine Treffer",
     "description": "Zu dieser Suche gibt es kein Spiel."
   },
+  "announce": {
+    "processing": "{{title}} wird jetzt verarbeitet.",
+    "done": "Analyse fertig: {{title}}.",
+    "failed": "Analyse fehlgeschlagen: {{title}}."
+  },
   "status": {
     "done": "Fertig",
     "processing": "Wird verarbeitet",

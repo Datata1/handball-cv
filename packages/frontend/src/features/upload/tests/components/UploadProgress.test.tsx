@@ -38,6 +38,23 @@ describe('UploadProgress', () => {
     expect(screen.queryByText(/noch etwa/)).not.toBeInTheDocument()
   })
 
+  // A live region fed the exact percent would be read out several times a
+  // second and understood as noise, so it moves in quarters.
+  it('announces progress in quarters rather than per percent', () => {
+    const { unmount } = render(<Midway />)
+    expect(screen.getByText('Upload zu 25 % übertragen')).toBeVisible()
+    unmount()
+
+    render(<Complete />)
+    expect(screen.getByText('Upload zu 100 % übertragen')).toBeVisible()
+  })
+
+  it('stops announcing progress once there is none left to make', () => {
+    render(<Processing />)
+
+    expect(screen.queryByText(/Upload zu/)).not.toBeInTheDocument()
+  })
+
   // The state the legacy spinner never distinguished from being stuck.
   it('explains the wait after the last byte instead of parking at 100%', () => {
     render(<Processing />)

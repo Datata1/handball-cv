@@ -17,6 +17,7 @@ export function MatchThumbnail({ src }: { src: string | null }) {
       {src === null || failed ? (
         <Film aria-hidden="true" className="size-8 text-muted-foreground" />
       ) : (
+        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onError is the image failing to load, not somebody interacting with it.
         <img
           src={src}
           alt=""
