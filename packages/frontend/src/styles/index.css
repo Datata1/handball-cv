@@ -2,3 +2,4 @@
    theme onto the WELS palette. */
 @import "./tailwind.css";
 @import "./tokens.css";
+@import "./motion.css";

@@ -60,6 +60,7 @@
   },
   "nav": {
     "main": "Hauptnavigation",
+    "skip": "Zum Inhalt springen",
     "home": "WELS — zur Übersicht",
     "dashboard": "Übersicht",
     "upload": "Upload"

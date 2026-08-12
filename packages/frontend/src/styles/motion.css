@@ -1,0 +1,27 @@
+/* ──────────────────────────────────────────────────────────────────
+   Reduced motion.
+
+   Everything that moves in this app is decoration: a pulsing dot beside
+   the word "Wird verarbeitet", a colour fade on hover, the skeleton
+   shimmer. None of it carries meaning the written label does not, so
+   the preference turns all of it off rather than picking survivors.
+
+   Kept as a blanket rule for the same reason: a component added later
+   is covered without anyone remembering this file exists. If something
+   ever animates *information*, it needs a reduced-motion form of its
+   own — this rule would otherwise silently delete it.
+   ────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}

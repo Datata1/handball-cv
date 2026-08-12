@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { DashboardSummary } from '@/features/dashboard/components/DashboardSummary'
 import { MatchFilters } from '@/features/dashboard/components/MatchFilters'
 import { MatchList } from '@/features/dashboard/components/MatchList'
+import { StatusAnnouncer } from '@/features/dashboard/components/StatusAnnouncer'
 import {
   filterMatches,
   sortMatches,
@@ -73,6 +74,10 @@ function Dashboard() {
       />
 
       <DashboardSummary summary={summary} />
+
+      {/* The unfiltered list: a match finishing is news whether or not the
+          search box happens to be hiding it. */}
+      <StatusAnnouncer matches={matches.data} />
 
       <Section title={t('list.title')}>
         <MatchFilters

@@ -75,6 +75,11 @@ jobs:
 
       - name: Lint frontend
         id: lint-frontend
+        # `shell: bash` for `set -o pipefail`: without it every step's exit code
+        # is tee's, which is always 0, and `outcome` is success no matter what
+        # the command did. The Python steps still have that bug — turning it on
+        # there surfaces whatever has accumulated and wants its own PR.
+        shell: bash
         run: cd packages/frontend && pnpm lint 2>&1 | tee /tmp/lint-frontend.txt
         continue-on-error: true
 
@@ -97,6 +102,7 @@ jobs:
 
       - name: Typecheck frontend
         id: typecheck-frontend
+        shell: bash
         run: cd packages/frontend && pnpm typecheck 2>&1 | tee /tmp/typecheck-frontend.txt
         continue-on-error: true
 
@@ -121,11 +127,14 @@ jobs:
         # A separate gate from the tests: catches unresolved imports, a stale
         # generated route tree, and tsc errors.
         id: build-frontend
+        shell: bash
         run: cd packages/frontend && pnpm build 2>&1 | tee /tmp/build-frontend.txt
         continue-on-error: true
 
       - name: Test frontend
         id: test-frontend
+        # Both vitest projects, so this is also the axe-over-every-story gate.
+        shell: bash
         run: cd packages/frontend && pnpm test 2>&1 | tee /tmp/test-frontend.txt
         continue-on-error: true
 

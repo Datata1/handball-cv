@@ -46,6 +46,9 @@
     },
     "rules": {
       "preset": "recommended",
+      "a11y": {
+        "noNoninteractiveElementInteractions": "error"
+      },
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error"

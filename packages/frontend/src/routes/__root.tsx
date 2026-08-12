@@ -2,7 +2,9 @@ import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
 
 import { MainNav } from '@/app/components/MainNav'
+import { RouteFocusProvider, useRouteFocus } from '@/app/components/RouteFocus'
 import { RouteNotFound } from '@/app/components/RouteNotFound'
+import { MAIN_CONTENT_ID } from '@/app/focus'
 import { LiveConnectionIndicator } from '@/shared/query'
 import { AppHeader, Page } from '@/shared/ui'
 
@@ -36,13 +38,25 @@ export const Route = createRootRoute({
 
 function AppShell() {
   return (
+    <RouteFocusProvider>
+      <Shell />
+    </RouteFocusProvider>
+  )
+}
+
+// Below the provider, because the content element is what the route focus hook
+// hands its ref to.
+function Shell() {
+  const content = useRouteFocus<HTMLElement>()
+
+  return (
     <div className="flex min-h-dvh flex-col">
-      <AppHeader>
+      <AppHeader skipTo={`#${MAIN_CONTENT_ID}`}>
         <MainNav />
         <LiveConnectionIndicator className="ms-auto" />
       </AppHeader>
 
-      <main className="flex-1">
+      <main id={MAIN_CONTENT_ID} ref={content} tabIndex={-1} className="flex-1">
         <Page>
           <Outlet />
         </Page>

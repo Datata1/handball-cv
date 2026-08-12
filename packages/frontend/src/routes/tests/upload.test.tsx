@@ -92,9 +92,11 @@ describe('upload route', () => {
     await user.click(await screen.findByRole('button', { name: 'Abbrechen' }))
 
     expect(requests[0]?.aborted).toBe(true)
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'Upload von „spiel.mp4“ abgebrochen',
-    )
+    // One of several live regions on the page — the shell mounts one for route
+    // announcements, and it is nameless too.
+    expect(
+      await screen.findByText(/Upload von „spiel\.mp4“ abgebrochen/),
+    ).toHaveAttribute('role', 'status')
     expect(await dropzone()).toBeEnabled()
   })
 

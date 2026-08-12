@@ -7,11 +7,15 @@ import { timeBar, timeOffset } from './geometry'
 import { formatClock } from './time'
 import type { TimelineItem, TimelineTone, TimelineTrack } from './types'
 
+// The team roles rather than the chart ones: a bar says whose possession it
+// was, and the chart series are not built to be written on — white on the light
+// scheme's --chart-2 reaches 3.7:1, and 1.9:1 on the dark one's. `event` carries
+// no label, so it needs 3:1 against the track behind it and nothing else.
 const TONES: Record<TimelineTone, string> = {
-  teamA: 'bg-chart-1 text-white',
-  teamB: 'bg-chart-2 text-white',
-  unknown: 'bg-muted-foreground text-white',
-  event: 'bg-chart-4 text-white',
+  teamA: 'bg-team-a text-team-foreground',
+  teamB: 'bg-team-b text-team-foreground',
+  unknown: 'bg-team-u text-team-foreground',
+  event: 'bg-chart-4',
 }
 
 /** Below this a bar has no room for its short label without clipping it. */
@@ -63,6 +67,9 @@ export function TimelineTrackRow({
             type="button"
             tabIndex={controls.cursor === index ? 0 : -1}
             aria-pressed={selected}
+            // A bar narrower than its own label is identified by its colour
+            // alone otherwise, and the two team fills are one hue apart.
+            title={item.label}
             aria-label={
               marker
                 ? t('timeline.marker', {

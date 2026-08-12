@@ -41,11 +41,22 @@
   --wels-accent-soft: #f2647c;
   --wels-blue-bright: #6ea8dc;
 
+  /* The same problem again for the categorical accents below: every one of them
+     ends up as a mark on --muted (the court surface and the timeline's track
+     background), where 3:1 is the bar. #ca8a04 reaches 2.7 on the light muted,
+     #16a34a 3.0, #2563eb 2.4 on the dark one. */
+  --wels-caution-deep: #a16207;
+  --wels-positive-deep: #15803d;
+  --wels-info-bright: #60a5fa;
+
   /* Neutrals — deliberately few. Reach for a role in layer 2 first. */
   --wels-neutral-50: #f9fafb;
   --wels-neutral-100: #f3f4f6;
   --wels-neutral-400: #9ca3af;
   --wels-neutral-500: #6b7280;
+  /* Secondary text also lands on --muted — a hovered row, a pressed scene — and
+     #6b7280 reaches only 4.4:1 there. */
+  --wels-neutral-600: #4b5563;
   --wels-neutral-900: #111827;
   --wels-white: #fff;
 
@@ -78,7 +89,7 @@
   --secondary: var(--wels-neutral-100);
   --secondary-foreground: var(--wels-navy);
   --muted: var(--wels-neutral-100);
-  --muted-foreground: var(--wels-neutral-500);
+  --muted-foreground: var(--wels-neutral-600);
   --accent: var(--wels-neutral-100);
   --accent-foreground: var(--wels-navy);
   --destructive: var(--wels-accent-deep);
@@ -99,23 +110,27 @@
      label itself — the four statuses have to stay apart for a colourblind
      reader, and none of these values carries text at 4.5:1. */
   --status-done: var(--wels-positive);
-  --status-processing: var(--wels-caution);
+  --status-processing: var(--wels-caution-deep);
   --status-failed: var(--wels-accent-deep);
-  --status-unknown: var(--wels-neutral-400);
+  --status-unknown: var(--wels-neutral-500);
 
   --chart-1: var(--wels-blue);
   --chart-2: var(--wels-accent);
   --chart-3: var(--wels-navy);
-  --chart-4: var(--wels-caution);
-  --chart-5: var(--wels-positive);
+  --chart-4: var(--wels-caution-deep);
+  --chart-5: var(--wels-positive-deep);
 
   /* Who a mark belongs to: the two teams and the tracks the classifier could
      not place. Three fills that have to stay apart from each other in both
      schemes — the chart roles do not, because --chart-2 and --muted-foreground
-     are the same grey in the dark one. Fills only; nothing sets text on them. */
+     are the same grey in the dark one.
+     --team-foreground is the one thing that may be written on any of the three:
+     one value rather than three, so a timeline bar does not need to know which
+     team it carries to know what colour its label is. */
   --team-a: var(--wels-blue);
   --team-b: var(--wels-accent-deep);
   --team-u: var(--wels-neutral-500);
+  --team-foreground: var(--wels-white);
 
   --sidebar: var(--wels-white);
   --sidebar-foreground: var(--wels-neutral-900);
@@ -152,17 +167,23 @@
   --input: rgb(255 255 255 / 0.2);
   --ring: var(--wels-accent);
 
+  /* The deepened light-scheme values are the ones that disappear against a navy
+     card; the brighter originals are what carry here. */
+  --status-processing: var(--wels-caution);
   --status-failed: var(--wels-accent-soft);
+  --status-unknown: var(--wels-neutral-400);
 
   --chart-1: var(--wels-accent);
   --chart-2: var(--wels-neutral-400);
   --chart-3: var(--wels-caution);
   --chart-4: var(--wels-positive);
-  --chart-5: var(--wels-info);
+  --chart-5: var(--wels-info-bright);
 
   --team-a: var(--wels-blue-bright);
   --team-b: var(--wels-accent-soft);
   --team-u: var(--wels-neutral-400);
+  /* The dark scheme's three fills are all light, so the label on them is not. */
+  --team-foreground: var(--wels-dark);
 
   --sidebar: var(--wels-navy);
   --sidebar-foreground: var(--wels-neutral-100);
@@ -209,6 +230,7 @@
   --color-team-a: var(--team-a);
   --color-team-b: var(--team-b);
   --color-team-u: var(--team-u);
+  --color-team-foreground: var(--team-foreground);
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);

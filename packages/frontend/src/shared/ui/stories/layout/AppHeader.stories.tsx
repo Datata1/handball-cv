@@ -24,3 +24,11 @@ export const WithConnectionIndicator: Story = {
     children: <LiveConnectionIndicator className="ms-auto" />,
   },
 }
+
+/**
+ * The skip link is the first thing in the tab order and invisible until it has
+ * focus — tab into this story to see it.
+ */
+export const WithSkipLink: Story = {
+  args: { skipTo: '#main-content' },
+}
